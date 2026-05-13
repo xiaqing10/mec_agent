@@ -1,0 +1,586 @@
+{
+  "reports": [
+    {
+      "timestamp": "2026-05-12 16:56:44",
+      "saved_at": "2026-05-12T19:06:34.983161",
+      "projects": {
+        "南京仙新路": {
+          "physical": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        },
+        "山西灵石": {
+          "physical": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        },
+        "德会": {
+          "physical": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        },
+        "德会隧道": {
+          "physical": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": [
+            {
+              "name": "mzk68_325",
+              "ip": "10.145.58.111"
+            }
+          ]
+        },
+        "柯诸": {
+          "physical": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        },
+        "汉宜": {
+          "physical": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        },
+        "汕梅": {
+          "physical": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        },
+        "沈海": {
+          "physical": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [
+            {
+              "name": "mec_1007",
+              "ip": "172.18.33.118"
+            }
+          ],
+          "zero_images_devices": []
+        },
+        "绵九": {
+          "physical": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [
+            {
+              "name": "mk626_486",
+              "ip": "10.145.181.49"
+            },
+            {
+              "name": "mk636_385",
+              "ip": "10.145.189.102"
+            },
+            {
+              "name": "mk666_639",
+              "ip": "10.142.72.173"
+            },
+            {
+              "name": "mk672_917",
+              "ip": "10.142.80.110"
+            },
+            {
+              "name": "mk673_877",
+              "ip": "10.142.84.1"
+            }
+          ],
+          "zero_images_devices": [
+            {
+              "name": "s002",
+              "ip": "10.142.206.32"
+            },
+            {
+              "name": "mk625_310",
+              "ip": "10.145.181.1"
+            },
+            {
+              "name": "mzk667_246",
+              "ip": "10.142.70.173"
+            },
+            {
+              "name": "mzk670_754",
+              "ip": "10.142.74.101"
+            },
+            {
+              "name": "mk763_834",
+              "ip": "10.142.196.1"
+            },
+            {
+              "name": "mzk717_440",
+              "ip": "10.142.136.82"
+            },
+            {
+              "name": "mzk717_800",
+              "ip": "10.142.136.109"
+            },
+            {
+              "name": "mk713_255",
+              "ip": "10.142.134.1"
+            },
+            {
+              "name": "mk713_375",
+              "ip": "10.142.134.10"
+            },
+            {
+              "name": "mk715_030",
+              "ip": "10.142.134.136"
+            },
+            {
+              "name": "mk717_670",
+              "ip": "10.142.138.145"
+            }
+          ]
+        },
+        "贵阳": {
+          "physical": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        },
+        "青海": {
+          "physical": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        }
+      }
+    },
+    {
+      "timestamp": "2026-05-12 16:56:44",
+      "saved_at": "2026-05-12T19:09:58.572002",
+      "projects": {
+        "南京仙新路": {
+          "physical": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        },
+        "山西灵石": {
+          "physical": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        },
+        "德会": {
+          "physical": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        },
+        "德会隧道": {
+          "physical": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": [
+            {
+              "name": "mzk68_325",
+              "ip": "10.145.58.111"
+            }
+          ]
+        },
+        "柯诸": {
+          "physical": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        },
+        "汉宜": {
+          "physical": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        },
+        "汕梅": {
+          "physical": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        },
+        "沈海": {
+          "physical": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [
+            {
+              "name": "mec_1007",
+              "ip": "172.18.33.118"
+            }
+          ],
+          "zero_images_devices": []
+        },
+        "绵九": {
+          "physical": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [
+            {
+              "name": "mk626_486",
+              "ip": "10.145.181.49"
+            },
+            {
+              "name": "mk636_385",
+              "ip": "10.145.189.102"
+            },
+            {
+              "name": "mk666_639",
+              "ip": "10.142.72.173"
+            },
+            {
+              "name": "mk672_917",
+              "ip": "10.142.80.110"
+            },
+            {
+              "name": "mk673_877",
+              "ip": "10.142.84.1"
+            }
+          ],
+          "zero_images_devices": [
+            {
+              "name": "s002",
+              "ip": "10.142.206.32"
+            },
+            {
+              "name": "mk625_310",
+              "ip": "10.145.181.1"
+            },
+            {
+              "name": "mzk667_246",
+              "ip": "10.142.70.173"
+            },
+            {
+              "name": "mzk670_754",
+              "ip": "10.142.74.101"
+            },
+            {
+              "name": "mk763_834",
+              "ip": "10.142.196.1"
+            },
+            {
+              "name": "mzk717_440",
+              "ip": "10.142.136.82"
+            },
+            {
+              "name": "mzk717_800",
+              "ip": "10.142.136.109"
+            },
+            {
+              "name": "mk713_255",
+              "ip": "10.142.134.1"
+            },
+            {
+              "name": "mk713_375",
+              "ip": "10.142.134.10"
+            },
+            {
+              "name": "mk715_030",
+              "ip": "10.142.134.136"
+            },
+            {
+              "name": "mk717_670",
+              "ip": "10.142.138.145"
+            }
+          ]
+        },
+        "贵阳": {
+          "physical": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        },
+        "青海": {
+          "physical": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        }
+      }
+    }
+  ]
+}
