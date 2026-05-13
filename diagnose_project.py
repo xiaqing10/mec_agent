@@ -255,7 +255,7 @@ def diagnose_device(diag_type, device_info):
                 "type": diag_type, "diagnosis": {"error": str(e)}, "recommendations": []}
 
 
-def build_dingtalk_message(container_offline_results, zero_images_results, project_name):
+def build_dingtalk_message(container_offline_results, zero_images_results, project_name, recovered_results=None):
     message = f"## 设备诊断-项目: {project_name}\n\n"
     message += f"**诊断时间**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n"
 
@@ -302,6 +302,33 @@ def build_dingtalk_message(container_offline_results, zero_images_results, proje
                         errors = info.get('errors', [])
                         if errors:
                             message += f"  - {proc_name}: {errors[0][:80]}\n"
+            message += "\n"
+
+    if recovered_results:
+        message += f"### ✅ 已恢复设备 ({len(recovered_results)}台)\n\n"
+        for r in recovered_results:
+            ip = r.get('host', '')
+            device_id = r.get('device_name', '未知')
+            diagnosis = r.get('diagnosis', {})
+            message += f"**{device_id} ({ip})**\n"
+            today_count = diagnosis.get('today_image_count', 0)
+            message += f"- 📸 今日图片: {today_count} 张\n"
+            latest_time = diagnosis.get('latest_image_time', '')
+            latest_file = diagnosis.get('latest_image_file', '')
+            if latest_time:
+                message += f"- 🕐 最新图片: {latest_time}\n"
+            if latest_file:
+                message += f"- 📄 最新文件: {latest_file}\n"
+            supervisor_output = diagnosis.get('supervisor_output', '')
+            if supervisor_output:
+                message += f"- ⚙️ 进程状态:\n"
+                for line in supervisor_output.split('\n')[:10]:
+                    line = line.strip()
+                    if line:
+                        message += f"  {line}\n"
+            issue = diagnosis.get('issue', '')
+            if issue:
+                message += f"- ℹ️ {issue}\n"
             message += "\n"
 
     return message
@@ -374,9 +401,13 @@ def diagnose_project(project_name):
                          and '正常' not in r.get('diagnosis', {}).get('issue', '')]
     zero_results = [r for r in project_results if r.get('type') == 'zero_images'
                     and 'error' not in r.get('diagnosis', {})
-                    and '正常' not in r.get('diagnosis', {}).get('issue', '')]
+                    and '正常' not in r.get('diagnosis', {}).get('issue', '')
+                    and '已恢复正常' not in r.get('diagnosis', {}).get('issue', '')]
+    recovered_results = [r for r in project_results if r.get('type') == 'zero_images'
+                         and 'error' not in r.get('diagnosis', {})
+                         and '已恢复正常' in r.get('diagnosis', {}).get('issue', '')]
 
-    dingtalk_msg = build_dingtalk_message(container_results, zero_results, project_name)
+    dingtalk_msg = build_dingtalk_message(container_results, zero_results, project_name, recovered_results)
 
     result_summary["success"] = True
     result_summary["total_diagnosed"] = len(project_results)

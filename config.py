@@ -7,7 +7,7 @@ SCRIPTS_DIR = Path("/home/sy/.hermes/scripts")
 
 # API 配置
 API_HOST = os.getenv("SELF_AGENT_HOST", "0.0.0.0")
-API_PORT = int(os.getenv("SELF_AGENT_PORT", "8645"))
+API_PORT = int(os.getenv("SELF_AGENT_PORT", "5051"))
 API_KEY = os.getenv("SELF_AGENT_API_KEY", "mec-diagnose-agent-2026")
 
 # LLM 配置（复用 hermes 的火山引擎配置）

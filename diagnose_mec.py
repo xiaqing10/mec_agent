@@ -43,6 +43,8 @@ import time
 from datetime import datetime
 from pathlib import Path
 
+from query_sensor_status import get_sensor_status, format_sensor_status_short
+
 # ============================================================================
 # 日志配置
 # ============================================================================
@@ -118,7 +120,7 @@ def cleanup_old_logs(days: int = 7) -> int:
     return count
 
 
-def ssh_exec(host_ip: str, port: int, user: str, command: str, timeout: int = 5):
+def ssh_exec(host_ip: str, port: int, user: str, command: str, timeout: int = 8):
     """使用SSH密钥执行远程命令。
 
     通过Windows OpenSSH连接MEC设备，使用ed25519密钥认证。
@@ -138,14 +140,14 @@ def ssh_exec(host_ip: str, port: int, user: str, command: str, timeout: int = 5)
         - stderr: 命令标准错误（已strip）
         - returncode: 命令返回码，超时为-1
     """
-    connect_timeout = min(timeout, 3)
+    connect_timeout = min(timeout, 5)
     cmd = [
         SSH_CMD,
         "-i", SSH_KEY,
         "-o", "StrictHostKeyChecking=no",
         "-o", f"ConnectTimeout={connect_timeout}",
         "-o", "ServerAliveInterval=2",
-        "-o", "ServerAliveCountMax=1",
+        "-o", "ServerAliveCountMax=3",
         "-p", str(port),
         f"{user}@{host_ip}",
         command
@@ -191,6 +193,37 @@ def find_physical_user(host_ip: str):
 
     logger.warning("  ❌ 物理机 %s 所有用户均失败: %s", host_ip, last_error)
     return last_error
+
+
+def _add_sensor_status(result: dict, host_ip: str, project: str = None) -> dict:
+    try:
+        si = get_sensor_status(host_ip, project)
+        if si.get("total_cameras", 0) > 0 or si.get("total_radars", 0) > 0:
+            result["diagnosis"]["sensors"] = si
+            logger.info("📡 传感器状态: %s", format_sensor_status_short(si))
+    except Exception:
+        pass
+    return result
+
+
+def _resolve_device(query: str) -> str:
+    import re
+    if re.match(r'^\d+\.\d+\.\d+\.\d+$', query.strip()):
+        return query.strip(), None
+
+    devices = lookup_device(query)
+    if not devices:
+        logger.warning("❌ 数据库中未找到设备: %s", query)
+        return query, None
+
+    if len(devices) > 1:
+        logger.warning("⚠️ 设备名 '%s' 对应多个结果:", query)
+        for d in devices:
+            logger.warning("   - %s (IP: %s, 项目: %s)", d['name'], d['ip'], d['project'])
+        logger.warning("→ 使用第一个: %s (%s)", devices[0]['name'], devices[0]['ip'])
+
+    logger.info("→ 设备名 '%s' → IP: %s (项目: %s)", query, devices[0]['ip'], devices[0]['project'])
+    return devices[0]['ip'], devices[0]
 
 
 # ============================================================================
@@ -257,7 +290,7 @@ def diagnose_container_offline(host_ip: str) -> dict:
         result["diagnosis"]["docker_service"] = "未运行"
         result["diagnosis"]["issue"] = "Docker服务未运行"
         logger.warning("❌ Docker服务未运行")
-        return result
+        return _add_sensor_status(result, host_ip)
 
     result["diagnosis"]["docker_service"] = "运行中 ✓"
     logger.info("✅ Docker服务运行中")
@@ -275,7 +308,7 @@ def diagnose_container_offline(host_ip: str) -> dict:
         result["diagnosis"]["container_exec"] = f"失败: {exec_error[:200]}"
         result["diagnosis"]["issue"] = f"docker exec失败: {exec_error[:200]}"
         logger.warning("❌ docker exec失败: %s", exec_error[:150])
-        return result
+        return _add_sensor_status(result, host_ip)
 
     result["diagnosis"]["container_exec"] = "正常 ✓"
     logger.info("✅ docker exec正常")
@@ -323,7 +356,7 @@ def diagnose_container_offline(host_ip: str) -> dict:
     except Exception:
         pass
 
-    return result
+    return _add_sensor_status(result, host_ip)
 
 
 # ============================================================================
@@ -386,7 +419,7 @@ def diagnose_zero_images(host_ip: str) -> dict:
     if code != 0 or "OK" not in stdout:
         result["diagnosis"]["issue"] = f"容器SSH无法连接: {(stderr or stdout).strip()[:200]}"
         logger.warning("❌ 容器无法连接（可能已离线，应由容器离线诊断处理）")
-        return result
+        return _add_sensor_status(result, host_ip)
 
     logger.info("✅ 容器连接正常")
 
@@ -406,9 +439,44 @@ def diagnose_zero_images(host_ip: str) -> dict:
     result["diagnosis"]["today_image_count"] = today_image_count
 
     if today_image_count > 0:
-        result["diagnosis"]["issue"] = f"设备已恢复正常，今日图片数: {today_image_count}（无需诊断）"
-        logger.info("✅ 今日图片数: %d，设备已恢复正常，跳过诊断", today_image_count)
-        return result
+        result["diagnosis"]["issue"] = f"设备已恢复正常，今日图片数: {today_image_count}"
+        logger.info("✅ 今日图片数: %d，设备已恢复正常，收集详细信息", today_image_count)
+
+        # 收集supervisor进程状态
+        sv_stdout, sv_stderr, sv_code = ssh_exec(
+            host_ip, CONTAINER_PORT, CONTAINER_USER, "supervisorctl status"
+        )
+        if sv_stdout.strip():
+            processes, abnormal_processes, running_count = _parse_supervisor_status(sv_stdout)
+            result["diagnosis"]["supervisor"] = {
+                "total": len(processes),
+                "running": running_count,
+                "abnormal": len(abnormal_processes)
+            }
+            result["diagnosis"]["supervisor_output"] = sv_stdout.strip()
+            if abnormal_processes:
+                result["diagnosis"]["abnormal_processes"] = abnormal_processes
+            logger.info("📋 进程状态: %d/%d 运行中, %d 异常", running_count, len(processes), len(abnormal_processes))
+
+        # 收集最新图片时间
+        latest_img_stdout, _, _ = ssh_exec(
+            host_ip, CONTAINER_PORT, CONTAINER_USER,
+            f"ls -t /home/files/nfsroot/{today_str}/ 2>/dev/null | head -1",
+            timeout=5
+        )
+        latest_img_name = latest_img_stdout.strip()
+        if latest_img_name:
+            latest_time_stdout, _, _ = ssh_exec(
+                host_ip, CONTAINER_PORT, CONTAINER_USER,
+                f"ls -l --time-style='+%Y-%m-%d %H:%M:%S' /home/files/nfsroot/{today_str}/{latest_img_name} 2>/dev/null | awk '{{print $6, $7}}'",
+                timeout=5
+            )
+            if latest_time_stdout.strip():
+                result["diagnosis"]["latest_image_time"] = latest_time_stdout.strip()
+                result["diagnosis"]["latest_image_file"] = latest_img_name
+                logger.info("📸 最新图片: %s (时间: %s)", latest_img_name, latest_time_stdout.strip())
+
+        return _add_sensor_status(result, host_ip)
     elif today_image_count == 0:
         logger.info("⚠️  确认今日图片为0，继续诊断")
     else:
@@ -424,7 +492,7 @@ def diagnose_zero_images(host_ip: str) -> dict:
         result["diagnosis"]["supervisor"] = "异常：无输出"
         result["diagnosis"]["issue"] = "supervisorctl status无输出，Supervisor服务异常"
         logger.warning("❌ supervisorctl无输出 (code=%d): %s", code, stderr[:100])
-        return result
+        return _add_sensor_status(result, host_ip)
 
     # 解析进程状态
     processes, abnormal_processes, running_count = _parse_supervisor_status(stdout)
@@ -440,7 +508,7 @@ def diagnose_zero_images(host_ip: str) -> dict:
         result["diagnosis"]["issue"] = _format_abnormal_summary(abnormal_processes)
         logger.warning("❌ %s", result["diagnosis"]["issue"])
         # 进程异常就到这里，不再继续（进程都不正常，看ros和topic没意义）
-        return result
+        return _add_sensor_status(result, host_ip)
 
     logger.info("✅ 所有进程运行正常 (%d/%d)", running_count, len(processes))
 
@@ -455,7 +523,7 @@ def diagnose_zero_images(host_ip: str) -> dict:
         result["diagnosis"]["roscore"] = "未运行"
         result["diagnosis"]["issue"] = "roscore未运行"
         logger.warning("❌ roscore未运行")
-        return result
+        return _add_sensor_status(result, host_ip)
 
     result["diagnosis"]["roscore"] = f"运行中: {stdout.strip()[:150]}"
     logger.info("✅ roscore运行中")
@@ -511,7 +579,7 @@ def diagnose_zero_images(host_ip: str) -> dict:
         else:
             result["diagnosis"]["issue"] = "进程正常、roscore运行、日志无明显错误、topic有数据，但图片为0"
 
-    return result
+    return _add_sensor_status(result, host_ip)
 
 
 # ============================================================================
@@ -999,8 +1067,12 @@ def _check_rostopic_hz(host_ip: str, result: dict, has_log_errors: bool) -> dict
             zero_rate_topics.append(topic)
             logger.warning("❌ %s: 无数据", topic)
         else:
-            result["diagnosis"]["topic_rates"][topic] = f"检查失败: {topic_text.strip()[:60]}"
-            logger.warning("⚠️  %s: 检查失败 - %s", topic, topic_text.strip()[:60])
+            clean_text = topic_text.strip()[:60]
+            if clean_text:
+                result["diagnosis"]["topic_rates"][topic] = f"无数据: {clean_text}"
+            else:
+                result["diagnosis"]["topic_rates"][topic] = "无数据"
+            logger.warning("⚠️  %s: 无数据 - %s", topic, clean_text)
 
     if zero_rate_topics and not has_log_errors:
         result["diagnosis"]["issue"] = f"ROS topic无数据: {', '.join(zero_rate_topics)}"
