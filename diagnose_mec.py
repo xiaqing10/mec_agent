@@ -122,19 +122,19 @@ def cleanup_old_logs(days: int = 7) -> int:
     return count
 
 
-def ssh_exec(host_ip: str, port: int, user: str, command: str, timeout: int = 8):
+def ssh_exec(host_ip: str, port: int, user: str, command: str, exec_timeout: int = 30) -> tuple:
     """使用SSH密钥执行远程命令。
 
     通过Windows OpenSSH连接MEC设备，使用ed25519密钥认证。
-    ConnectTimeout设短（最多3秒），快速判断不可达设备；
-    总timeout控制命令执行时间上限。
+    ConnectTimeout固定5秒，快速判断不可达设备；
+    exec_timeout控制命令总执行时长上限（含连接+执行）。
 
     Args:
         host_ip: 目标主机IP
         port: SSH端口（物理机22，容器10022）
         user: SSH用户名
         command: 要执行的远程命令
-        timeout: 命令总超时秒数，默认5秒
+        exec_timeout: 命令总执行超时秒数，默认30秒
 
     Returns:
         (stdout, stderr, returncode) 三元组
@@ -142,7 +142,7 @@ def ssh_exec(host_ip: str, port: int, user: str, command: str, timeout: int = 8)
         - stderr: 命令标准错误（已strip）
         - returncode: 命令返回码，超时为-1
     """
-    connect_timeout = min(timeout, 5)
+    connect_timeout = 5
     cmd = [
         SSH_CMD,
         "-i", SSH_KEY,
@@ -156,14 +156,51 @@ def ssh_exec(host_ip: str, port: int, user: str, command: str, timeout: int = 8)
     ]
 
     try:
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=exec_timeout)
         return result.stdout.strip(), result.stderr.strip(), result.returncode
     except subprocess.TimeoutExpired:
-        logger.warning("SSH超时: %s@%s:%d (%ds)", user, host_ip, port, timeout)
-        return "", f"SSH连接超时({timeout}s)", -1
+        logger.warning("SSH执行超时: %s@%s:%d (%ds)", user, host_ip, port, exec_timeout)
+        return "", f"SSH执行超时({exec_timeout}s)", -1
     except Exception as e:
         logger.error("SSH异常: %s@%s:%d - %s", user, host_ip, port, e)
         return "", str(e), -1
+
+
+def _combined_ssh(host_ip: str, port: int, user: str, commands: list, exec_timeout: int = 30) -> dict:
+    """合并多条命令为一次SSH调用，用标记分隔输出。
+
+    Args:
+        host_ip: 目标主机IP
+        port: SSH端口
+        user: SSH用户名
+        commands: [(name, command), ...] 命令列表
+        exec_timeout: 总超时秒数
+
+    Returns:
+        {name: stdout, ...} 解析后的输出字典
+    """
+    marker = "===MKR==="
+    parts = []
+    for name, cmd in commands:
+        parts.append(f"echo '{marker}{name}' && ({cmd}) 2>&1")
+    full_cmd = "; ".join(parts)
+
+    stdout, _, _ = ssh_exec(host_ip, port, user, full_cmd, exec_timeout=exec_timeout)
+
+    result = {}
+    current_name = None
+    current_lines = []
+    for line in stdout.split('\n'):
+        if line.startswith(marker):
+            if current_name:
+                result[current_name] = '\n'.join(current_lines)
+            current_name = line[len(marker):]
+            current_lines = []
+        elif current_name is not None:
+            current_lines.append(line)
+    if current_name:
+        result[current_name] = '\n'.join(current_lines)
+    return result
 
 
 def find_physical_user(host_ip: str):
@@ -184,7 +221,7 @@ def find_physical_user(host_ip: str):
 
     for user in PHYSICAL_USERS:
         logger.debug("  尝试用户: %s", user)
-        stdout, stderr, code = ssh_exec(host_ip, 22, user, "echo 'OK'", timeout=5)
+        stdout, stderr, code = ssh_exec(host_ip, 22, user, "echo 'OK'", exec_timeout=10)
 
         if code == 0 and "OK" in stdout:
             logger.info("  ✅ 登录成功: %s", user)
@@ -285,31 +322,15 @@ def _resolve_device(query: str, project: str = None) -> tuple:
 def diagnose_container_offline(host_ip: str) -> dict:
     """诊断问题1：物理机在线但容器不可连。
 
-    4步排查链路，每步断在哪就报事实，不擅自给建议：
-      1. 检查物理机SSH连接（尝试多个用户）
-      2. 检查Docker服务状态
-      3. docker exec检查容器内部是否可用
-      4. 检查容器内SSH服务
+    4步排查链路，合并为2次SSH调用：
+      1. 物理机一次SSH取docker/exec/uptime/容器状态
+      2. 容器一次SSH验证直连
 
     Args:
         host_ip: 设备IP地址
 
     Returns:
-        诊断结果字典，格式：
-        {
-            "host": "10.x.x.x",
-            "type": "container_offline",
-            "timestamp": "2026-05-12T...",
-            "diagnosis": {
-                "physical_machine": "root@10.x.x.x:22 ✓",
-                "docker_service": "运行中 ✓",
-                "dev_container": "Up 9 days",
-                "container_exec": "正常 ✓",
-                "container_ssh_connect": "不可连接: ...",
-                "issue": "容器内SSH服务不可连接: ..."
-            },
-            "recommendations": []
-        }
+        诊断结果字典
     """
     logger.info("=" * 70)
     logger.info("🔍 诊断：物理机在线但容器不可连 - %s", host_ip)
@@ -327,90 +348,74 @@ def diagnose_container_offline(host_ip: str) -> dict:
     physical_user = find_physical_user(host_ip)
 
     if physical_user not in PHYSICAL_USERS:
-        # 返回的是错误信息而非用户名
         result["diagnosis"]["error"] = f"物理机无法连接：{physical_user}"
         logger.warning("❌ 物理机无法连接: %s", physical_user)
-        return result
+        return _add_sensor_status(result, host_ip)
 
     result["diagnosis"]["physical_machine"] = f"{physical_user}@{host_ip}:22 ✓"
 
-    # ========== 步骤2: 检查Docker服务 ==========
-    logger.info("🐳 步骤2: 检查Docker服务...")
-    stdout, stderr, code = ssh_exec(host_ip, 22, physical_user, "systemctl is-active docker")
+    # ========== 步骤2-4: 一次SSH获取所有物理机信息 ==========
+    logger.info("🐳 一次SSH采集物理机所有信息...")
+    dc = _docker_cmd
+    combined = _combined_ssh(host_ip, 22, physical_user, [
+        ("DOCKER_STATUS", dc(physical_user, "systemctl is-active docker")),
+        ("EXEC_OK", dc(physical_user, "docker exec dev bash -c 'echo EXEC_OK' 2>&1")),
+        ("SSH_STATUS", dc(physical_user, "docker exec dev bash -c 'service ssh status 2>&1 || systemctl status sshd 2>&1 || ps aux | grep sshd' 2>&1")),
+        ("UPTIME", "cat /proc/uptime | awk '{print int($1/86400)\"天 \"int(($1%86400)/3600)\"小时\"}'"),
+        ("DOCKER_PS", dc(physical_user, "docker ps --filter name=dev --format='{{.Status}}'")),
+        ("DOCKER_INSPECT", "docker inspect dev --format='{{.State.StartedAt}}' 2>/dev/null | cut -c1-19"),
+    ], exec_timeout=30)
 
-    if code != 0 or "active" not in stdout:
-        result["diagnosis"]["docker_service"] = "未运行"
-        result["diagnosis"]["issue"] = "Docker服务未运行"
-        logger.warning("❌ Docker服务未运行")
-        return _add_sensor_status(result, host_ip)
+    docker_status = combined.get("DOCKER_STATUS", "").strip()
+    exec_ok = combined.get("EXEC_OK", "").strip()
+    ssh_status = combined.get("SSH_STATUS", "").strip()
+    uptime = combined.get("UPTIME", "").strip()
+    docker_ps = combined.get("DOCKER_PS", "").strip()
+    docker_inspect = combined.get("DOCKER_INSPECT", "").strip()
 
-    result["diagnosis"]["docker_service"] = "运行中 ✓"
-    logger.info("✅ Docker服务运行中")
-
-    # ========== 步骤3: docker exec检查容器内部可用性 ==========
-    logger.info("🩺 步骤3: docker exec检查容器内部...")
-    stdout, stderr, code = ssh_exec(
-        host_ip, 22, physical_user,
-        _docker_cmd(physical_user, "docker exec dev bash -c 'echo EXEC_OK' 2>&1"),
-        timeout=8
-    )
-
-    if "EXEC_OK" not in stdout or code != 0:
-        exec_error = (stderr or stdout).strip()
-        result["diagnosis"]["container_exec"] = f"失败: {exec_error[:200]}"
-        logger.warning("⚠️ docker exec失败: %s（继续尝试容器SSH直连）", exec_error[:150])
-        # 不直接return！继续步骤4尝试容器SSH直连
-        # docker exec可能因权限/namespace等问题失败，但容器SSH可能仍然正常
+    if "active" in docker_status:
+        result["diagnosis"]["docker_service"] = "运行中 ✓"
+        logger.info("✅ Docker服务运行中")
     else:
+        result["diagnosis"]["docker_service"] = f"未运行 ({docker_status})" if docker_status else "未运行"
+        logger.warning("❌ Docker服务未运行")
+
+    if "EXEC_OK" in exec_ok:
         result["diagnosis"]["container_exec"] = "正常 ✓"
         logger.info("✅ docker exec正常")
+        if ssh_status:
+            result["diagnosis"]["container_ssh"] = ssh_status[:200]
+    else:
+        result["diagnosis"]["container_exec"] = f"失败: {exec_ok[:200]}" if exec_ok else "失败: (无输出)"
+        logger.warning("⚠️ docker exec失败")
 
-        # docker exec正常时，通过它查看SSH服务状态
-        logger.info("🔑 步骤4: 检查容器内SSH服务...")
-        stdout, stderr, code = ssh_exec(
-            host_ip, 22, physical_user,
-            _docker_cmd(physical_user, "docker exec dev bash -c 'service ssh status 2>&1 || systemctl status sshd 2>&1 || ps aux | grep sshd' 2>&1"),
-            timeout=8
-        )
-        result["diagnosis"]["container_ssh"] = stdout.strip()[:200] if stdout.strip() else "无输出"
+    if uptime:
+        result["diagnosis"]["physical_uptime"] = uptime
+    if docker_ps:
+        result["diagnosis"]["container_status"] = docker_ps
+    if docker_inspect:
+        result["diagnosis"]["container_started"] = docker_inspect
 
-    # 再直接尝试SSH连接容器
-    logger.info("📡 步骤4补充: 尝试连接容器SSH...")
+    # ========== 容器SSH直连（独立调用） ==========
+    logger.info("📡 尝试连接容器SSH...")
     ssh_stdout, ssh_stderr, ssh_code = ssh_exec(
-        host_ip, CONTAINER_PORT, CONTAINER_USER, "echo 'SSH_OK'", timeout=5
+        host_ip, CONTAINER_PORT, CONTAINER_USER, "echo 'SSH_OK'", exec_timeout=10
     )
 
     if ssh_code == 0 and "SSH_OK" in ssh_stdout:
         result["diagnosis"]["container_ssh_connect"] = "可连接 ✓"
-        exec_failed = "失败" in result["diagnosis"].get("container_exec", "")
-        if exec_failed:
+        if "失败" in result["diagnosis"].get("container_exec", ""):
             result["diagnosis"]["issue"] = "docker exec不可用但容器SSH正常，容器内部可用"
-            logger.info("✅ 容器SSH可连接（docker exec失败但SSH正常，容器可用）")
+            logger.info("✅ 容器SSH可连接（docker exec失败但SSH正常）")
         else:
             result["diagnosis"]["issue"] = "容器SSH可连接但监控显示离线，可能监控判定逻辑问题"
-            logger.info("✅ 容器SSH可连接（但监控显示离线，需检查监控判定逻辑）")
+            logger.info("✅ 容器SSH可连接（监控显示离线）")
     else:
         ssh_error = (ssh_stderr or ssh_stdout).strip()[:200]
         result["diagnosis"]["container_ssh_connect"] = f"不可连接: {ssh_error}"
-        result["diagnosis"]["issue"] = f"容器内SSH服务不可连接: {ssh_error}"
+        if "issue" not in result["diagnosis"]:
+            result["diagnosis"]["issue"] = f"容器内SSH服务不可连接: {ssh_error}"
         logger.warning("❌ 容器SSH不可连接: %s", ssh_error[:100])
-
-    try:
-        stdout, _, _ = ssh_exec(host_ip, 22, physical_user, "cat /proc/uptime | awk '{print int($1/86400)\"天 \"int(($1%86400)/3600)\"小时\"}'", timeout=5)
-        if stdout.strip():
-            result["diagnosis"]["physical_uptime"] = stdout.strip()
-    except Exception:
-        pass
-
-    try:
-        stdout, _, _ = ssh_exec(host_ip, 22, physical_user, _docker_cmd(physical_user, "docker ps --filter name=dev --format='{{.Status}}'"), timeout=5)
-        if stdout.strip():
-            result["diagnosis"]["container_status"] = stdout.strip()
-        stdout2, _, _ = ssh_exec(host_ip, 22, physical_user, _docker_cmd(physical_user, "docker inspect dev --format='{{json .State}}' 2>/dev/null | python3 -c 'import sys,json; d=json.load(sys.stdin); print(d.get(\"StartedAt\",\"\")[:19])'"), timeout=5)
-        if stdout2.strip():
-            result["diagnosis"]["container_started"] = stdout2.strip()
-    except Exception:
-        pass
 
     return _add_sensor_status(result, host_ip)
 
@@ -463,165 +468,111 @@ def diagnose_zero_images(host_ip: str) -> dict:
 
     # ========== 步骤0: 检查容器连通性（含重试，避免偶发超时误判） ==========
     logger.info("📡 步骤0: 检查容器连通性...")
-    stdout, stderr, code = ssh_exec(host_ip, CONTAINER_PORT, CONTAINER_USER, "echo 'OK'")
+    stdout, stderr, code = ssh_exec(host_ip, CONTAINER_PORT, CONTAINER_USER, "echo 'OK'", exec_timeout=10)
 
     if code != 0 or "OK" not in stdout:
-        # 首次失败，重试一次（SSH连接偶尔波动，避免一次超时就判定无法连接）
         logger.info("   首次连接失败，重试中...")
         import time
         time.sleep(1)
-        stdout, stderr, code = ssh_exec(host_ip, CONTAINER_PORT, CONTAINER_USER, "echo 'OK'")
+        stdout, stderr, code = ssh_exec(host_ip, CONTAINER_PORT, CONTAINER_USER, "echo 'OK'", exec_timeout=10)
 
     if code != 0 or "OK" not in stdout:
         result["diagnosis"]["issue"] = f"容器SSH无法连接: {(stderr or stdout).strip()[:200]}"
-        logger.warning("❌ 容器无法连接（可能已离线，应由容器离线诊断处理）")
+        logger.warning("❌ 容器无法连接")
         return _add_sensor_status(result, host_ip)
 
     logger.info("✅ 容器连接正常")
 
-    # ========== 步骤0.5: 前置验证——今日图片是否真的为0 ==========
+    # ========== 步骤0.5-2: 一次SSH获取所有初始数据 ==========
     today_str = datetime.now().strftime("%Y-%m-%d")
-    logger.info("📷 步骤0.5: 检查今日图片数 (%s)...", today_str)
-    img_stdout, _, _ = ssh_exec(
-        host_ip, CONTAINER_PORT, CONTAINER_USER,
-        f"ls /home/files/nfsroot/{today_str}/ 2>/dev/null | wc -l",
-        timeout=5
-    )
-    try:
-        today_image_count = int(img_stdout.strip())
-    except (ValueError, AttributeError):
-        today_image_count = -1  # 无法获取，继续诊断
+    logger.info("📦 一次SSH采集容器初始数据...")
+    combined = _combined_ssh(host_ip, CONTAINER_PORT, CONTAINER_USER, [
+        ("SUPERVISOR", "supervisorctl status 2>&1"),
+        ("ROSCORE", "ps -ef | grep roscore | grep -v grep"),
+        ("IMG_COUNT", f"ls /home/files/nfsroot/{today_str}/ 2>/dev/null | wc -l"),
+        ("IMG_INFO", f"ls -lt --time-style='+%Y-%m-%d %H:%M:%S' /home/files/nfsroot/{today_str}/ 2>/dev/null | head -2"),
+        ("GREP_CONF", "grep -hE 'stdout_logfile=|stderr_logfile=' /etc/supervisor/conf.d/*.conf 2>/dev/null | sort -u"),
+    ], exec_timeout=30)
 
+    sv_raw = combined.get("SUPERVISOR", "").strip()
+    ros_raw = combined.get("ROSCORE", "").strip()
+    img_count_raw = combined.get("IMG_COUNT", "").strip()
+    img_info_raw = combined.get("IMG_INFO", "").strip()
+    grep_conf_raw = combined.get("GREP_CONF", "").strip()
+
+    # ----- 图片数 -----
+    try:
+        today_image_count = int(img_count_raw)
+    except (ValueError, AttributeError):
+        today_image_count = -1
     result["diagnosis"]["today_image_count"] = today_image_count
+
+    # ----- 最新图片信息 -----
+    if img_info_raw:
+        for line in img_info_raw.split('\n'):
+            parts = line.split()
+            if len(parts) >= 7:
+                result["diagnosis"]["latest_image_time"] = f"{parts[5]} {parts[6]}"
+                result["diagnosis"]["latest_image_file"] = parts[7] if len(parts) > 7 else ""
+                break
 
     if today_image_count > 0:
         result["diagnosis"]["issue"] = f"设备已恢复正常，今日图片数: {today_image_count}"
-        logger.info("✅ 今日图片数: %d，设备已恢复正常，收集详细信息", today_image_count)
-
-        # 收集supervisor进程状态
-        sv_stdout, sv_stderr, sv_code = ssh_exec(
-            host_ip, CONTAINER_PORT, CONTAINER_USER, "supervisorctl status"
-        )
-        if sv_stdout.strip():
-            processes, abnormal_processes, running_count = _parse_supervisor_status(sv_stdout)
-            result["diagnosis"]["supervisor"] = {
-                "total": len(processes),
-                "running": running_count,
-                "abnormal": len(abnormal_processes)
-            }
-            result["diagnosis"]["supervisor_output"] = sv_stdout.strip()
-            if abnormal_processes:
-                result["diagnosis"]["abnormal_processes"] = abnormal_processes
-            logger.info("📋 进程状态: %d/%d 运行中, %d 异常", running_count, len(processes), len(abnormal_processes))
-
-        # 收集最新图片时间
-        latest_img_stdout, _, _ = ssh_exec(
-            host_ip, CONTAINER_PORT, CONTAINER_USER,
-            f"ls -t /home/files/nfsroot/{today_str}/ 2>/dev/null | head -1",
-            timeout=5
-        )
-        latest_img_name = latest_img_stdout.strip().split('\n')[0]
-        if latest_img_name:
-            latest_time_stdout, _, _ = ssh_exec(
-                host_ip, CONTAINER_PORT, CONTAINER_USER,
-                f"ls -l --time-style='+%Y-%m-%d %H:%M:%S' /home/files/nfsroot/{today_str}/{latest_img_name} 2>/dev/null | awk '{{print $6, $7}}'",
-                timeout=5
-            )
-            latest_time_str = latest_time_stdout.strip().split('\n')[0]
-            if latest_time_str:
-                result["diagnosis"]["latest_image_time"] = latest_time_str
-                result["diagnosis"]["latest_image_file"] = latest_img_name
-                logger.info("📸 最新图片: %s (时间: %s)", latest_img_name, latest_time_str)
-
-        # 检查roscore状态（避免server.py因字段缺失误判为"未运行"）
-        ros_stdout, _, _ = ssh_exec(
-            host_ip, CONTAINER_PORT, CONTAINER_USER,
-            "ps -ef | grep roscore | grep -v grep", timeout=5
-        )
-        if ros_stdout.strip():
-            result["diagnosis"]["roscore"] = f"运行中: {ros_stdout.strip()[:150]}"
-        else:
-            result["diagnosis"]["roscore"] = "未运行"
-
-        return _add_sensor_status(result, host_ip)
+        logger.info("✅ 今日图片数: %d，已恢复正常，继续采集完整信息", today_image_count)
     elif today_image_count == 0:
-        logger.info("⚠️  确认今日图片为0，继续诊断")
+        logger.info("⚠️ 确认今日图片为0，继续诊断")
     else:
-        logger.info("⚠️  无法获取图片数，继续诊断")
+        logger.info("⚠️ 无法获取图片数，继续诊断")
 
-    # ========== 步骤1: supervisorctl status ==========
-    logger.info("⚙️ 步骤1: supervisorctl status...")
-    stdout, stderr, code = ssh_exec(
-        host_ip, CONTAINER_PORT, CONTAINER_USER, "supervisorctl status"
-    )
-
-    if not stdout.strip():
+    # ----- Supervisor -----
+    if sv_raw:
+        processes, abnormal_processes, running_count = _parse_supervisor_status(sv_raw)
+        result["diagnosis"]["supervisor"] = {
+            "total": len(processes), "running": running_count, "abnormal": len(abnormal_processes)
+        }
+        result["diagnosis"]["supervisor_output"] = sv_raw
+        if abnormal_processes:
+            result["diagnosis"]["abnormal_processes"] = abnormal_processes
+            result["diagnosis"]["issue"] = _format_abnormal_summary(abnormal_processes)
+            logger.warning("❌ %s", result["diagnosis"]["issue"])
+        else:
+            logger.info("✅ 所有进程运行正常 (%d/%d)", running_count, len(processes))
+    else:
         result["diagnosis"]["supervisor"] = "异常：无输出"
-        result["diagnosis"]["issue"] = "supervisorctl status无输出，Supervisor服务异常"
-        logger.warning("❌ supervisorctl无输出 (code=%d): %s", code, stderr[:100])
-        return _add_sensor_status(result, host_ip)
+        if "issue" not in result["diagnosis"]:
+            result["diagnosis"]["issue"] = "supervisorctl status无输出，Supervisor服务异常"
+        logger.warning("❌ supervisorctl无输出")
 
-    # 解析进程状态
-    processes, abnormal_processes, running_count = _parse_supervisor_status(stdout)
-    result["diagnosis"]["supervisor"] = {
-        "total": len(processes),
-        "running": running_count,
-        "abnormal": len(abnormal_processes)
-    }
-    result["diagnosis"]["supervisor_output"] = stdout.strip()
-
-    if abnormal_processes:
-        result["diagnosis"]["abnormal_processes"] = abnormal_processes
-        result["diagnosis"]["issue"] = _format_abnormal_summary(abnormal_processes)
-        logger.warning("❌ %s", result["diagnosis"]["issue"])
-        # 进程异常就到这里，不再继续（进程都不正常，看ros和topic没意义）
-        return _add_sensor_status(result, host_ip)
-
-    logger.info("✅ 所有进程运行正常 (%d/%d)", running_count, len(processes))
-
-    # ========== 步骤2: 检查roscore ==========
-    logger.info("🔑 步骤2: 检查roscore...")
-    stdout, stderr, code = ssh_exec(
-        host_ip, CONTAINER_PORT, CONTAINER_USER,
-        "ps -ef | grep roscore | grep -v grep"
-    )
-
-    if not stdout.strip():
+    # ----- Roscore -----
+    if ros_raw:
+        result["diagnosis"]["roscore"] = f"运行中: {ros_raw[:150]}"
+        logger.info("✅ roscore运行中")
+    else:
         result["diagnosis"]["roscore"] = "未运行"
-        result["diagnosis"]["issue"] = "roscore未运行"
+        if "issue" not in result["diagnosis"]:
+            result["diagnosis"]["issue"] = "roscore未运行"
         logger.warning("❌ roscore未运行")
-        return _add_sensor_status(result, host_ip)
 
-    result["diagnosis"]["roscore"] = f"运行中: {stdout.strip()[:150]}"
-    logger.info("✅ roscore运行中")
+    # ----- 保存grep conf供日志检查复用 -----
+    if grep_conf_raw:
+        result["diagnosis"]["_grep_conf_raw"] = grep_conf_raw
 
-    # ========== 步骤3: 检查各进程日志 ==========
-    # 从supervisor配置提取每个进程的stdout(.log)和stderr(.err)日志路径
-    # 必须同时读取两个文件，否则会漏掉关键信息（血泪教训见SKILL）
-    # 按进程类型区分结论：infer驱动错误 vs 通用进程错误
+    # ========== 步骤3: 检查各进程日志（独立SSH，操作较重） ==========
     logger.info("📋 步骤3: 检查各进程日志...")
     result, has_log_errors, error_category = _check_process_logs(host_ip, result)
-
-    # 保存error_category到结果，供should_need_llm等判断使用
     if error_category:
         result["diagnosis"]["error_category"] = error_category
-
-    if has_log_errors:
-        # 从配置文件中查找匹配模式的结论模板
+    if has_log_errors and "issue" not in result["diagnosis"]:
         patterns_config = _load_diagnostic_patterns()
         conclusion_from_config = None
         for pat in patterns_config:
             if pat["category"] == error_category:
                 conclusion_from_config = pat.get("conclusion")
                 break
-
         if conclusion_from_config and error_category != "process":
-            # 使用配置文件的结论模板
             procs = list(result["diagnosis"]["log_errors"].keys())
             result["diagnosis"]["issue"] = conclusion_from_config.format(procs=", ".join(procs))
-            logger.warning("❌ 结论: %s", result["diagnosis"]["issue"])
         else:
-            # 通用进程错误：逐个列出
             error_summary = []
             for proc_name, info in result["diagnosis"]["log_errors"].items():
                 cat = info.get("error_category", "")
@@ -630,13 +581,13 @@ def diagnose_zero_images(host_ip: str) -> dict:
                 else:
                     error_summary.append(f"{proc_name}({len(info['errors'])}条错误)")
             result["diagnosis"]["issue"] = f"进程错误: {', '.join(error_summary)}"
-            logger.warning("❌ 结论: %s", result["diagnosis"]["issue"])
+        logger.warning("❌ %s", result["diagnosis"]["issue"])
 
     # ========== 步骤4: rostopic hz 检查关键主题 ==========
     logger.info("📡 步骤4: rostopic hz 检查...")
-    result = _check_rostopic_hz(host_ip, result, has_log_errors)
+    result = _check_rostopic_hz(host_ip, result, bool(result.get("diagnosis", {}).get("log_errors")))
 
-    # 如果所有步骤都没发现issue，给一个总结
+    # 汇总issue（如果前面都没设）
     if "issue" not in result["diagnosis"]:
         topic_rates = result["diagnosis"].get("topic_rates", {})
         zero_rate_topics = [t for t, r in topic_rates.items() if "0 Hz" in r]
@@ -879,7 +830,7 @@ def _check_process_logs(host_ip: str, result: dict):
         )
     combined_cmd = " ; ".join(shell_cmds) if shell_cmds else "echo '__NO_LOGS__'"
 
-    stdout, _, _ = ssh_exec(host_ip, CONTAINER_PORT, CONTAINER_USER, combined_cmd, timeout=15)
+    stdout, _, _ = ssh_exec(host_ip, CONTAINER_PORT, CONTAINER_USER, combined_cmd, exec_timeout=20)
 
     # ========== 4. 解析grep输出 ==========
     # 在 __START__ 和 __END__ 标记之间的行属于对应进程的日志错误
@@ -1017,7 +968,7 @@ def _check_process_logs(host_ip: str, result: dict):
             if not check_cmd:
                 continue
             stdout_dmesg, _, _ = ssh_exec(
-                host_ip, CONTAINER_PORT, CONTAINER_USER, check_cmd, timeout=5
+                host_ip, CONTAINER_PORT, CONTAINER_USER, check_cmd, exec_timeout=15
             )
             if stdout_dmesg.strip():
                 error_category = pat["category"]
@@ -1053,7 +1004,7 @@ def _check_rostopic_hz(host_ip: str, result: dict, has_log_errors: bool) -> dict
     stdout, _, _ = ssh_exec(
         host_ip, CONTAINER_PORT, CONTAINER_USER,
         f"{ROS_ENV_CMD} && rostopic list 2>/dev/null",
-        timeout=8
+        exec_timeout=15
     )
 
     if not stdout.strip():
@@ -1114,7 +1065,7 @@ def _check_rostopic_hz(host_ip: str, result: dict, has_log_errors: bool) -> dict
         )
 
     parallel_cmd = " ; ".join(check_parts) + " ; wait ; " + " ; ".join(collect_parts)
-    stdout, _, _ = ssh_exec(host_ip, CONTAINER_PORT, CONTAINER_USER, parallel_cmd, timeout=20)
+    stdout, _, _ = ssh_exec(host_ip, CONTAINER_PORT, CONTAINER_USER, parallel_cmd, exec_timeout=30)
 
     # 解析并行输出
     current_topic = None
@@ -1227,68 +1178,62 @@ def collect_device_raw_data(host_ip: str) -> dict:
 
     raw["physical_ssh"] = f"{physical_user}@{host_ip}:22 连接成功"
 
-    # 物理机uptime
-    stdout, _, _ = ssh_exec(host_ip, 22, physical_user,
-        "cat /proc/uptime | awk '{print int($1/86400)\"天 \"int(($1%86400)/3600)\"小时\"}'",
-        timeout=5)
-    raw["physical_uptime"] = stdout.strip() if stdout.strip() else "未知"
+    # 一次SSH获取所有物理机信息
+    logger.info("📦 一次SSH采集物理机信息...")
+    dc = _docker_cmd
+    phys_data = _combined_ssh(host_ip, 22, physical_user, [
+        ("UPTIME", "cat /proc/uptime | awk '{print int($1/86400)\"天 \"int(($1%86400)/3600)\"小时\"}'"),
+        ("DOCKER_STATUS", dc(physical_user, "systemctl is-active docker")),
+        ("DOCKER_PS", dc(physical_user, "docker ps --filter name=dev --format='{{.Status}}'")),
+        ("DOCKER_INSPECT", "docker inspect dev --format='{{.State.StartedAt}}' 2>/dev/null | cut -c1-19"),
+    ], exec_timeout=30)
 
-    # Docker状态
-    stdout, _, _ = ssh_exec(host_ip, 22, physical_user, "systemctl is-active docker", timeout=5)
-    raw["docker_status"] = stdout.strip() if stdout.strip() else "未知"
+    raw["physical_uptime"] = phys_data.get("UPTIME", "").strip() or "未知"
+    raw["docker_status"] = phys_data.get("DOCKER_STATUS", "").strip() or "未知"
+    raw["container_status"] = phys_data.get("DOCKER_PS", "").strip() or "未找到容器"
+    di = phys_data.get("DOCKER_INSPECT", "").strip()
+    if di:
+        raw["container_started_at"] = di
 
-    # 容器状态
-    stdout, _, _ = ssh_exec(host_ip, 22, physical_user,
-        _docker_cmd(physical_user, "docker ps --filter name=dev --format='{{.Status}}'"), timeout=5)
-    raw["container_status"] = stdout.strip() if stdout.strip() else "未找到容器"
-
-    # 容器启动时间
-    stdout2, _, _ = ssh_exec(host_ip, 22, physical_user,
-        _docker_cmd(physical_user, "docker inspect dev --format='{{.State.StartedAt}}' 2>/dev/null | cut -c1-19"), timeout=5)
-    if stdout2.strip():
-        raw["container_started_at"] = stdout2.strip()
-
-    # ========== 2. 容器SSH连通性 ==========
+    # ========== 2. 容器SSH连通性 + 初始数据 ==========
     logger.info("🔑 步骤2: 容器SSH连通性...")
     ssh_stdout, ssh_stderr, ssh_code = ssh_exec(
-        host_ip, CONTAINER_PORT, CONTAINER_USER, "echo 'SSH_OK'", timeout=5
+        host_ip, CONTAINER_PORT, CONTAINER_USER, "echo 'SSH_OK'", exec_timeout=10
     )
-    if ssh_code == 0 and "SSH_OK" in ssh_stdout:
-        raw["container_ssh"] = "可连接"
-    else:
+    if ssh_code != 0 or "SSH_OK" not in ssh_stdout:
         raw["container_ssh"] = f"不可连接: {(ssh_stderr or ssh_stdout).strip()[:200]}"
         logger.warning("❌ 容器SSH不可连接，采集到此为止")
         return _add_sensor_status(result, host_ip)
 
-    # ========== 3. supervisorctl status 原始输出 ==========
-    logger.info("⚙️ 步骤3: supervisorctl status...")
-    stdout, _, _ = ssh_exec(host_ip, CONTAINER_PORT, CONTAINER_USER, "supervisorctl status")
-    raw["supervisor_raw"] = stdout.strip() if stdout.strip() else "(无输出)"
+    raw["container_ssh"] = "可连接"
 
-    # ========== 4. 今日图片数 ==========
+    # 一次SSH采集容器初始数据
+    logger.info("📦 一次SSH采集容器初始数据...")
     today_str = datetime.now().strftime("%Y-%m-%d")
-    logger.info("📷 步骤4: 今日图片数 (%s)...", today_str)
-    img_stdout, _, _ = ssh_exec(host_ip, CONTAINER_PORT, CONTAINER_USER,
-        f"ls /home/files/nfsroot/{today_str}/ 2>/dev/null | wc -l", timeout=5)
+    ctn_data = _combined_ssh(host_ip, CONTAINER_PORT, CONTAINER_USER, [
+        ("SUPERVISOR", "supervisorctl status 2>&1"),
+        ("IMG_COUNT", f"ls /home/files/nfsroot/{today_str}/ 2>/dev/null | wc -l"),
+        ("IMG_INFO", f"ls -lt --time-style='+%Y-%m-%d %H:%M:%S' /home/files/nfsroot/{today_str}/ 2>/dev/null | head -2"),
+        ("GREP_CONF", "grep -hE 'stdout_logfile=|stderr_logfile=' /etc/supervisor/conf.d/*.conf 2>/dev/null | sort -u"),
+    ], exec_timeout=30)
+
+    raw["supervisor_raw"] = ctn_data.get("SUPERVISOR", "").strip() or "(无输出)"
+
+    img_count_raw = ctn_data.get("IMG_COUNT", "").strip()
     try:
-        raw["today_image_count"] = int(img_stdout.strip())
+        raw["today_image_count"] = int(img_count_raw)
     except (ValueError, AttributeError):
         raw["today_image_count"] = -1
 
-    # 最新图片时间
-    latest_stdout, _, _ = ssh_exec(host_ip, CONTAINER_PORT, CONTAINER_USER,
-        f"ls -t /home/files/nfsroot/{today_str}/ 2>/dev/null | head -1", timeout=5)
-    latest_name = latest_stdout.strip().split('\n')[0] if latest_stdout.strip() else ""
-    if latest_name:
-        time_stdout, _, _ = ssh_exec(host_ip, CONTAINER_PORT, CONTAINER_USER,
-            f"ls -l --time-style='+%Y-%m-%d %H:%M:%S' /home/files/nfsroot/{today_str}/{latest_name} 2>/dev/null | awk '{{print $6, $7}}'",
-            timeout=5)
-        raw["latest_image_time"] = time_stdout.strip() if time_stdout.strip() else ""
+    img_info_raw = ctn_data.get("IMG_INFO", "").strip()
+    if img_info_raw:
+        for line in img_info_raw.split('\n'):
+            parts = line.split()
+            if len(parts) >= 7:
+                raw["latest_image_time"] = f"{parts[5]} {parts[6]}"
+                break
 
-    # ========== 5. 各进程日志最后50行 ==========
-    logger.info("📋 步骤5: 采集进程日志...")
-    stdout_conf, _, _ = ssh_exec(host_ip, CONTAINER_PORT, CONTAINER_USER,
-        "grep -hE 'stdout_logfile=|stderr_logfile=' /etc/supervisor/conf.d/*.conf 2>/dev/null | sort -u")
+    stdout_conf = ctn_data.get("GREP_CONF", "").strip()
 
     log_files = {}
     for line in stdout_conf.strip().split('\n'):
@@ -1322,7 +1267,7 @@ def collect_device_raw_data(host_ip: str) -> dict:
             f"echo '__END__{proc_name}'"
         )
     combined_cmd = " ; ".join(log_parts)
-    stdout, _, _ = ssh_exec(host_ip, CONTAINER_PORT, CONTAINER_USER, combined_cmd, timeout=15)
+    stdout, _, _ = ssh_exec(host_ip, CONTAINER_PORT, CONTAINER_USER, combined_cmd, exec_timeout=20)
 
     raw["log_snippets"] = {}
     if stdout.strip():
@@ -1343,7 +1288,7 @@ def collect_device_raw_data(host_ip: str) -> dict:
     # ========== 6. rostopic list + 关键topic hz ==========
     logger.info("📡 步骤6: rostopic检查...")
     stdout, _, _ = ssh_exec(host_ip, CONTAINER_PORT, CONTAINER_USER,
-        f"{ROS_ENV_CMD} && rostopic list 2>/dev/null", timeout=8)
+        f"{ROS_ENV_CMD} && rostopic list 2>/dev/null", exec_timeout=15)
     raw["rostopic_list"] = [t.strip() for t in stdout.strip().split('\n') if t.strip()] if stdout.strip() else []
 
     TOPIC_SUFFIXES = [
@@ -1368,7 +1313,7 @@ def collect_device_raw_data(host_ip: str) -> dict:
                 f"echo 'TOPIC:{topic}'; cat /tmp/hz_{safe_name}.txt 2>/dev/null; echo '---END---'"
             )
         parallel_cmd = " ; ".join(check_parts) + " ; wait ; " + " ; ".join(collect_parts)
-        stdout, _, _ = ssh_exec(host_ip, CONTAINER_PORT, CONTAINER_USER, parallel_cmd, timeout=20)
+        stdout, _, _ = ssh_exec(host_ip, CONTAINER_PORT, CONTAINER_USER, parallel_cmd, exec_timeout=30)
 
         raw["topic_rates"] = {}
         current_topic = None

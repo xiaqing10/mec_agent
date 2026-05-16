@@ -1,0 +1,36 @@
+{
+  "project": "山西灵石",
+  "devices": {
+    "mk778_138": {
+      "name": "mk778_138",
+      "ip": "192.168.4.136",
+      "records": [
+        {
+          "timestamp": "2026-05-17T01:30:37",
+          "diag_type": "zero_images",
+          "issue": "容器SSH无法连接: SSH连接超时(8s)",
+          "error": "",
+          "physical_uptime": "",
+          "container_status": "",
+          "today_image_count": -1
+        }
+      ]
+    },
+    "mk776_952": {
+      "name": "mk776_952",
+      "ip": "192.168.4.133",
+      "records": [
+        {
+          "timestamp": "2026-05-17T01:31:51",
+          "diag_type": "zero_images",
+          "issue": "容器SSH无法连接: SSH连接超时(8s)",
+          "error": "",
+          "physical_uptime": "",
+          "container_status": "",
+          "today_image_count": -1
+        }
+      ]
+    }
+  },
+  "updated_at": "2026-05-17T01:31:51"
+}
