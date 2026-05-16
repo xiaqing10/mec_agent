@@ -6,7 +6,6 @@ MEC项目诊断模块 - 对指定项目进行设备诊断
   from diagnose_project import diagnose_project
   result = diagnose_project("德会")
 """
-import subprocess
 import sys
 import json
 import time
@@ -210,6 +209,7 @@ def _parse_json_devices(line):
 
 
 def diagnose_device(diag_type, device_info):
+    from diagnose_mec import diagnose_container_offline, diagnose_zero_images
     device_name = device_info.get('name', '')
     ip = device_info.get('ip', '')
     project = device_info.get('project', '')
@@ -220,36 +220,20 @@ def diagnose_device(diag_type, device_info):
             "type": diag_type, "diagnosis": {"error": "IP地址为空"}, "recommendations": []
         }
 
-    script = SELF_AGENT_DIR / "diagnose_mec.py"
-
     try:
-        result = subprocess.run(
-            ["python3", str(script), diag_type, ip, "--no-push"],
-            capture_output=True, text=True, timeout=30
-        )
-
-        if result.returncode == 0:
-            import glob
-            json_files = sorted(
-                glob.glob(str(SELF_AGENT_DIR / "diagnose_logs" / f"diagnose_{ip}_{diag_type}_*.json")),
-                reverse=True
-            )
-            if json_files:
-                with open(json_files[0]) as f:
-                    result = json.load(f)
-                    result["device_name"] = device_name
-                    result["project"] = project
-                    return result
-
-            return {"host": ip, "device_name": device_name, "project": project,
-                    "type": diag_type, "diagnosis": {"error": "诊断完成但未生成结果文件"}, "recommendations": []}
+        if diag_type == "container_offline":
+            result = diagnose_container_offline(ip)
+        elif diag_type == "zero_images":
+            result = diagnose_zero_images(ip)
         else:
             return {"host": ip, "device_name": device_name, "project": project,
-                    "type": diag_type, "diagnosis": {"error": result.stderr[:500]}, "recommendations": []}
+                    "type": diag_type, "diagnosis": {"error": f"未知诊断类型: {diag_type}"}, "recommendations": []}
 
-    except subprocess.TimeoutExpired:
-        return {"host": ip, "device_name": device_name, "project": project,
-                "type": diag_type, "diagnosis": {"error": "诊断超时"}, "recommendations": ["检查网络连接", "增加超时时间"]}
+        if isinstance(result, dict):
+            result["device_name"] = device_name
+            result["project"] = project
+        return result
+
     except Exception as e:
         return {"host": ip, "device_name": device_name, "project": project,
                 "type": diag_type, "diagnosis": {"error": str(e)}, "recommendations": []}
@@ -397,14 +381,11 @@ def diagnose_project(project_name):
             total_need_llm += 1
 
     container_results = [r for r in project_results if r.get('type') == 'container_offline'
-                         and 'error' not in r.get('diagnosis', {})
                          and '正常' not in r.get('diagnosis', {}).get('issue', '')]
     zero_results = [r for r in project_results if r.get('type') == 'zero_images'
-                    and 'error' not in r.get('diagnosis', {})
                     and '正常' not in r.get('diagnosis', {}).get('issue', '')
                     and '已恢复正常' not in r.get('diagnosis', {}).get('issue', '')]
     recovered_results = [r for r in project_results if r.get('type') == 'zero_images'
-                         and 'error' not in r.get('diagnosis', {})
                          and '已恢复正常' in r.get('diagnosis', {}).get('issue', '')]
 
     dingtalk_msg = build_dingtalk_message(container_results, zero_results, project_name, recovered_results)

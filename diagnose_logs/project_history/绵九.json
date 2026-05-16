@@ -1,0 +1,39 @@
+{
+  "project": "绵九",
+  "devices": {
+    "mzk717_800": {
+      "name": "mzk717_800",
+      "ip": "10.142.136.109",
+      "records": [
+        {
+          "timestamp": "2026-05-14T17:42:52",
+          "diag_type": "zero_images",
+          "issue": "驱动没有加载（寒武纪GPU/MLU驱动异常）",
+          "error": "",
+          "physical_uptime": "",
+          "container_status": "",
+          "today_image_count": -1
+        },
+        {
+          "timestamp": "2026-05-14T17:43:53",
+          "diag_type": "zero_images",
+          "issue": "驱动没有加载（寒武纪GPU/MLU驱动异常）",
+          "error": "",
+          "physical_uptime": "",
+          "container_status": "",
+          "today_image_count": 0
+        },
+        {
+          "timestamp": "2026-05-15T08:41:12",
+          "diag_type": "container_offline",
+          "issue": "docker exec失败: SSH连接超时(8s)",
+          "error": "",
+          "physical_uptime": "",
+          "container_status": "",
+          "today_image_count": -1
+        }
+      ]
+    }
+  },
+  "updated_at": "2026-05-15T08:41:12"
+}

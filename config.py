@@ -7,13 +7,13 @@ SCRIPTS_DIR = Path("/home/sy/.hermes/scripts")
 
 # API 配置
 API_HOST = os.getenv("SELF_AGENT_HOST", "0.0.0.0")
-API_PORT = int(os.getenv("SELF_AGENT_PORT", "5051"))
+API_PORT = int(os.getenv("SELF_AGENT_PORT", "8645"))
 API_KEY = os.getenv("SELF_AGENT_API_KEY", "mec-diagnose-agent-2026")
 
 # LLM 配置（复用 hermes 的火山引擎配置）
 LLM_API_KEY = "8668b8cf-f301-4ee5-b5c3-b43da332643b"
 LLM_BASE_URL = "https://ark.cn-beijing.volces.com/api/coding/v3"
-LLM_MODEL = "glm-5.1"
+LLM_MODEL = "kimi-k2.6"
 
 # 诊断日志目录
 DIAGNOSE_DIR = SELF_AGENT_DIR / "diagnose_logs"

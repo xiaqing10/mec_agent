@@ -1,0 +1,21 @@
+{
+  "project": "贵阳",
+  "devices": {
+    "mec_1007": {
+      "name": "mec_1007",
+      "ip": "52.81.209.130",
+      "records": [
+        {
+          "timestamp": "2026-05-14T13:46:01",
+          "diag_type": "zero_images",
+          "issue": "设备已恢复正常，今日图片数: 895",
+          "error": "",
+          "physical_uptime": "",
+          "container_status": "",
+          "today_image_count": 895
+        }
+      ]
+    }
+  },
+  "updated_at": "2026-05-14T13:46:01"
+}

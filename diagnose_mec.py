@@ -43,7 +43,7 @@ import time
 from datetime import datetime
 from pathlib import Path
 
-from query_sensor_status import get_sensor_status, format_sensor_status_short
+from query_sensor_status import get_sensor_status, format_sensor_status_short, lookup_device
 
 # ============================================================================
 # 日志配置
@@ -85,7 +85,9 @@ CONTAINER_PORT = 10022
 CONTAINER_USER = "root"
 
 # 物理机SSH配置（脚本会尝试这两个用户，看哪个能免密登录）
-PHYSICAL_USERS = ["root", "nvidia"]
+PHYSICAL_USERS = ["root", "nvidia","lcfc"]
+# 非root用户执行docker命令需要sudo
+SUDO_USERS = {"lcfc", "nvidia"}
 
 # ROS环境（容器内必须有这个source才有rostopic命令）
 ROS_ENV_CMD = "source /home/files/rvf/setup.bash 2>/dev/null"
@@ -195,6 +197,28 @@ def find_physical_user(host_ip: str):
     return last_error
 
 
+def _docker_cmd(physical_user: str, cmd: str) -> str:
+    """为非root用户的物理机docker命令自动添加sudo前缀。
+
+    非root用户(lcfc/nvidia)执行docker命令会卡住或报权限不足，
+    直接加sudo避免超时。root用户直接执行即可。
+
+    注意：之前试过回退模式 "docker ... || sudo docker ..."，
+    但lcfc用户执行docker exec会卡住（不是快速报错），
+    导致 || 后面永远触发不了，SSH超时。
+
+    Args:
+        physical_user: 物理机SSH用户名
+        cmd: docker命令（如 "docker exec dev bash -c 'echo OK'"）
+
+    Returns:
+        命令字符串，非root用户直接加sudo前缀
+    """
+    if physical_user in SUDO_USERS:
+        return "sudo " + cmd
+    return cmd
+
+
 def _add_sensor_status(result: dict, host_ip: str, project: str = None) -> dict:
     try:
         si = get_sensor_status(host_ip, project)
@@ -206,20 +230,48 @@ def _add_sensor_status(result: dict, host_ip: str, project: str = None) -> dict:
     return result
 
 
-def _resolve_device(query: str) -> str:
+def _resolve_device(query: str, project: str = None) -> tuple:
+    """将用户输入解析为IP地址和设备信息。
+
+    支持IP地址、设备名、模糊设备名。配合project参数可精准匹配。
+
+    Args:
+        query: IP地址、设备名、或模糊设备名
+        project: 可选项目名，用于模糊搜索时缩小范围
+
+    Returns:
+        (ip, device_info) 元组：
+          - ip: 解析后的IP地址，失败时返回原始query
+          - device_info: 设备信息dict，失败时返回None
+    """
     import re
     if re.match(r'^\d+\.\d+\.\d+\.\d+$', query.strip()):
         return query.strip(), None
 
-    devices = lookup_device(query)
+    devices = lookup_device(query, project=project)
     if not devices:
-        logger.warning("❌ 数据库中未找到设备: %s", query)
-        return query, None
+        # 尝试不带项目再搜一次（项目名可能LLM解析错误）
+        if project:
+            devices = lookup_device(query)
+        if not devices:
+            logger.warning("❌ 数据库中未找到设备: %s (项目=%s)", query, project or "未指定")
+            return query, None
 
     if len(devices) > 1:
-        logger.warning("⚠️ 设备名 '%s' 对应多个结果:", query)
-        for d in devices:
-            logger.warning("   - %s (IP: %s, 项目: %s)", d['name'], d['ip'], d['project'])
+        # 多设备匹配时，如果只有1台在目标项目中，自动选它
+        if project:
+            proj_match = [d for d in devices if d.get('project') == project]
+            if len(proj_match) == 1:
+                d = proj_match[0]
+                logger.info("→ 项目匹配，唯一命中: %s (%s)", d['name'], d['ip'])
+                return d['ip'], d
+            elif len(proj_match) > 1:
+                # 同项目多台匹配，让用户确认
+                names = ", ".join(f"{d['name']}({d['ip']})" for d in proj_match[:5])
+                logger.warning("⚠️ 项目'%s'中匹配到%d台设备: %s，请指定完整设备名", project, len(proj_match), names)
+                # 返回第一个但标记为模糊匹配
+                d = proj_match[0]
+                return d['ip'], {**d, "_ambiguous": True, "_candidates": [dd['name'] for dd in proj_match]}
         logger.warning("→ 使用第一个: %s (%s)", devices[0]['name'], devices[0]['ip'])
 
     logger.info("→ 设备名 '%s' → IP: %s (项目: %s)", query, devices[0]['ip'], devices[0]['project'])
@@ -299,29 +351,28 @@ def diagnose_container_offline(host_ip: str) -> dict:
     logger.info("🩺 步骤3: docker exec检查容器内部...")
     stdout, stderr, code = ssh_exec(
         host_ip, 22, physical_user,
-        "docker exec dev bash -c 'echo EXEC_OK' 2>&1",
+        _docker_cmd(physical_user, "docker exec dev bash -c 'echo EXEC_OK' 2>&1"),
         timeout=8
     )
 
     if "EXEC_OK" not in stdout or code != 0:
         exec_error = (stderr or stdout).strip()
         result["diagnosis"]["container_exec"] = f"失败: {exec_error[:200]}"
-        result["diagnosis"]["issue"] = f"docker exec失败: {exec_error[:200]}"
-        logger.warning("❌ docker exec失败: %s", exec_error[:150])
-        return _add_sensor_status(result, host_ip)
+        logger.warning("⚠️ docker exec失败: %s（继续尝试容器SSH直连）", exec_error[:150])
+        # 不直接return！继续步骤4尝试容器SSH直连
+        # docker exec可能因权限/namespace等问题失败，但容器SSH可能仍然正常
+    else:
+        result["diagnosis"]["container_exec"] = "正常 ✓"
+        logger.info("✅ docker exec正常")
 
-    result["diagnosis"]["container_exec"] = "正常 ✓"
-    logger.info("✅ docker exec正常")
-
-    # ========== 步骤4: 检查容器内SSH服务 ==========
-    # 先通过docker exec查看SSH服务状态
-    logger.info("🔑 步骤4: 检查容器内SSH服务...")
-    stdout, stderr, code = ssh_exec(
-        host_ip, 22, physical_user,
-        "docker exec dev bash -c 'service ssh status 2>&1 || systemctl status sshd 2>&1 || ps aux | grep sshd' 2>&1",
-        timeout=8
-    )
-    result["diagnosis"]["container_ssh"] = stdout.strip()[:200] if stdout.strip() else "无输出"
+        # docker exec正常时，通过它查看SSH服务状态
+        logger.info("🔑 步骤4: 检查容器内SSH服务...")
+        stdout, stderr, code = ssh_exec(
+            host_ip, 22, physical_user,
+            _docker_cmd(physical_user, "docker exec dev bash -c 'service ssh status 2>&1 || systemctl status sshd 2>&1 || ps aux | grep sshd' 2>&1"),
+            timeout=8
+        )
+        result["diagnosis"]["container_ssh"] = stdout.strip()[:200] if stdout.strip() else "无输出"
 
     # 再直接尝试SSH连接容器
     logger.info("📡 步骤4补充: 尝试连接容器SSH...")
@@ -331,8 +382,13 @@ def diagnose_container_offline(host_ip: str) -> dict:
 
     if ssh_code == 0 and "SSH_OK" in ssh_stdout:
         result["diagnosis"]["container_ssh_connect"] = "可连接 ✓"
-        result["diagnosis"]["issue"] = "容器SSH可连接但监控显示离线，可能监控判定逻辑问题"
-        logger.info("✅ 容器SSH可连接（但监控显示离线，需检查监控判定逻辑）")
+        exec_failed = "失败" in result["diagnosis"].get("container_exec", "")
+        if exec_failed:
+            result["diagnosis"]["issue"] = "docker exec不可用但容器SSH正常，容器内部可用"
+            logger.info("✅ 容器SSH可连接（docker exec失败但SSH正常，容器可用）")
+        else:
+            result["diagnosis"]["issue"] = "容器SSH可连接但监控显示离线，可能监控判定逻辑问题"
+            logger.info("✅ 容器SSH可连接（但监控显示离线，需检查监控判定逻辑）")
     else:
         ssh_error = (ssh_stderr or ssh_stdout).strip()[:200]
         result["diagnosis"]["container_ssh_connect"] = f"不可连接: {ssh_error}"
@@ -347,10 +403,10 @@ def diagnose_container_offline(host_ip: str) -> dict:
         pass
 
     try:
-        stdout, _, _ = ssh_exec(host_ip, 22, physical_user, "docker ps --filter name=dev --format='{{.Status}}'", timeout=5)
+        stdout, _, _ = ssh_exec(host_ip, 22, physical_user, _docker_cmd(physical_user, "docker ps --filter name=dev --format='{{.Status}}'"), timeout=5)
         if stdout.strip():
             result["diagnosis"]["container_status"] = stdout.strip()
-        stdout2, _, _ = ssh_exec(host_ip, 22, physical_user, "docker inspect dev --format='{{json .State}}' 2>/dev/null | python3 -c 'import sys,json; d=json.load(sys.stdin); print(d.get(\"StartedAt\",\"\")[:19])'", timeout=5)
+        stdout2, _, _ = ssh_exec(host_ip, 22, physical_user, _docker_cmd(physical_user, "docker inspect dev --format='{{json .State}}' 2>/dev/null | python3 -c 'import sys,json; d=json.load(sys.stdin); print(d.get(\"StartedAt\",\"\")[:19])'"), timeout=5)
         if stdout2.strip():
             result["diagnosis"]["container_started"] = stdout2.strip()
     except Exception:
@@ -464,17 +520,28 @@ def diagnose_zero_images(host_ip: str) -> dict:
             f"ls -t /home/files/nfsroot/{today_str}/ 2>/dev/null | head -1",
             timeout=5
         )
-        latest_img_name = latest_img_stdout.strip()
+        latest_img_name = latest_img_stdout.strip().split('\n')[0]
         if latest_img_name:
             latest_time_stdout, _, _ = ssh_exec(
                 host_ip, CONTAINER_PORT, CONTAINER_USER,
                 f"ls -l --time-style='+%Y-%m-%d %H:%M:%S' /home/files/nfsroot/{today_str}/{latest_img_name} 2>/dev/null | awk '{{print $6, $7}}'",
                 timeout=5
             )
-            if latest_time_stdout.strip():
-                result["diagnosis"]["latest_image_time"] = latest_time_stdout.strip()
+            latest_time_str = latest_time_stdout.strip().split('\n')[0]
+            if latest_time_str:
+                result["diagnosis"]["latest_image_time"] = latest_time_str
                 result["diagnosis"]["latest_image_file"] = latest_img_name
-                logger.info("📸 最新图片: %s (时间: %s)", latest_img_name, latest_time_stdout.strip())
+                logger.info("📸 最新图片: %s (时间: %s)", latest_img_name, latest_time_str)
+
+        # 检查roscore状态（避免server.py因字段缺失误判为"未运行"）
+        ros_stdout, _, _ = ssh_exec(
+            host_ip, CONTAINER_PORT, CONTAINER_USER,
+            "ps -ef | grep roscore | grep -v grep", timeout=5
+        )
+        if ros_stdout.strip():
+            result["diagnosis"]["roscore"] = f"运行中: {ros_stdout.strip()[:150]}"
+        else:
+            result["diagnosis"]["roscore"] = "未运行"
 
         return _add_sensor_status(result, host_ip)
     elif today_image_count == 0:
@@ -999,23 +1066,35 @@ def _check_rostopic_hz(host_ip: str, result: dict, has_log_errors: bool) -> dict
     all_topics = [t.strip() for t in stdout.strip().split('\n') if t.strip()]
     result["diagnosis"]["ros_topics"] = all_topics
 
-    # 筛选关键topic：image_raw, image_detect, camera等
-    key_topics = [t for t in all_topics if any(kw in t.lower() for kw in
-                  ['image_raw', 'image_detect', 'camera', 'compressed'])]
+    # 话题后缀 → (进程, 负责人) 映射
+    # 注意：后缀必须足够精确，避免误匹配（如 fps_hz 会匹配所有以 fps_hz 结尾的topic）
+    TOPIC_OWNER = {
+        'track_object':                 ('radar_bridge', 'lj'),
+        'image_raw':                    ('rtsp',          'zzm'),
+        'track_object_project':         ('calibration',   'cy'),
+        'image_detect/compressed':      ('infer',         'xq'),
+        'fusion_track_object':          ('fusion',        'pj'),
+        'traffic_event_object/fps_hz':  ('traffic',       'zrh'),
+    }
 
-    # 如果没有image相关topic，也检查traffic_event
-    if not key_topics:
-        key_topics = [t for t in all_topics if 'traffic_event' in t.lower()]
+    def _find_owner(topic):
+        for suffix, (proc, person) in TOPIC_OWNER.items():
+            if topic.endswith(suffix):
+                return proc, person
+        return None, None
+
+    # 筛选关键topic：以指定后缀结尾
+    key_topics = [t for t in all_topics if any(t.endswith(s) for s in TOPIC_OWNER)]
 
     if not key_topics:
-        result["diagnosis"]["rostopic"] = f"无image/traffic相关topic，现有: {all_topics[:5]}"
+        result["diagnosis"]["rostopic"] = f"无关键数据topic，现有: {all_topics[:5]}"
         if not has_log_errors:
-            result["diagnosis"]["issue"] = f"无image相关topic，当前topic: {', '.join(all_topics[:5])}"
-        logger.warning("❌ 无image相关topic，当前: %s", ', '.join(all_topics[:5]))
+            result["diagnosis"]["issue"] = f"无关键数据topic，当前topic: {', '.join(all_topics[:5])}"
+        logger.warning("❌ 无关键数据topic，当前: %s", ', '.join(all_topics[:5]))
         return result
 
-    # 最多检查3个topic（减少等待时间）
-    topics_to_check = key_topics[:3]
+    # 检查所有关键topic（并行执行，不会增加总等待时间）
+    topics_to_check = key_topics
     logger.info("关键topic: %s", ', '.join(topics_to_check))
 
     # 构建并行检查脚本：每个topic后台执行，3秒超时，最后wait收集结果
@@ -1035,7 +1114,7 @@ def _check_rostopic_hz(host_ip: str, result: dict, has_log_errors: bool) -> dict
         )
 
     parallel_cmd = " ; ".join(check_parts) + " ; wait ; " + " ; ".join(collect_parts)
-    stdout, _, _ = ssh_exec(host_ip, CONTAINER_PORT, CONTAINER_USER, parallel_cmd, timeout=15)
+    stdout, _, _ = ssh_exec(host_ip, CONTAINER_PORT, CONTAINER_USER, parallel_cmd, timeout=20)
 
     # 解析并行输出
     current_topic = None
@@ -1052,6 +1131,8 @@ def _check_rostopic_hz(host_ip: str, result: dict, has_log_errors: bool) -> dict
 
     zero_rate_topics = []
     for topic in topics_to_check:
+        proc, person = _find_owner(topic)
+        person_tag = f" @{person}" if person else ""
         topic_text = '\n'.join(topic_output.get(topic, []))
         if 'average rate' in topic_text.lower():
             rate_match = re.search(r'average rate:\s*([\d.]+)', topic_text)
@@ -1063,20 +1144,255 @@ def _check_rostopic_hz(host_ip: str, result: dict, has_log_errors: bool) -> dict
                 result["diagnosis"]["topic_rates"][topic] = topic_text.strip()[:80]
                 logger.info("ℹ️  %s: %s", topic, topic_text.strip()[:60])
         elif 'no new messages' in topic_text.lower():
-            result["diagnosis"]["topic_rates"][topic] = "0 Hz (无数据)"
+            result["diagnosis"]["topic_rates"][topic] = f"0 Hz (无数据){person_tag}"
             zero_rate_topics.append(topic)
-            logger.warning("❌ %s: 无数据", topic)
+            logger.warning("❌ %s: 无数据, 负责人%s", topic, person_tag)
         else:
             clean_text = topic_text.strip()[:60]
             if clean_text:
-                result["diagnosis"]["topic_rates"][topic] = f"无数据: {clean_text}"
+                result["diagnosis"]["topic_rates"][topic] = f"无数据: {clean_text}{person_tag}"
             else:
-                result["diagnosis"]["topic_rates"][topic] = "无数据"
-            logger.warning("⚠️  %s: 无数据 - %s", topic, clean_text)
+                result["diagnosis"]["topic_rates"][topic] = f"无数据{person_tag}"
+            logger.warning("⚠️  %s: 无数据 - %s, 负责人%s", topic, clean_text, person_tag)
 
     if zero_rate_topics and not has_log_errors:
-        result["diagnosis"]["issue"] = f"ROS topic无数据: {', '.join(zero_rate_topics)}"
+        mentions = []
+        for t in zero_rate_topics:
+            _, person = _find_owner(t)
+            mentions.append(f"{t} @{person}" if person else t)
+        result["diagnosis"]["issue"] = f"ROS topic无数据: {', '.join(mentions)}"
 
     return result
 
 
+# ============================================================================
+# 纯数据采集：供 LLM 诊断使用，只采集原始数据不做任何判断
+# ============================================================================
+
+def collect_device_raw_data(host_ip: str) -> dict:
+    """纯数据采集：SSH连接设备，收集所有原始诊断数据，不做任何判断。
+
+    采集内容：
+      1. 物理机连通性 + uptime + docker状态 + 容器状态
+      2. 容器内 supervisorctl status 原始输出
+      3. 今日图片数
+      4. 各进程日志最后50行（从supervisor配置提取路径）
+      5. rostopic list + 关键topic hz
+      6. 传感器状态（MySQL查询）
+
+    所有数据以原始文本形式返回，不做解读/分级/判断。
+
+    Args:
+        host_ip: 设备IP地址
+
+    Returns:
+        {
+            "host": "10.x.x.x",
+            "timestamp": "...",
+            "raw_data": {
+                "physical_ssh": "连接成功/失败",
+                "physical_uptime": "...",
+                "docker_status": "active" | "inactive",
+                "container_status": "Up 9 days" | "未找到容器",
+                "container_ssh": "可连接" | "不可连接: ...",
+                "supervisor_raw": "supervisorctl status 原始输出",
+                "today_image_count": N,
+                "latest_image_time": "...",
+                "log_snippets": {"进程名": "最后50行日志"},
+                "rostopic_list": [...],
+                "topic_rates": {"topic": "原始hz输出"},
+                "sensor_status": {...}
+            }
+        }
+    """
+    logger.info("=" * 70)
+    logger.info("📡 数据采集（LLM模式）: %s", host_ip)
+    logger.info("=" * 70)
+
+    result = {
+        "host": host_ip,
+        "timestamp": datetime.now().isoformat(),
+        "raw_data": {}
+    }
+    raw = result["raw_data"]
+
+    # ========== 1. 物理机连通性 ==========
+    logger.info("🔐 步骤1: 物理机连通性...")
+    physical_user = find_physical_user(host_ip)
+    if physical_user not in PHYSICAL_USERS:
+        raw["physical_ssh"] = f"连接失败: {physical_user}"
+        raw["container_ssh"] = "未尝试（物理机不可达）"
+        logger.warning("❌ 物理机无法连接")
+        return _add_sensor_status(result, host_ip)
+
+    raw["physical_ssh"] = f"{physical_user}@{host_ip}:22 连接成功"
+
+    # 物理机uptime
+    stdout, _, _ = ssh_exec(host_ip, 22, physical_user,
+        "cat /proc/uptime | awk '{print int($1/86400)\"天 \"int(($1%86400)/3600)\"小时\"}'",
+        timeout=5)
+    raw["physical_uptime"] = stdout.strip() if stdout.strip() else "未知"
+
+    # Docker状态
+    stdout, _, _ = ssh_exec(host_ip, 22, physical_user, "systemctl is-active docker", timeout=5)
+    raw["docker_status"] = stdout.strip() if stdout.strip() else "未知"
+
+    # 容器状态
+    stdout, _, _ = ssh_exec(host_ip, 22, physical_user,
+        _docker_cmd(physical_user, "docker ps --filter name=dev --format='{{.Status}}'"), timeout=5)
+    raw["container_status"] = stdout.strip() if stdout.strip() else "未找到容器"
+
+    # 容器启动时间
+    stdout2, _, _ = ssh_exec(host_ip, 22, physical_user,
+        _docker_cmd(physical_user, "docker inspect dev --format='{{.State.StartedAt}}' 2>/dev/null | cut -c1-19"), timeout=5)
+    if stdout2.strip():
+        raw["container_started_at"] = stdout2.strip()
+
+    # ========== 2. 容器SSH连通性 ==========
+    logger.info("🔑 步骤2: 容器SSH连通性...")
+    ssh_stdout, ssh_stderr, ssh_code = ssh_exec(
+        host_ip, CONTAINER_PORT, CONTAINER_USER, "echo 'SSH_OK'", timeout=5
+    )
+    if ssh_code == 0 and "SSH_OK" in ssh_stdout:
+        raw["container_ssh"] = "可连接"
+    else:
+        raw["container_ssh"] = f"不可连接: {(ssh_stderr or ssh_stdout).strip()[:200]}"
+        logger.warning("❌ 容器SSH不可连接，采集到此为止")
+        return _add_sensor_status(result, host_ip)
+
+    # ========== 3. supervisorctl status 原始输出 ==========
+    logger.info("⚙️ 步骤3: supervisorctl status...")
+    stdout, _, _ = ssh_exec(host_ip, CONTAINER_PORT, CONTAINER_USER, "supervisorctl status")
+    raw["supervisor_raw"] = stdout.strip() if stdout.strip() else "(无输出)"
+
+    # ========== 4. 今日图片数 ==========
+    today_str = datetime.now().strftime("%Y-%m-%d")
+    logger.info("📷 步骤4: 今日图片数 (%s)...", today_str)
+    img_stdout, _, _ = ssh_exec(host_ip, CONTAINER_PORT, CONTAINER_USER,
+        f"ls /home/files/nfsroot/{today_str}/ 2>/dev/null | wc -l", timeout=5)
+    try:
+        raw["today_image_count"] = int(img_stdout.strip())
+    except (ValueError, AttributeError):
+        raw["today_image_count"] = -1
+
+    # 最新图片时间
+    latest_stdout, _, _ = ssh_exec(host_ip, CONTAINER_PORT, CONTAINER_USER,
+        f"ls -t /home/files/nfsroot/{today_str}/ 2>/dev/null | head -1", timeout=5)
+    latest_name = latest_stdout.strip().split('\n')[0] if latest_stdout.strip() else ""
+    if latest_name:
+        time_stdout, _, _ = ssh_exec(host_ip, CONTAINER_PORT, CONTAINER_USER,
+            f"ls -l --time-style='+%Y-%m-%d %H:%M:%S' /home/files/nfsroot/{today_str}/{latest_name} 2>/dev/null | awk '{{print $6, $7}}'",
+            timeout=5)
+        raw["latest_image_time"] = time_stdout.strip() if time_stdout.strip() else ""
+
+    # ========== 5. 各进程日志最后50行 ==========
+    logger.info("📋 步骤5: 采集进程日志...")
+    stdout_conf, _, _ = ssh_exec(host_ip, CONTAINER_PORT, CONTAINER_USER,
+        "grep -hE 'stdout_logfile=|stderr_logfile=' /etc/supervisor/conf.d/*.conf 2>/dev/null | sort -u")
+
+    log_files = {}
+    for line in stdout_conf.strip().split('\n'):
+        for log_type in ['stderr_logfile=', 'stdout_logfile=']:
+            if log_type in line:
+                path = line.split(log_type)[1].strip()
+                basename = path.split('/')[-1].replace('.err', '').replace('.log', '')
+                if basename not in log_files:
+                    log_files[basename] = []
+                log_files[basename].append(path)
+
+    if not log_files:
+        log_files = {
+            "rtsp": ["/home/files/common_logs/rtsp.err", "/home/files/common_logs/rtsp.log"],
+            "infer": ["/home/files/common_logs/infer.err", "/home/files/common_logs/infer.log"],
+            "traffic": ["/home/files/common_logs/traffic.err", "/home/files/common_logs/traffic.log"],
+            "kafka_event": ["/home/files/common_logs/kafka_event.err", "/home/files/common_logs/kafka_event.log"],
+            "kafka_flow": ["/home/files/common_logs/kafka_flow.err", "/home/files/common_logs/kafka_flow.log"],
+        }
+
+    KAFKA_EXTRA = {"kafka_event": "/home/files/common_logs/event.log", "kafka_flow": "/home/files/common_logs/flow.log"}
+    for proc, extra in KAFKA_EXTRA.items():
+        if proc in log_files:
+            log_files[proc].append(extra)
+
+    log_parts = []
+    for proc_name, paths in log_files.items():
+        log_parts.append(
+            f"echo '__START__{proc_name}'; "
+            f"tail -50 {' '.join(paths)} 2>/dev/null; "
+            f"echo '__END__{proc_name}'"
+        )
+    combined_cmd = " ; ".join(log_parts)
+    stdout, _, _ = ssh_exec(host_ip, CONTAINER_PORT, CONTAINER_USER, combined_cmd, timeout=15)
+
+    raw["log_snippets"] = {}
+    if stdout.strip():
+        current_proc = None
+        lines = []
+        for line in stdout.strip().split('\n'):
+            if line.startswith('__START__'):
+                current_proc = line[len('__START__'):]
+                lines = []
+            elif line.startswith('__END__'):
+                if current_proc:
+                    raw["log_snippets"][current_proc] = '\n'.join(lines)
+                current_proc = None
+                lines = []
+            elif current_proc is not None:
+                lines.append(line)
+
+    # ========== 6. rostopic list + 关键topic hz ==========
+    logger.info("📡 步骤6: rostopic检查...")
+    stdout, _, _ = ssh_exec(host_ip, CONTAINER_PORT, CONTAINER_USER,
+        f"{ROS_ENV_CMD} && rostopic list 2>/dev/null", timeout=8)
+    raw["rostopic_list"] = [t.strip() for t in stdout.strip().split('\n') if t.strip()] if stdout.strip() else []
+
+    TOPIC_SUFFIXES = [
+        'track_object', 'image_raw', 'track_object_project',
+        'image_detect/compressed', 'fusion_track_object',
+        'traffic_event_object/fps_hz'
+    ]
+    key_topics = [t for t in raw["rostopic_list"] if any(t.endswith(s) for s in TOPIC_SUFFIXES)]
+
+    if key_topics:
+        check_parts = []
+        for topic in key_topics:
+            safe_name = re.sub(r'[^a-zA-Z0-9_]', '_', topic)
+            check_parts.append(
+                f"({ROS_ENV_CMD} && timeout 3 rostopic hz {topic} 2>&1 | tail -3) "
+                f"> /tmp/hz_{safe_name}.txt 2>&1 &"
+            )
+        collect_parts = []
+        for topic in key_topics:
+            safe_name = re.sub(r'[^a-zA-Z0-9_]', '_', topic)
+            collect_parts.append(
+                f"echo 'TOPIC:{topic}'; cat /tmp/hz_{safe_name}.txt 2>/dev/null; echo '---END---'"
+            )
+        parallel_cmd = " ; ".join(check_parts) + " ; wait ; " + " ; ".join(collect_parts)
+        stdout, _, _ = ssh_exec(host_ip, CONTAINER_PORT, CONTAINER_USER, parallel_cmd, timeout=20)
+
+        raw["topic_rates"] = {}
+        current_topic = None
+        topic_output = {}
+        for line in stdout.strip().split('\n'):
+            line = line.strip()
+            if line.startswith('TOPIC:'):
+                current_topic = line[6:]
+                topic_output[current_topic] = []
+            elif line == '---END---':
+                current_topic = None
+            elif current_topic:
+                topic_output.setdefault(current_topic, []).append(line)
+
+        for topic in key_topics:
+            raw["topic_rates"][topic] = '\n'.join(topic_output.get(topic, [])) or "(无输出)"
+
+    # ========== 7. 传感器状态 ==========
+    try:
+        si = get_sensor_status(host_ip)
+        if si.get("total_cameras", 0) > 0 or si.get("total_radars", 0) > 0:
+            raw["sensor_status"] = si
+    except Exception:
+        pass
+
+    logger.info("✅ 数据采集完成")
+    return result

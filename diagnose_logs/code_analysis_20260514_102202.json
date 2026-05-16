@@ -1,0 +1,398 @@
+{
+  "type": "代码分析",
+  "title": "MEC监控-代码分析",
+  "timestamp": "2026-05-13 20:12:10",
+  "saved_at": "2026-05-14T10:22:02.814910",
+  "report": "## 🔴 MEC监控-代码分析\n\n**报告时间**: 2026-05-13 20:12:10\n**分析时间**: 2026-05-14 10:22:02\n\n### 📊 概览\n\n| 级别 | 项目数 |\n|------|--------|\n| 🔴 P0 紧急 | 3 |\n| 🟠 P1 重大 | 0 |\n| 🟡 P2 重要 | 0 |\n| 🔵 P3 一般 | 0 |\n| ✅ 正常 | 8 |\n\n**趋势**: 持续问题3项\n\n### 🔴 紧急问题\n\n**🔴 [P0] 德会隧道** (原P3，持续41h升级)\n\n- 物理机: 0/0 (0.0%)\n- 容器: 0/0 (0.0%)\n- 传感器: 0/0 (0.0%)\n- 🟠 今日图片为0(1台): mzk68_325(10.145.58.111)\n- ⚠️ 容器在线但今日图片为0(1台): mzk68_325\n- ⚠️ ⏱️ 持续41小时，升级为P0\n- 💡 建议: 检查网络连通性，确认项目是否仍在运行\n\n**🔴 [P0] 沈海** (原P1，持续41h升级)\n\n- 物理机: 0/0 (0.0%)\n- 容器: 0/0 (0.0%)\n- 传感器: 0/0 (0.0%)\n- 🔴 物理机在线但容器不可连(2台): mec_1007(172.18.33.118), mec_1023(172.18.73.96)\n- ⚠️ 物理机在线但容器不可连(2台): mec_1007, mec_1023\n- ⚠️ ⏱️ 持续41小时，升级为P0\n- 💡 建议: 检查网络连通性，确认项目是否仍在运行\n\n**🔴 [P0] 绵九** (原P1，持续41h升级)\n\n- 物理机: 0/0 (0.0%)\n- 容器: 0/0 (0.0%)\n- 传感器: 0/0 (0.0%)\n- 🔴 物理机在线但容器不可连(5台): mk626_486(10.145.181.49), mk636_385(10.145.189.102), mk666_639(10.142.72.173), mk672_917(10.142.80.110), mk673_877(10.142.84.1)\n- 🟠 今日图片为0(11台): s002(10.142.206.32), mk625_310(10.145.181.1), mzk667_246(10.142.70.173), mzk670_754(10.142.74.101), mk763_834(10.142.196.1) 等11台\n- ⚠️ 物理机在线但容器不可连(5台): mk626_486, mk636_385, mk666_639, mk672_917, mk673_877\n- ⚠️ ⏱️ 持续41小时，升级为P0\n- 💡 建议: 检查网络连通性，确认项目是否仍在运行\n\n### ✅ 运行正常\n\n南京仙新路, 山西灵石, 德会, 柯诸, 汉宜, 汕梅, 贵阳, 青海\n\n---\n*此报告由代码分析自动生成*",
+  "structured_data": {
+    "timestamp": "2026-05-13 20:12:10",
+    "projects": {
+      "南京仙新路": {
+        "physical": {
+          "total": 0,
+          "healthy": 0,
+          "rate": 0.0
+        },
+        "container": {
+          "total": 0,
+          "healthy": 0,
+          "rate": 0.0
+        },
+        "sensor": {
+          "total": 0,
+          "healthy": 0,
+          "rate": 0.0
+        },
+        "container_offline_but_pm_online": [],
+        "zero_images_devices": []
+      },
+      "山西灵石": {
+        "physical": {
+          "total": 0,
+          "healthy": 0,
+          "rate": 0.0
+        },
+        "container": {
+          "total": 0,
+          "healthy": 0,
+          "rate": 0.0
+        },
+        "sensor": {
+          "total": 0,
+          "healthy": 0,
+          "rate": 0.0
+        },
+        "container_offline_but_pm_online": [],
+        "zero_images_devices": []
+      },
+      "德会": {
+        "physical": {
+          "total": 0,
+          "healthy": 0,
+          "rate": 0.0
+        },
+        "container": {
+          "total": 0,
+          "healthy": 0,
+          "rate": 0.0
+        },
+        "sensor": {
+          "total": 0,
+          "healthy": 0,
+          "rate": 0.0
+        },
+        "container_offline_but_pm_online": [],
+        "zero_images_devices": []
+      },
+      "德会隧道": {
+        "physical": {
+          "total": 0,
+          "healthy": 0,
+          "rate": 0.0
+        },
+        "container": {
+          "total": 0,
+          "healthy": 0,
+          "rate": 0.0
+        },
+        "sensor": {
+          "total": 0,
+          "healthy": 0,
+          "rate": 0.0
+        },
+        "container_offline_but_pm_online": [],
+        "zero_images_devices": [
+          {
+            "name": "mzk68_325",
+            "ip": "10.145.58.111"
+          }
+        ]
+      },
+      "柯诸": {
+        "physical": {
+          "total": 0,
+          "healthy": 0,
+          "rate": 0.0
+        },
+        "container": {
+          "total": 0,
+          "healthy": 0,
+          "rate": 0.0
+        },
+        "sensor": {
+          "total": 0,
+          "healthy": 0,
+          "rate": 0.0
+        },
+        "container_offline_but_pm_online": [],
+        "zero_images_devices": []
+      },
+      "汉宜": {
+        "physical": {
+          "total": 0,
+          "healthy": 0,
+          "rate": 0.0
+        },
+        "container": {
+          "total": 0,
+          "healthy": 0,
+          "rate": 0.0
+        },
+        "sensor": {
+          "total": 0,
+          "healthy": 0,
+          "rate": 0.0
+        },
+        "container_offline_but_pm_online": [],
+        "zero_images_devices": []
+      },
+      "汕梅": {
+        "physical": {
+          "total": 0,
+          "healthy": 0,
+          "rate": 0.0
+        },
+        "container": {
+          "total": 0,
+          "healthy": 0,
+          "rate": 0.0
+        },
+        "sensor": {
+          "total": 0,
+          "healthy": 0,
+          "rate": 0.0
+        },
+        "container_offline_but_pm_online": [],
+        "zero_images_devices": []
+      },
+      "沈海": {
+        "physical": {
+          "total": 0,
+          "healthy": 0,
+          "rate": 0.0
+        },
+        "container": {
+          "total": 0,
+          "healthy": 0,
+          "rate": 0.0
+        },
+        "sensor": {
+          "total": 0,
+          "healthy": 0,
+          "rate": 0.0
+        },
+        "container_offline_but_pm_online": [
+          {
+            "name": "mec_1007",
+            "ip": "172.18.33.118"
+          },
+          {
+            "name": "mec_1023",
+            "ip": "172.18.73.96"
+          }
+        ],
+        "zero_images_devices": []
+      },
+      "绵九": {
+        "physical": {
+          "total": 0,
+          "healthy": 0,
+          "rate": 0.0
+        },
+        "container": {
+          "total": 0,
+          "healthy": 0,
+          "rate": 0.0
+        },
+        "sensor": {
+          "total": 0,
+          "healthy": 0,
+          "rate": 0.0
+        },
+        "container_offline_but_pm_online": [
+          {
+            "name": "mk626_486",
+            "ip": "10.145.181.49"
+          },
+          {
+            "name": "mk636_385",
+            "ip": "10.145.189.102"
+          },
+          {
+            "name": "mk666_639",
+            "ip": "10.142.72.173"
+          },
+          {
+            "name": "mk672_917",
+            "ip": "10.142.80.110"
+          },
+          {
+            "name": "mk673_877",
+            "ip": "10.142.84.1"
+          }
+        ],
+        "zero_images_devices": [
+          {
+            "name": "s002",
+            "ip": "10.142.206.32"
+          },
+          {
+            "name": "mk625_310",
+            "ip": "10.145.181.1"
+          },
+          {
+            "name": "mzk667_246",
+            "ip": "10.142.70.173"
+          },
+          {
+            "name": "mzk670_754",
+            "ip": "10.142.74.101"
+          },
+          {
+            "name": "mk763_834",
+            "ip": "10.142.196.1"
+          },
+          {
+            "name": "mzk717_440",
+            "ip": "10.142.136.82"
+          },
+          {
+            "name": "mzk717_800",
+            "ip": "10.142.136.109"
+          },
+          {
+            "name": "mk713_255",
+            "ip": "10.142.134.1"
+          },
+          {
+            "name": "mk713_375",
+            "ip": "10.142.134.10"
+          },
+          {
+            "name": "mk715_030",
+            "ip": "10.142.134.136"
+          },
+          {
+            "name": "mk717_670",
+            "ip": "10.142.138.145"
+          }
+        ]
+      },
+      "贵阳": {
+        "physical": {
+          "total": 0,
+          "healthy": 0,
+          "rate": 0.0
+        },
+        "container": {
+          "total": 0,
+          "healthy": 0,
+          "rate": 0.0
+        },
+        "sensor": {
+          "total": 0,
+          "healthy": 0,
+          "rate": 0.0
+        },
+        "container_offline_but_pm_online": [],
+        "zero_images_devices": []
+      },
+      "青海": {
+        "physical": {
+          "total": 0,
+          "healthy": 0,
+          "rate": 0.0
+        },
+        "container": {
+          "total": 0,
+          "healthy": 0,
+          "rate": 0.0
+        },
+        "sensor": {
+          "total": 0,
+          "healthy": 0,
+          "rate": 0.0
+        },
+        "container_offline_but_pm_online": [],
+        "zero_images_devices": []
+      }
+    }
+  },
+  "comparison": {
+    "persistent_issues": [
+      {
+        "project": "沈海",
+        "level": "P1",
+        "reason": "物理机在线但容器不可连(2台): mec_1007, mec_1023",
+        "consecutive": 11,
+        "duration_hours": 41.4
+      },
+      {
+        "project": "德会隧道",
+        "level": "P3",
+        "reason": "容器在线但今日图片为0(1台): mzk68_325",
+        "consecutive": 11,
+        "duration_hours": 41.4
+      },
+      {
+        "project": "绵九",
+        "level": "P1",
+        "reason": "物理机在线但容器不可连(5台): mk626_486, mk636_385, mk666_639, mk672_917, mk673_877",
+        "consecutive": 11,
+        "duration_hours": 41.4
+      }
+    ],
+    "new_issues": [],
+    "recovered_issues": [],
+    "worsening": [],
+    "improving": []
+  },
+  "project_priorities": {
+    "南京仙新路": {
+      "priority": "OK",
+      "base_priority": "OK",
+      "duration_hours": 0,
+      "upgrade_reason": null
+    },
+    "山西灵石": {
+      "priority": "OK",
+      "base_priority": "OK",
+      "duration_hours": 0,
+      "upgrade_reason": null
+    },
+    "德会": {
+      "priority": "OK",
+      "base_priority": "OK",
+      "duration_hours": 0,
+      "upgrade_reason": null
+    },
+    "德会隧道": {
+      "priority": "P0",
+      "base_priority": "P3",
+      "duration_hours": 41.4,
+      "upgrade_reason": "持续41小时，升级为P0"
+    },
+    "柯诸": {
+      "priority": "OK",
+      "base_priority": "OK",
+      "duration_hours": 0,
+      "upgrade_reason": null
+    },
+    "汉宜": {
+      "priority": "OK",
+      "base_priority": "OK",
+      "duration_hours": 0,
+      "upgrade_reason": null
+    },
+    "汕梅": {
+      "priority": "OK",
+      "base_priority": "OK",
+      "duration_hours": 0,
+      "upgrade_reason": null
+    },
+    "沈海": {
+      "priority": "P0",
+      "base_priority": "P1",
+      "duration_hours": 41.4,
+      "upgrade_reason": "持续41小时，升级为P0"
+    },
+    "绵九": {
+      "priority": "P0",
+      "base_priority": "P1",
+      "duration_hours": 41.4,
+      "upgrade_reason": "持续41小时，升级为P0"
+    },
+    "贵阳": {
+      "priority": "OK",
+      "base_priority": "OK",
+      "duration_hours": 0,
+      "upgrade_reason": null
+    },
+    "青海": {
+      "priority": "OK",
+      "base_priority": "OK",
+      "duration_hours": 0,
+      "upgrade_reason": null
+    }
+  }
+}

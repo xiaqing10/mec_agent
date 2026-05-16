@@ -1,0 +1,19 @@
+{
+  "ip": "172.18.73.96",
+  "device_name": "mec_1023",
+  "project": "沈海",
+  "diag_type": "container_offline",
+  "code_diagnosis": {
+    "host": "172.18.73.96",
+    "type": "container_offline",
+    "timestamp": "2026-05-14T11:24:10.350921",
+    "diagnosis": {
+      "error": "物理机无法连接：SSH连接超时(5s)"
+    },
+    "recommendations": [],
+    "device_name": "mec_1023",
+    "project": "沈海"
+  },
+  "need_llm_reason": "未知",
+  "pending_time": "2026-05-14 11:24:20"
+}

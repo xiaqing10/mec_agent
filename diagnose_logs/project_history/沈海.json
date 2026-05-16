@@ -1,0 +1,102 @@
+{
+  "project": "沈海",
+  "devices": {
+    "mec_1007": {
+      "name": "mec_1007",
+      "ip": "172.18.33.118",
+      "records": [
+        {
+          "timestamp": "2026-05-14T11:24:20",
+          "diag_type": "container_offline",
+          "issue": "docker exec失败: close - IO is still pending on closed socket. read:1, write:0, io:000001A3DCE48980",
+          "error": "",
+          "physical_uptime": "",
+          "container_status": "",
+          "today_image_count": -1
+        },
+        {
+          "timestamp": "2026-05-14T11:35:00",
+          "diag_type": "container_offline",
+          "issue": "docker exec失败: close - IO is still pending on closed socket. read:1, write:0, io:0000028051955D50",
+          "error": "",
+          "physical_uptime": "",
+          "container_status": "",
+          "today_image_count": -1
+        },
+        {
+          "timestamp": "2026-05-14T17:26:05",
+          "diag_type": "container_offline",
+          "issue": "docker exec失败: OCI runtime exec failed: exec failed: container_linux.go:349: starting container process caused \"process_linux.go:101: executing setns process caused \\\"exit status 1\\\"\": unknown",
+          "error": "",
+          "physical_uptime": "",
+          "container_status": "",
+          "today_image_count": -1
+        }
+      ]
+    },
+    "mec_1023": {
+      "name": "mec_1023",
+      "ip": "172.18.73.96",
+      "records": [
+        {
+          "timestamp": "2026-05-14T11:24:20",
+          "diag_type": "container_offline",
+          "issue": "",
+          "error": "物理机无法连接：SSH连接超时(5s)",
+          "physical_uptime": "",
+          "container_status": "",
+          "today_image_count": -1
+        },
+        {
+          "timestamp": "2026-05-14T17:26:05",
+          "diag_type": "container_offline",
+          "issue": "",
+          "error": "物理机无法连接：SSH连接超时(5s)",
+          "physical_uptime": "",
+          "container_status": "",
+          "today_image_count": -1
+        }
+      ]
+    },
+    "mec_1002": {
+      "name": "mec_1002",
+      "ip": "172.18.188.60",
+      "records": [
+        {
+          "timestamp": "2026-05-14T11:35:00",
+          "diag_type": "container_offline",
+          "issue": "容器内SSH服务不可连接: Connection closed by 172.18.188.60 port 10022",
+          "error": "",
+          "physical_uptime": "0天 1小时",
+          "container_status": "Up About an hour",
+          "today_image_count": -1
+        },
+        {
+          "timestamp": "2026-05-14T17:26:05",
+          "diag_type": "container_offline",
+          "issue": "容器内SSH服务不可连接: Connection closed by 172.18.188.60 port 10022",
+          "error": "",
+          "physical_uptime": "0天 6小时",
+          "container_status": "Up 7 hours",
+          "today_image_count": -1
+        }
+      ]
+    },
+    "mec_1021": {
+      "name": "mec_1021",
+      "ip": "172.18.72.66",
+      "records": [
+        {
+          "timestamp": "2026-05-15T11:17:13",
+          "diag_type": "container_offline",
+          "issue": "",
+          "error": "物理机无法连接：SSH连接超时(5s)",
+          "physical_uptime": "",
+          "container_status": "",
+          "today_image_count": -1
+        }
+      ]
+    }
+  },
+  "updated_at": "2026-05-15T11:17:13"
+}

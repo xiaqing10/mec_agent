@@ -955,21 +955,8 @@ def push_to_dingtalk(report):
 # 8. update_task_status - 更新任务状态
 # ============================================================
 def update_task_status(status):
-    """更新任务执行状态
-
-    调用 update_task_status.py "MEC监控分析" status
-    """
-    try:
-        result = subprocess.run(
-            ["python3", str(SCRIPTS_DIR / "update_task_status.py"), "MEC监控分析", status],
-            capture_output=True, text=True, timeout=5
-        )
-        if result.returncode == 0:
-            print(f"✅ 已更新任务状态: {status}")
-        else:
-            print(f"⚠️ 更新任务状态失败: {result.stderr}")
-    except Exception as e:
-        print(f"⚠️ 更新任务状态异常: {e}")
+    """记录任务执行状态"""
+    print(f"📋 任务状态: {status}")
 
 
 # ============================================================

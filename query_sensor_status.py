@@ -33,17 +33,25 @@ def _get_conn():
     )
 
 
-def lookup_device(query: str) -> list:
-    """查找设备，支持IP或设备名称。
+def lookup_device(query: str, project: str = None) -> list:
+    """查找设备，支持IP或设备名称，可按项目过滤。
+
+    搜索策略（按顺序）：
+      1. 精确匹配设备名/IP
+      2. LIKE模糊匹配（%query%）
+      3. 按项目过滤+后缀搜索（如 "柯诸" + "690" → myk23_690）
+      4. 仅按项目过滤列出所有设备
 
     Args:
         query: 设备IP或设备名称
+        project: 可选项目名，用于缩小搜索范围
 
     Returns:
         [{"name": str, "ip": str, "project": str, "pole": str, "host": str}, ...]
         若找不到返回空列表
     """
-    is_ip = bool(re.match(r'^\d+\.\d+\.\d+\.\d+$', query.strip()))
+    query = query.strip()
+    is_ip = bool(re.match(r'^\d+\.\d+\.\d+\.\d+$', query))
     results = []
 
     try:
@@ -61,29 +69,61 @@ def lookup_device(query: str) -> list:
                     LEFT JOIN pole p ON p.mec_device_id = md.id
                     WHERE md.host = %s
                     """,
-                    (query.strip(),),
+                    (query,),
                 )
             else:
+                # 1. 精确匹配
+                project_filter = f"AND md.project = %s" if project else ""
+                params = [query, query]
+                if project:
+                    params.append(project)
                 cursor.execute(
-                    """
+                    f"""
                     SELECT DISTINCT md.name, md.host, md.project, p.name AS pole
                     FROM mec_device md
                     LEFT JOIN pole p ON p.mec_device_id = md.id
-                    WHERE md.name LIKE %s AND md.name = %s
+                    WHERE md.name = %s {project_filter}
                     """,
-                    (query.strip(), query.strip()),
+                    params[:1 + (1 if project else 0)],
                 )
                 if cursor.rowcount == 0:
+                    # 2. LIKE模糊匹配
+                    like_params = [f"%{query}%"]
+                    if project:
+                        like_params.append(project)
+                    cursor.execute(
+                        f"""
+                        SELECT DISTINCT md.name, md.host, md.project, p.name AS pole
+                        FROM mec_device md
+                        LEFT JOIN pole p ON p.mec_device_id = md.id
+                        WHERE md.name LIKE %s {project_filter}
+                        ORDER BY md.name
+                        LIMIT 20
+                        """,
+                        like_params,
+                    )
+            rows = cursor.fetchall()
+
+            # 3. 如果还没找到，且有project，尝试项目+后缀数字搜索
+            #    例如 query="zk26_690" + project="柯诸" → 搜索 project=柯诸 AND name LIKE '%\_690'
+            if not rows and project and not is_ip:
+                # 提取query中的数字后缀（如 zk26_690 → 690, 690 → 690）
+                suffix_match = re.search(r'(\d+)$', query)
+                if suffix_match:
+                    suffix = suffix_match.group(1)
                     cursor.execute(
                         """
                         SELECT DISTINCT md.name, md.host, md.project, p.name AS pole
                         FROM mec_device md
                         LEFT JOIN pole p ON p.mec_device_id = md.id
-                        WHERE md.name LIKE %s
+                        WHERE md.project = %s AND md.name LIKE %s
+                        ORDER BY md.name
+                        LIMIT 20
                         """,
-                        (f"%{query.strip()}%",),
+                        (project, f"%\\_{suffix}"),
                     )
-            rows = cursor.fetchall()
+                    rows = cursor.fetchall()
+
             seen = set()
             for r in rows:
                 key = (r["host"], r["project"])
