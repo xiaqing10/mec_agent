@@ -1,1 +1,5 @@
 aiohttp>=3.9.0
+langgraph>=1.2.0
+langchain-openai>=1.2.0
+langchain-core>=1.4.0
+PyMySQL>=1.1.0

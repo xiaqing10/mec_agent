@@ -31,6 +31,15 @@
           "physical_uptime": "",
           "container_status": "",
           "today_image_count": -1
+        },
+        {
+          "timestamp": "2026-05-16T10:40:32",
+          "diag_type": "container_offline",
+          "issue": "容器内SSH服务不可连接: banner exchange: Connection to UNKNOWN port -1: Connection refused",
+          "error": "",
+          "physical_uptime": "16天 15小时",
+          "container_status": "Up 2 weeks",
+          "today_image_count": -1
         }
       ]
     },
@@ -98,5 +107,5 @@
       ]
     }
   },
-  "updated_at": "2026-05-15T11:17:13"
+  "updated_at": "2026-05-16T10:40:32"
 }
