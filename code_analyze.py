@@ -665,14 +665,99 @@ def compare_with_history(current, history):
 
 
 # ============================================================
+# ============================================================
+# 4a. _format_rate - 格式化健康率显示
+# ============================================================
+def _format_rate(data, compact=False):
+    """格式化健康率显示
+
+    当total=0时显示'-'(无数据)，而非误导性的0.0%
+
+    Args:
+        data: {"total": N, "healthy": N, "rate": float}
+        compact: True=表格用紧凑格式, False=详情用完整格式
+    """
+    total = data.get("total", 0)
+    healthy = data.get("healthy", 0)
+    rate = data.get("rate", 0.0)
+
+    if total == 0:
+        return "-"
+
+    if compact:
+        if rate >= 100:
+            return f"{healthy}/{total}"
+        else:
+            return f"{healthy}/{total}({rate:.0f}%)"
+    else:
+        if rate >= 100:
+            return f"{healthy}/{total} ✅"
+        else:
+            return f"{healthy}/{total} ({rate:.1f}%)"
+
+
+# ============================================================
+# 4b. _get_suggestion - 根据问题类型生成针对性建议
+# ============================================================
+def _get_suggestion(priority, proj_data):
+    """根据问题类型生成针对性建议，替代泛泛的通用建议"""
+    phys = proj_data.get("physical", {})
+    cont = proj_data.get("container", {})
+    sens = proj_data.get("sensor", {})
+
+    cont_off = proj_data.get("container_offline_but_pm_online", [])
+    zero_img = proj_data.get("zero_images_devices", [])
+    if not zero_img:
+        zero_img = proj_data.get("container_online_zero_images", [])
+
+    has_cont_off = len(cont_off) > 0
+    has_zero_img = len(zero_img) > 0
+    phys_all_offline = phys.get("total", 0) > 0 and phys.get("rate", 0) == 0
+    cont_all_offline = cont.get("total", 0) > 0 and cont.get("rate", 0) == 0
+
+    # 完全离线
+    if phys_all_offline or cont_all_offline:
+        return "检查网络连通性，确认项目是否仍在运行"
+
+    # 混合问题
+    if has_cont_off and has_zero_img:
+        return "优先排查容器不可连设备(docker ps)，其次检查图片为0设备的采集服务"
+
+    # 容器不可连
+    if has_cont_off:
+        return "SSH到物理机检查容器状态(docker ps)，排查容器启动失败或网络不通"
+
+    # 图片为0
+    if has_zero_img:
+        return "检查容器内图片采集服务，确认RTSP流和摄像头状态"
+
+    # 物理机部分离线
+    if phys.get("total", 0) > 0 and phys.get("rate", 0) < 100:
+        return f"排查{phys['total'] - phys['healthy']}台离线物理机的网络和电源状态"
+
+    # 容器离线
+    if cont.get("total", 0) > 0 and cont.get("rate", 0) < 100:
+        return f"排查{cont['total'] - cont['healthy']}台容器离线原因，检查Docker服务状态"
+
+    # 传感器离线
+    if sens.get("total", 0) > 0 and sens.get("rate", 0) < 100:
+        return f"检查{sens['total'] - sens['healthy']}台离线传感器的网络连接和供电"
+
+    # 默认
+    return "关注设备状态变化趋势"
+
+
+# ============================================================
 # 4. generate_report - 生成钉钉报告
 # ============================================================
 def generate_report(current, comparison, history=None):
     """生成钉钉Markdown格式报告
 
-    格式: P0/P1紧急 → P2重要 → P3一般 → OK
-    每个项目显示: 健康率 + 异常设备列表 + 建议
-    支持基于持续时长的动态等级升级
+    格式: 全局总览表(所有项目) → 问题详情 → 趋势变化
+    - 总览表一目了然，所有项目健康率+异常摘要
+    - 区分"无数据"和"异常"，total=0显示"-"而非0.0%
+    - 异常设备只列一次，不重复
+    - 建议按问题类型针对性给出
     """
     projects = current.get("projects", {})
     timestamp = current.get("timestamp", "")
@@ -694,11 +779,15 @@ def generate_report(current, comparison, history=None):
 
         proj_priorities[proj_name] = {
             "priority": base_priority,
-            "base_priority": classify_priority(proj_name, proj_data)[0],  # 原始等级
+            "base_priority": classify_priority(proj_name, proj_data)[0],
             "reasons": reasons,
             "data": proj_data,
             "duration_hours": calc_issue_duration_hours(proj_name, history) if history and base_priority != "OK" else 0
         }
+
+    # 按优先级排序
+    priority_order = {"P0": 0, "P1": 1, "P2": 2, "P3": 3, "OK": 4}
+    sorted_projects = sorted(proj_priorities.items(), key=lambda x: priority_order.get(x[1]["priority"], 5))
 
     # 按优先级分组
     groups = {"P0": [], "P1": [], "P2": [], "P3": [], "OK": []}
@@ -716,34 +805,72 @@ def generate_report(current, comparison, history=None):
     msg += f"**报告时间**: {timestamp}\n"
     msg += f"**分析时间**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n"
 
-    # 概览统计
-    total_proj = len(projects)
-    msg += "### 📊 概览\n\n"
-    msg += f"| 级别 | 项目数 |\n"
-    msg += f"|------|--------|\n"
-    msg += f"| 🔴 P0 紧急 | {len(groups['P0'])} |\n"
-    msg += f"| 🟠 P1 重大 | {len(groups['P1'])} |\n"
-    msg += f"| 🟡 P2 重要 | {len(groups['P2'])} |\n"
-    msg += f"| 🔵 P3 一般 | {len(groups['P3'])} |\n"
-    msg += f"| ✅ 正常 | {len(groups['OK'])} |\n\n"
+    # ── 全局总览表 ──
+    msg += "### 📊 全局总览\n\n"
+    msg += "| 项目 | 级别 | 物理机 | 容器 | 传感器 | 主要问题 |\n"
+    msg += "|------|------|--------|------|--------|----------|\n"
 
-    # 历史对比摘要
+    for proj_name, info in sorted_projects:
+        proj_data = info["data"]
+        phys = proj_data.get("physical", {})
+        cont = proj_data.get("container", {})
+        sens = proj_data.get("sensor", {})
+
+        # 优先级图标
+        p = info["priority"]
+        p_icon = {"P0": "🔴P0", "P1": "🟠P1", "P2": "🟡P2", "P3": "🔵P3", "OK": "✅"}.get(p, p)
+
+        # 健康率（紧凑格式，total=0显示"-"）
+        phys_str = _format_rate(phys, compact=True)
+        cont_str = _format_rate(cont, compact=True)
+        sens_str = _format_rate(sens, compact=True)
+
+        # 异常摘要（简洁，不含设备名）
+        issues = []
+        cont_off = proj_data.get("container_offline_but_pm_online", [])
+        zero_img = proj_data.get("zero_images_devices", [])
+        if not zero_img:
+            zero_img = proj_data.get("container_online_zero_images", [])
+
+        if cont_off:
+            issues.append(f"容器不可连({len(cont_off)}台)")
+        if zero_img:
+            issues.append(f"图片为0({len(zero_img)}台)")
+        if not issues and phys.get("total", 0) > 0 and phys.get("rate", 0) < 100:
+            issues.append(f"物理机离线({phys['total'] - phys['healthy']}台)")
+        if not issues and cont.get("total", 0) > 0 and cont.get("rate", 0) < 100:
+            issues.append(f"容器离线({cont['total'] - cont['healthy']}台)")
+        if not issues and sens.get("total", 0) > 0 and sens.get("rate", 0) < 100:
+            issues.append(f"传感器离线({sens['total'] - sens['healthy']}台)")
+
+        issue_str = "·".join(issues) if issues else "-"
+
+        msg += f"| {proj_name} | {p_icon} | {phys_str} | {cont_str} | {sens_str} | {issue_str} |\n"
+
+    msg += "\n"
+
+    # 概览统计
+    msg += f"🔴P0 {len(groups['P0'])} · 🟠P1 {len(groups['P1'])} · 🟡P2 {len(groups['P2'])} · 🔵P3 {len(groups['P3'])} · ✅正常 {len(groups['OK'])}\n\n"
+
+    # 趋势摘要
     if comparison:
         comp_parts = []
         if comparison.get("persistent_issues"):
-            comp_parts.append(f"持续问题{len(comparison['persistent_issues'])}项")
+            comp_parts.append(f"🔄持续{len(comparison['persistent_issues'])}项")
         if comparison.get("new_issues"):
-            comp_parts.append(f"新增{len(comparison['new_issues'])}项")
+            comp_parts.append(f"🆕新增{len(comparison['new_issues'])}项")
         if comparison.get("recovered_issues"):
-            comp_parts.append(f"已恢复{len(comparison['recovered_issues'])}项")
+            comp_parts.append(f"✅恢复{len(comparison['recovered_issues'])}项")
         if comparison.get("worsening"):
-            comp_parts.append(f"恶化{len(comparison['worsening'])}项")
+            comp_parts.append(f"📉恶化{len(comparison['worsening'])}项")
         if comparison.get("improving"):
-            comp_parts.append(f"好转{len(comparison['improving'])}项")
+            comp_parts.append(f"📈好转{len(comparison['improving'])}项")
         if comp_parts:
-            msg += f"**趋势**: {', '.join(comp_parts)}\n\n"
+            msg += f"**趋势**: {' '.join(comp_parts)}\n\n"
 
-    # P0/P1 紧急
+    msg += "---\n\n"
+
+    # ── 紧急问题详情 ──
     if groups["P0"] or groups["P1"]:
         msg += "### 🔴 紧急问题\n\n"
         for proj_name, info in groups["P0"] + groups["P1"]:
@@ -751,9 +878,10 @@ def generate_report(current, comparison, history=None):
             phys = proj_data.get("physical", {})
             cont = proj_data.get("container", {})
             sens = proj_data.get("sensor", {})
+
             icon = "🔴" if info["priority"] == "P0" else "🟠"
 
-            # 显示升级标记（如 P2→P0）
+            # 标题行（含升级标记和持续时长）
             base_p = info.get("base_priority", info["priority"])
             duration_h = info.get("duration_hours", 0)
             if base_p != info["priority"]:
@@ -762,47 +890,34 @@ def generate_report(current, comparison, history=None):
                 msg += f"**{icon} [{info['priority']}] {proj_name}** (持续{duration_h:.0f}h)\n\n"
             else:
                 msg += f"**{icon} [{info['priority']}] {proj_name}**\n\n"
-            msg += f"- 物理机: {phys.get('healthy',0)}/{phys.get('total',0)} ({phys.get('rate',0):.1f}%)\n"
-            msg += f"- 容器: {cont.get('healthy',0)}/{cont.get('total',0)} ({cont.get('rate',0):.1f}%)\n"
-            msg += f"- 传感器: {sens.get('healthy',0)}/{sens.get('total',0)} ({sens.get('rate',0):.1f}%)\n"
 
-            # 异常设备
+            # 健康率（完整格式，区分无数据）
+            msg += f"- 物理机: {_format_rate(phys)}\n"
+            msg += f"- 容器: {_format_rate(cont)}\n"
+            msg += f"- 传感器: {_format_rate(sens)}\n"
+
+            # 异常设备（只列一次，含IP）
             cont_off = proj_data.get("container_offline_but_pm_online", [])
             zero_img = proj_data.get("zero_images_devices", [])
             if not zero_img:
                 zero_img = proj_data.get("container_online_zero_images", [])
 
             if cont_off:
-                msg += f"- 🔴 物理机在线但容器不可连({len(cont_off)}台): "
+                msg += f"- 🔴 容器不可连({len(cont_off)}台): "
                 msg += ", ".join(f"{d.get('name','?')}({d.get('ip','')})" for d in cont_off[:5])
                 if len(cont_off) > 5:
                     msg += f" 等{len(cont_off)}台"
                 msg += "\n"
 
             if zero_img:
-                msg += f"- 🟠 今日图片为0({len(zero_img)}台): "
+                msg += f"- 🟠 图片为0({len(zero_img)}台): "
                 msg += ", ".join(f"{d.get('name','?')}({d.get('ip','')})" for d in zero_img[:5])
                 if len(zero_img) > 5:
                     msg += f" 等{len(zero_img)}台"
                 msg += "\n"
 
-            # 问题原因
-            for reason in info["reasons"]:
-                msg += f"- ⚠️ {reason}\n"
-
-            # 建议
-            msg += f"- 💡 建议: "
-            if info["priority"] == "P0":
-                if phys.get("rate", 100) == 0:
-                    msg += "检查网络连通性，确认项目是否仍在运行\n"
-                else:
-                    msg += "立即排查离线物理机，优先恢复核心节点\n"
-            else:
-                if cont_off:
-                    msg += "检查容器服务状态，排查容器不可连原因\n"
-                else:
-                    msg += "关注物理机健康率趋势，预防进一步恶化\n"
-            msg += "\n"
+            # 针对性建议
+            msg += f"- 💡 建议: {_get_suggestion(info['priority'], proj_data)}\n\n"
 
     # P2 重要
     if groups["P2"]:
@@ -813,24 +928,28 @@ def generate_report(current, comparison, history=None):
             cont = proj_data.get("container", {})
             sens = proj_data.get("sensor", {})
 
-            msg += f"**🟡 [{info['priority']}] {proj_name}**\n\n"
-            msg += f"- 物理机: {phys.get('healthy',0)}/{phys.get('total',0)} ({phys.get('rate',0):.1f}%)\n"
-            msg += f"- 容器: {cont.get('healthy',0)}/{cont.get('total',0)} ({cont.get('rate',0):.1f}%)\n"
-            msg += f"- 传感器: {sens.get('healthy',0)}/{sens.get('total',0)} ({sens.get('rate',0):.1f}%)\n"
+            base_p = info.get("base_priority", info["priority"])
+            duration_h = info.get("duration_hours", 0)
+            if base_p != info["priority"]:
+                msg += f"**🟡 [{info['priority']}] {proj_name}** (原{base_p}，持续{duration_h:.0f}h升级)\n\n"
+            else:
+                msg += f"**🟡 [{info['priority']}] {proj_name}**\n\n"
+
+            msg += f"- 物理机: {_format_rate(phys)}\n"
+            msg += f"- 容器: {_format_rate(cont)}\n"
+            msg += f"- 传感器: {_format_rate(sens)}\n"
 
             zero_img = proj_data.get("zero_images_devices", [])
             if not zero_img:
                 zero_img = proj_data.get("container_online_zero_images", [])
             if zero_img:
-                msg += f"- 🟠 今日图片为0({len(zero_img)}台): "
+                msg += f"- 🟠 图片为0({len(zero_img)}台): "
                 msg += ", ".join(f"{d.get('name','?')}" for d in zero_img[:3])
                 if len(zero_img) > 3:
                     msg += f" 等{len(zero_img)}台"
                 msg += "\n"
 
-            for reason in info["reasons"]:
-                msg += f"- ⚠️ {reason}\n"
-            msg += "- 💡 建议: 安排巡检，关注恶化趋势\n\n"
+            msg += f"- 💡 建议: {_get_suggestion(info['priority'], proj_data)}\n\n"
 
     # P3 一般
     if groups["P3"]:
@@ -842,21 +961,35 @@ def generate_report(current, comparison, history=None):
             sens = proj_data.get("sensor", {})
 
             msg += f"**🔵 [{info['priority']}] {proj_name}** - "
-            msg += f"物理机{phys.get('rate',0):.1f}% | "
-            msg += f"容器{cont.get('rate',0):.1f}% | "
-            msg += f"传感器{sens.get('rate',0):.1f}%\n\n"
-            for reason in info["reasons"]:
-                msg += f"- {reason}\n"
+            msg += f"物理机{_format_rate(phys, compact=True)} | "
+            msg += f"容器{_format_rate(cont, compact=True)} | "
+            msg += f"传感器{_format_rate(sens, compact=True)}\n\n"
+
+            # 简洁问题列表
+            zero_img = proj_data.get("zero_images_devices", [])
+            if not zero_img:
+                zero_img = proj_data.get("container_online_zero_images", [])
+            if zero_img:
+                msg += f"- 图片为0: {', '.join(d.get('name','?') for d in zero_img[:3])}\n"
+            if cont.get("total", 0) > 0 and cont.get("rate", 0) < 100:
+                msg += f"- 容器离线{cont['total'] - cont['healthy']}台\n"
+            if sens.get("total", 0) > 0 and sens.get("rate", 0) < 100:
+                msg += f"- 传感器离线{sens['total'] - sens['healthy']}台\n"
+
             msg += "\n"
 
     # OK 正常
     if groups["OK"]:
-        ok_names = [name for name, _ in groups["OK"]]
         msg += "### ✅ 运行正常\n\n"
-        msg += ", ".join(ok_names)
-        msg += "\n\n"
+        for proj_name, info in groups["OK"]:
+            proj_data = info["data"]
+            phys = proj_data.get("physical", {})
+            cont = proj_data.get("container", {})
+            sens = proj_data.get("sensor", {})
+            msg += f"- **{proj_name}** 物理机{_format_rate(phys, compact=True)} | 容器{_format_rate(cont, compact=True)} | 传感器{_format_rate(sens, compact=True)}\n"
+        msg += "\n"
 
-    # 恶化/好转详情
+    # 恶化/好转
     if comparison:
         if comparison.get("worsening"):
             msg += "### 📉 恶化趋势\n\n"
@@ -872,6 +1005,7 @@ def generate_report(current, comparison, history=None):
 
     msg += "---\n*此报告由代码分析自动生成*"
     return msg, has_severe
+
 
 
 # ============================================================

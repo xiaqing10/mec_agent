@@ -25,7 +25,7 @@ REPORT_HEADER_KEYWORD = '全局刷新完成报告'
 # 重试配置
 MAX_RETRIES = 2
 RETRY_DELAY = 1
-MAX_LOG_SIZE = 20000  # 最大20KB
+MAX_LOG_SIZE = 200000  # 最大20KB
 
 def get_feishu_token():
     """获取Feishu token"""

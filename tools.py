@@ -284,32 +284,32 @@ def device_info(ip: str, info_type: str = "disk") -> str:
 
     for t in types:
         if t == "disk":
-            stdout, _, _ = ssh_exec(ip, 22, user, "df -h / /home 2>/dev/null || df -h /", timeout=8)
+            stdout, _, _ = ssh_exec(ip, 22, user, "df -h / /home 2>/dev/null || df -h /", exec_timeout=8)
             info["disk"] = stdout.strip() if stdout.strip() else "无法获取"
-            cont_out, _, _ = ssh_exec(ip, CONTAINER_PORT, CONTAINER_USER, "df -h / /home 2>/dev/null || df -h /", timeout=8)
+            cont_out, _, _ = ssh_exec(ip, CONTAINER_PORT, CONTAINER_USER, "df -h / /home 2>/dev/null || df -h /", exec_timeout=8)
             if cont_out.strip():
                 info["disk_container"] = cont_out.strip()
         elif t == "memory":
-            stdout, _, _ = ssh_exec(ip, 22, user, "free -h", timeout=8)
+            stdout, _, _ = ssh_exec(ip, 22, user, "free -h", exec_timeout=8)
             info["memory"] = stdout.strip() if stdout.strip() else "无法获取"
-            cont_out, _, _ = ssh_exec(ip, CONTAINER_PORT, CONTAINER_USER, "free -h", timeout=8)
+            cont_out, _, _ = ssh_exec(ip, CONTAINER_PORT, CONTAINER_USER, "free -h", exec_timeout=8)
             if cont_out.strip():
                 info["memory_container"] = cont_out.strip()
         elif t == "cpu":
-            stdout, _, _ = ssh_exec(ip, 22, user, "top -bn1 | head -5", timeout=8)
+            stdout, _, _ = ssh_exec(ip, 22, user, "top -bn1 | head -5", exec_timeout=8)
             info["cpu"] = stdout.strip() if stdout.strip() else "无法获取"
-            cont_out, _, _ = ssh_exec(ip, CONTAINER_PORT, CONTAINER_USER, "top -bn1 | head -5", timeout=8)
+            cont_out, _, _ = ssh_exec(ip, CONTAINER_PORT, CONTAINER_USER, "top -bn1 | head -5", exec_timeout=8)
             if cont_out.strip():
                 info["cpu_container"] = cont_out.strip()
         elif t == "network":
-            stdout, _, _ = ssh_exec(ip, 22, user, "ip addr show | grep 'inet ' | awk '{print $2, $NF}'", timeout=8)
+            stdout, _, _ = ssh_exec(ip, 22, user, "ip addr show | grep 'inet ' | awk '{print $2, $NF}'", exec_timeout=8)
             info["network"] = stdout.strip() if stdout.strip() else "无法获取"
         elif t == "uptime":
-            stdout, _, _ = ssh_exec(ip, 22, user, "uptime", timeout=8)
+            stdout, _, _ = ssh_exec(ip, 22, user, "uptime", exec_timeout=8)
             info["uptime"] = stdout.strip() if stdout.strip() else "无法获取"
         elif t == "history":
             cmd = "ls -d /home/files/nfsroot/20[0-9][0-9]-[0-9][0-9]-[0-9][0-9] 2>/dev/null | sort"
-            stdout, _, _ = ssh_exec(ip, 22, user, cmd, timeout=8)
+            stdout, _, _ = ssh_exec(ip, 22, user, cmd, exec_timeout=8)
             if stdout.strip():
                 dirs = [d.strip().split('/')[-1] for d in stdout.strip().split('\n') if d.strip()]
                 import datetime
@@ -317,7 +317,7 @@ def device_info(ip: str, info_type: str = "disk") -> str:
                 day_details = []
                 for d in dirs[:30]:
                     count_cmd = f"ls /home/files/nfsroot/{d}/*.jpg 2>/dev/null | wc -l"
-                    cnt_out, _, _ = ssh_exec(ip, 22, user, count_cmd, timeout=5)
+                    cnt_out, _, _ = ssh_exec(ip, 22, user, count_cmd, exec_timeout=5)
                     cnt = cnt_out.strip() if cnt_out.strip() else "0"
                     marker = " (今天)" if d == today_str else ""
                     day_details.append(f"  {d}: {cnt} 张{marker}")
@@ -325,7 +325,7 @@ def device_info(ip: str, info_type: str = "disk") -> str:
                 info["history"] = f"共 {total_days} 天数据\n" + "\n".join(day_details[-7:] if total_days > 7 else day_details)
             else:
                 cont_cmd = "ls -d /home/files/nfsroot/20[0-9][0-9]-[0-9][0-9]-[0-9][0-9] 2>/dev/null | sort | tail -10"
-                cont_out, _, _ = ssh_exec(ip, CONTAINER_PORT, CONTAINER_USER, cont_cmd, timeout=8)
+                cont_out, _, _ = ssh_exec(ip, CONTAINER_PORT, CONTAINER_USER, cont_cmd, exec_timeout=8)
                 if cont_out.strip():
                     dirs2 = [d.strip().split('/')[-1] for d in cont_out.strip().split('\n') if d.strip()]
                     info["history"] = f"共 {len(dirs2)} 天数据（最近）: " + ", ".join(dirs2)
@@ -582,7 +582,7 @@ def fetch_report() -> str:
         return json.dumps({"error": f"获取报告失败: {error}"}, ensure_ascii=False)
     if not report_text:
         return json.dumps({"error": "未获取到报告"}, ensure_ascii=False)
-    return report_text[:8000]
+    return report_text[:]
 
 
 # ──────────────────────────────────────────────
@@ -696,7 +696,7 @@ def ssh_exec_command(ip: str, command: str, container: bool = False, ros_env: bo
     elif container and any(kw in command for kw in ['rostopic', 'rosnode', 'rosservice', 'rosrun', 'roslaunch']):
         command = f"source /home/files/rvf/setup.bash 2>/dev/null && {command}"
 
-    stdout, stderr, _ = ssh_exec(ip, port, user, command, timeout=15)
+    stdout, stderr, _ = ssh_exec(ip, port, user, command, exec_timeout=15)
     result = stdout.strip() if stdout.strip() else ""
     if stderr.strip():
         result += "\n[STDERR]\n" + stderr.strip()

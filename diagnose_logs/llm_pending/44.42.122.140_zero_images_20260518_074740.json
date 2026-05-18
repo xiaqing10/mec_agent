@@ -1,0 +1,360 @@
+{
+  "ip": "44.42.122.140",
+  "device_name": "mz4k88_800",
+  "project": "汕梅",
+  "diag_type": "zero_images",
+  "code_diagnosis": {
+    "host": "44.42.122.140",
+    "type": "zero_images",
+    "timestamp": "2026-05-18T07:47:31.041280",
+    "diagnosis": {
+      "today_image_count": 0,
+      "supervisor": {
+        "total": 12,
+        "running": 12,
+        "abnormal": 0
+      },
+      "supervisor_output": "calibration_event                RUNNING   pid 872362, uptime 19 days, 17:15:34\ncalibration_project              RUNNING   pid 116, uptime 51 days, 23:03:32\nfusion                           RUNNING   pid 601, uptime 51 days, 23:03:27\ninfer                            RUNNING   pid 113, uptime 51 days, 23:03:32\nkafka_event                      RUNNING   pid 120, uptime 51 days, 23:03:32\nkafka_flow                       RUNNING   pid 122, uptime 51 days, 23:03:32\nkafka_monitor                    RUNNING   pid 124, uptime 51 days, 23:03:32\nradar_bridge                     RUNNING   pid 111, uptime 51 days, 23:03:32\nrosbridge_websocket              RUNNING   pid 127, uptime 51 days, 23:03:32\nrtsp                             RUNNING   pid 1298, uptime 51 days, 22:56:07\ntraffic                          RUNNING   pid 1209, uptime 51 days, 22:56:19\nzmq_bridge                       RUNNING   pid 128, uptime 51 days, 23:03:32",
+      "roscore": "运行中: root          54       1  0 Mar27 pts/0    04:30:24 /usr/bin/python3 /opt/ros/noetic/bin/roscore",
+      "_grep_conf_raw": "stderr_logfile=/home/files/common_logs/error_calibration.log\nstderr_logfile=/home/files/common_logs/error_calibration_project.log\nstderr_logfile=/home/files/common_logs/error_fusion.log\nstderr_logfile=/home/files/common_logs/error_infer.log\nstderr_logfile=/home/files/common_logs/error_kafka_event.log\nstderr_logfile=/home/files/common_logs/error_kafka_flow.log\nstderr_logfile=/home/files/common_logs/error_kafka_monitor.log\nstderr_logfile=/home/files/common_logs/error_radar_bridge.log\nstderr_logfile=/home/files/common_logs/error_rosbridge_websocket.log\nstderr_logfile=/home/files/common_logs/error_rtsp.log\nstderr_logfile=/home/files/common_logs/error_traffic.log\nstderr_logfile=/home/files/common_logs/error_zmq_bridge.log\nstdout_logfile=//home/files/common_logs/out_calibration.log \nstdout_logfile=//home/files/common_logs/out_calibration_project.log \nstdout_logfile=//home/files/common_logs/out_fusion.log \nstdout_logfile=//home/files/common_logs/out_kafka_event.log \nstdout_logfile=//home/files/common_logs/out_kafka_flow.log \nstdout_logfile=//home/files/common_logs/out_kafka_monitor.log \nstdout_logfile=//home/files/common_logs/out_rosbridge_websocket.log \nstdout_logfile=//home/files/common_logs/out_traffic.log \nstdout_logfile=//home/files/common_logs/out_zmq_bridge.log \nstdout_logfile=/home/files/common_logs/out_infer.log \nstdout_logfile=/home/files/common_logs/out_radar_bridge.log \nstdout_logfile=/home/files/common_logs/out_rtsp.log",
+      "log_errors": {
+        "error_kafka_event": {
+          "log_files": [
+            "/home/files/common_logs/error_kafka_event.log"
+          ],
+          "errors": [
+            "[ERROR]2026-05-17 07:22:02,682 kafka_event_new.py:293: evnet has no img path:",
+            "[ERROR]2026-05-17 07:22:02,684 kafka_event_new.py:315: no valid video:"
+          ]
+        },
+        "error_radar_bridge": {
+          "log_files": [
+            "/home/files/common_logs/error_radar_bridge.log"
+          ],
+          "errors": [
+            "[ERROR] [1772241286.049745887]: Connection Failed: Connection refused"
+          ]
+        },
+        "error_rosbridge_websocket": {
+          "log_files": [
+            "/home/files/common_logs/error_rosbridge_websocket.log"
+          ],
+          "errors": [
+            "RLException: run_id on parameter server does not match declared run_id: a806ed02-fbfa-11f0-b284-48b02d792c06 vs a8116d68-fbfa-11f0-90e5-48b02d792c06",
+            "The traceback for the exception was written to the log file",
+            "from . message import Message, SerializationError, DeserializationError, MessageException, struct_I",
+            "Traceback (most recent call last):"
+          ]
+        },
+        "error_rtsp": {
+          "log_files": [
+            "/home/files/common_logs/error_rtsp.log"
+          ],
+          "errors": [
+            "RLException: run_id on parameter server does not match declared run_id: a806ed02-fbfa-11f0-b284-48b02d792c06 vs a7ee8118-fbfa-11f0-b66c-48b02d792c06",
+            "The traceback for the exception was written to the log file",
+            "[FATAL] [1769571456.292177216]: Failed to load nodelet '/mz4k88_800/server` of type `camera/dispatcher` to manager `pull_manager'",
+            "from . message import Message, SerializationError, DeserializationError, MessageException, struct_I",
+            "Traceback (most recent call last):",
+            "[ERROR] (/usr/src/jetson_multimedia_api/samples/common/classes/NvV4l2ElementPlane.cpp:178) <dec0> Capture Plane:Error while DQing buffer: Broken pipe",
+            "terminate called without an active exception"
+          ]
+        },
+        "error_traffic": {
+          "log_files": [
+            "/home/files/common_logs/error_traffic.log"
+          ],
+          "errors": [
+            "RLException: Invalid <param> tag: Cannot load command parameter [__param_loader_helper]: command [['bash', '-c', 'if [ -f /home/files/rvf/share/fusion",
+            "RLException: run_id on parameter server does not match declared run_id: a8253898-fbfa-11f0-8f89-48b02d792c06 vs abd5a16c-fbfa-11f0-b955-48b02d792c06",
+            "The traceback for the exception was written to the log file",
+            "[ERROR] [1750756221.884874912]: Cannot read param: traffic/out_mode",
+            "[ERROR] [1769571449.874801344]: Failed to get 'device_params' from param server. Check YAML!",
+            "/usr/bin/du: cannot access '/home/files/common_logs/log/latest': No such file or directory",
+            "ERROR: Unable to communicate with master!"
+          ]
+        },
+        "error_zmq_bridge": {
+          "log_files": [
+            "/home/files/common_logs/error_zmq_bridge.log"
+          ],
+          "errors": [
+            "RLException: run_id on parameter server does not match declared run_id: a806ed02-fbfa-11f0-b284-48b02d792c06 vs a7e833b2-fbfa-11f0-87ef-48b02d792c06",
+            "The traceback for the exception was written to the log file",
+            "[FATAL] [1765530216.238307947]: Invalid ROS msg_type \"zmq_bridge/OneTrackObject\" in configuration!",
+            "from . message import Message, SerializationError, DeserializationError, MessageException, struct_I",
+            "Traceback (most recent call last):",
+            "terminate called after throwing an instance of 'zmqpp::zmq_internal_exception'",
+            "terminate called without an active exception"
+          ]
+        },
+        "out_calibration_project": {
+          "log_files": [
+            "//home/files/common_logs/out_calibration_project.log"
+          ],
+          "errors": [
+            "Error in XmlRpcClient::writeRequest: write error (Connection refused)."
+          ]
+        },
+        "out_kafka_monitor": {
+          "log_files": [
+            "//home/files/common_logs/out_kafka_monitor.log"
+          ],
+          "errors": [
+            "Error in XmlRpcClient::writeRequest: write error (Connection refused)."
+          ]
+        }
+      },
+      "error_category": "process",
+      "issue": "进程错误: error_kafka_event(2条错误), error_radar_bridge(1条错误), error_rosbridge_websocket(4条错误), error_rtsp(7条错误), error_traffic(7条错误), error_zmq_bridge(7条错误), out_calibration_project(1条错误), out_kafka_monitor(1条错误)",
+      "topic_rates": {
+        "/mz4k88_800/fusion_track_object": "无数据 @lj",
+        "/mz4k88_800/traffic_event_object/fps_hz": "无数据 @zrh",
+        "/one_track_object": "无数据 @lj",
+        "/z4k88_800/downstream/long_camera/image_detect/compressed": "无数据 @xq",
+        "/z4k88_800/downstream/long_camera/image_raw": "无数据 @zzm",
+        "/z4k88_800/downstream/radar/track_object": "无数据 @lj",
+        "/z4k88_800/downstream/radar/track_object_project": "无数据 @cy",
+        "/z4k88_800/downstream/short_camera/image_detect/compressed": "无数据 @xq",
+        "/z4k88_800/downstream/short_camera/image_raw": "无数据 @zzm",
+        "/z4k88_800/upstream/radar/track_object": "无数据 @lj",
+        "/z4k88_800/upstream/radar/track_object_project": "无数据 @cy",
+        "/z4k89_170/downstream/long_camera/image_detect/compressed": "无数据 @xq",
+        "/z4k89_170/downstream/long_camera/image_raw": "无数据 @zzm",
+        "/z4k89_170/downstream/radar/track_object": "无数据 @lj",
+        "/z4k89_170/downstream/radar/track_object_project": "无数据 @cy",
+        "/z4k89_170/downstream/short_camera/image_detect/compressed": "无数据 @xq",
+        "/z4k89_170/downstream/short_camera/image_raw": "无数据 @zzm",
+        "/z4k89_170/upstream/radar/track_object": "无数据 @lj",
+        "/z4k89_170/upstream/radar/track_object_project": "无数据 @cy",
+        "/z4k89_170/upstream/short_camera/image_detect/compressed": "无数据 @xq",
+        "/z4k89_170/upstream/short_camera/image_raw": "无数据 @zzm"
+      },
+      "ros_topics": [
+        "/client_count",
+        "/connected_clients",
+        "/diagnostics",
+        "/mz4k88_800/fusion_track_object",
+        "/mz4k88_800/fusion_track_object/fps_hz",
+        "/mz4k88_800/fusion_track_object/print_log",
+        "/mz4k88_800/fusion_track_object/process_time",
+        "/mz4k88_800/fusion_track_statis",
+        "/mz4k88_800/infer_manager_test/bond",
+        "/mz4k88_800/pull_manager/bond",
+        "/mz4k88_800/traffic_event_object",
+        "/mz4k88_800/traffic_event_object/fps_hz",
+        "/one_track_object",
+        "/rosout",
+        "/rosout_agg",
+        "/z4k88_800/downstream/long_camera/image_detect",
+        "/z4k88_800/downstream/long_camera/image_detect/compressed",
+        "/z4k88_800/downstream/long_camera/image_detect/compressed/parameter_descriptions",
+        "/z4k88_800/downstream/long_camera/image_detect/compressed/parameter_updates",
+        "/z4k88_800/downstream/long_camera/image_detect/compressedDepth",
+        "/z4k88_800/downstream/long_camera/image_detect/compressedDepth/parameter_descriptions",
+        "/z4k88_800/downstream/long_camera/image_detect/compressedDepth/parameter_updates",
+        "/z4k88_800/downstream/long_camera/image_detect/theora",
+        "/z4k88_800/downstream/long_camera/image_detect/theora/parameter_descriptions",
+        "/z4k88_800/downstream/long_camera/image_detect/theora/parameter_updates",
+        "/z4k88_800/downstream/long_camera/image_detect_object",
+        "/z4k88_800/downstream/long_camera/image_detect_object/fps_hz",
+        "/z4k88_800/downstream/long_camera/image_detect_object_event",
+        "/z4k88_800/downstream/long_camera/image_detect_object_event/fps_hz",
+        "/z4k88_800/downstream/long_camera/image_detect_object_project",
+        "/z4k88_800/downstream/long_camera/image_detect_object_project/fps_hz",
+        "/z4k88_800/downstream/long_camera/image_raw",
+        "/z4k88_800/downstream/long_camera/view_offset",
+        "/z4k88_800/downstream/long_camera/view_offset_alert",
+        "/z4k88_800/downstream/radar/cloud_object",
+        "/z4k88_800/downstream/radar/track_object",
+        "/z4k88_800/downstream/radar/track_object/fps_hz",
+        "/z4k88_800/downstream/radar/track_object_project",
+        "/z4k88_800/downstream/radar/track_object_project/fps_hz",
+        "/z4k88_800/downstream/radar/traffic_flow",
+        "/z4k88_800/downstream/short_camera/image_detect",
+        "/z4k88_800/downstream/short_camera/image_detect/compressed",
+        "/z4k88_800/downstream/short_camera/image_detect/compressed/parameter_descriptions",
+        "/z4k88_800/downstream/short_camera/image_detect/compressed/parameter_updates",
+        "/z4k88_800/downstream/short_camera/image_detect/compressedDepth",
+        "/z4k88_800/downstream/short_camera/image_detect/compressedDepth/parameter_descriptions",
+        "/z4k88_800/downstream/short_camera/image_detect/compressedDepth/parameter_updates",
+        "/z4k88_800/downstream/short_camera/image_detect/theora",
+        "/z4k88_800/downstream/short_camera/image_detect/theora/parameter_descriptions",
+        "/z4k88_800/downstream/short_camera/image_detect/theora/parameter_updates",
+        "/z4k88_800/downstream/short_camera/image_detect_object",
+        "/z4k88_800/downstream/short_camera/image_detect_object/fps_hz",
+        "/z4k88_800/downstream/short_camera/image_detect_object_event",
+        "/z4k88_800/downstream/short_camera/image_detect_object_event/fps_hz",
+        "/z4k88_800/downstream/short_camera/image_detect_object_project",
+        "/z4k88_800/downstream/short_camera/image_detect_object_project/fps_hz",
+        "/z4k88_800/downstream/short_camera/image_raw",
+        "/z4k88_800/downstream/short_camera/view_offset",
+        "/z4k88_800/downstream/short_camera/view_offset_alert",
+        "/z4k88_800/upstream/radar/cloud_object",
+        "/z4k88_800/upstream/radar/track_object",
+        "/z4k88_800/upstream/radar/track_object/fps_hz",
+        "/z4k88_800/upstream/radar/track_object_project",
+        "/z4k88_800/upstream/radar/track_object_project/fps_hz",
+        "/z4k88_800/upstream/radar/traffic_flow",
+        "/z4k89_170/downstream/long_camera/image_detect",
+        "/z4k89_170/downstream/long_camera/image_detect/compressed",
+        "/z4k89_170/downstream/long_camera/image_detect/compressed/parameter_descriptions",
+        "/z4k89_170/downstream/long_camera/image_detect/compressed/parameter_updates",
+        "/z4k89_170/downstream/long_camera/image_detect/compressedDepth",
+        "/z4k89_170/downstream/long_camera/image_detect/compressedDepth/parameter_descriptions",
+        "/z4k89_170/downstream/long_camera/image_detect/compressedDepth/parameter_updates",
+        "/z4k89_170/downstream/long_camera/image_detect/theora",
+        "/z4k89_170/downstream/long_camera/image_detect/theora/parameter_descriptions",
+        "/z4k89_170/downstream/long_camera/image_detect/theora/parameter_updates",
+        "/z4k89_170/downstream/long_camera/image_detect_object",
+        "/z4k89_170/downstream/long_camera/image_detect_object/fps_hz",
+        "/z4k89_170/downstream/long_camera/image_detect_object_event",
+        "/z4k89_170/downstream/long_camera/image_detect_object_event/fps_hz",
+        "/z4k89_170/downstream/long_camera/image_detect_object_project",
+        "/z4k89_170/downstream/long_camera/image_detect_object_project/fps_hz",
+        "/z4k89_170/downstream/long_camera/image_raw",
+        "/z4k89_170/downstream/long_camera/view_offset",
+        "/z4k89_170/downstream/long_camera/view_offset_alert",
+        "/z4k89_170/downstream/radar/cloud_object",
+        "/z4k89_170/downstream/radar/track_object",
+        "/z4k89_170/downstream/radar/track_object/fps_hz",
+        "/z4k89_170/downstream/radar/track_object_project",
+        "/z4k89_170/downstream/radar/track_object_project/fps_hz",
+        "/z4k89_170/downstream/radar/traffic_flow",
+        "/z4k89_170/downstream/short_camera/image_detect",
+        "/z4k89_170/downstream/short_camera/image_detect/compressed",
+        "/z4k89_170/downstream/short_camera/image_detect/compressed/parameter_descriptions",
+        "/z4k89_170/downstream/short_camera/image_detect/compressed/parameter_updates",
+        "/z4k89_170/downstream/short_camera/image_detect/compressedDepth",
+        "/z4k89_170/downstream/short_camera/image_detect/compressedDepth/parameter_descriptions",
+        "/z4k89_170/downstream/short_camera/image_detect/compressedDepth/parameter_updates",
+        "/z4k89_170/downstream/short_camera/image_detect/theora",
+        "/z4k89_170/downstream/short_camera/image_detect/theora/parameter_descriptions",
+        "/z4k89_170/downstream/short_camera/image_detect/theora/parameter_updates",
+        "/z4k89_170/downstream/short_camera/image_detect_object",
+        "/z4k89_170/downstream/short_camera/image_detect_object/fps_hz",
+        "/z4k89_170/downstream/short_camera/image_detect_object_event",
+        "/z4k89_170/downstream/short_camera/image_detect_object_event/fps_hz",
+        "/z4k89_170/downstream/short_camera/image_detect_object_project",
+        "/z4k89_170/downstream/short_camera/image_detect_object_project/fps_hz",
+        "/z4k89_170/downstream/short_camera/image_raw",
+        "/z4k89_170/downstream/short_camera/view_offset",
+        "/z4k89_170/downstream/short_camera/view_offset_alert",
+        "/z4k89_170/upstream/radar/cloud_object",
+        "/z4k89_170/upstream/radar/track_object",
+        "/z4k89_170/upstream/radar/track_object/fps_hz",
+        "/z4k89_170/upstream/radar/track_object_project",
+        "/z4k89_170/upstream/radar/track_object_project/fps_hz",
+        "/z4k89_170/upstream/radar/traffic_flow",
+        "/z4k89_170/upstream/short_camera/image_detect",
+        "/z4k89_170/upstream/short_camera/image_detect/compressed",
+        "/z4k89_170/upstream/short_camera/image_detect/compressed/parameter_descriptions",
+        "/z4k89_170/upstream/short_camera/image_detect/compressed/parameter_updates",
+        "/z4k89_170/upstream/short_camera/image_detect/compressedDepth",
+        "/z4k89_170/upstream/short_camera/image_detect/compressedDepth/parameter_descriptions",
+        "/z4k89_170/upstream/short_camera/image_detect/compressedDepth/parameter_updates",
+        "/z4k89_170/upstream/short_camera/image_detect/theora",
+        "/z4k89_170/upstream/short_camera/image_detect/theora/parameter_descriptions",
+        "/z4k89_170/upstream/short_camera/image_detect/theora/parameter_updates",
+        "/z4k89_170/upstream/short_camera/image_detect_object",
+        "/z4k89_170/upstream/short_camera/image_detect_object/fps_hz",
+        "/z4k89_170/upstream/short_camera/image_detect_object_event",
+        "/z4k89_170/upstream/short_camera/image_detect_object_event/fps_hz",
+        "/z4k89_170/upstream/short_camera/image_detect_object_project",
+        "/z4k89_170/upstream/short_camera/image_detect_object_project/fps_hz",
+        "/z4k89_170/upstream/short_camera/image_raw",
+        "/z4k89_170/upstream/short_camera/view_offset",
+        "/z4k89_170/upstream/short_camera/view_offset_alert"
+      ],
+      "sensors": {
+        "cameras": [
+          {
+            "name": "z4k88_800_downstream_short",
+            "ip": "44.42.122.143",
+            "status": true,
+            "last_check": "2026-05-16 17:21:50",
+            "project": "汕梅",
+            "pole": "z4k88_800"
+          },
+          {
+            "name": "z4k88_800_downstream_long",
+            "ip": "44.42.122.141",
+            "status": true,
+            "last_check": "2026-05-16 17:21:50",
+            "project": "汕梅",
+            "pole": "z4k88_800"
+          },
+          {
+            "name": "z4k89_170_upstream_short",
+            "ip": "44.42.122.160",
+            "status": true,
+            "last_check": "2026-05-16 17:21:50",
+            "project": "汕梅",
+            "pole": "z4k89_170"
+          },
+          {
+            "name": "z4k89_170_downstream_short",
+            "ip": "44.42.122.144",
+            "status": true,
+            "last_check": "2026-05-16 17:21:50",
+            "project": "汕梅",
+            "pole": "z4k89_170"
+          },
+          {
+            "name": "z4k89_170_downstream_long",
+            "ip": "44.42.122.142",
+            "status": true,
+            "last_check": "2026-05-16 17:21:50",
+            "project": "汕梅",
+            "pole": "z4k89_170"
+          }
+        ],
+        "radars": [
+          {
+            "name": "z4k88_800_雷达_upstream",
+            "ip": "44.42.122.146",
+            "status": true,
+            "last_check": "2026-05-16 17:21:50",
+            "project": "汕梅",
+            "pole": "z4k88_800"
+          },
+          {
+            "name": "z4k88_800_雷达_downstream",
+            "ip": "44.42.122.145",
+            "status": true,
+            "last_check": "2026-05-16 17:21:50",
+            "project": "汕梅",
+            "pole": "z4k88_800"
+          },
+          {
+            "name": "z4k89_170_雷达_upstream",
+            "ip": "44.42.122.162",
+            "status": true,
+            "last_check": "2026-05-16 17:21:50",
+            "project": "汕梅",
+            "pole": "z4k89_170"
+          },
+          {
+            "name": "z4k89_170_雷达_downstream",
+            "ip": "44.42.122.161",
+            "status": true,
+            "last_check": "2026-05-16 17:21:50",
+            "project": "汕梅",
+            "pole": "z4k89_170"
+          }
+        ],
+        "total_cameras": 5,
+        "total_radars": 4,
+        "offline_cameras": 0,
+        "offline_radars": 0,
+        "offline_total": 0,
+        "project": ""
+      }
+    },
+    "recommendations": [],
+    "device_name": "mz4k88_800",
+    "project": "汕梅"
+  },
+  "need_llm_reason": "进程错误: error_kafka_event(2条错误), error_radar_bridge(1条错误), error_rosbridge_websocket(4条错误), error_rtsp(7条错误), error_traffic(7条错误), error_zmq_bridge(7条错误), out_calibration_project(1条错误), out_kafka_monitor(1条错误)",
+  "pending_time": "2026-05-18 07:47:40"
+}

@@ -1064,7 +1064,7 @@ def _check_rostopic_hz(host_ip: str, result: dict, has_log_errors: bool) -> dict
             f"echo 'TOPIC:{topic}'; cat /tmp/hz_{safe_topic_name}.txt 2>/dev/null; echo '---END---'"
         )
 
-    parallel_cmd = " ; ".join(check_parts) + " ; wait ; " + " ; ".join(collect_parts)
+    parallel_cmd = " ".join(check_parts) + " wait; " + "; ".join(collect_parts)
     stdout, _, _ = ssh_exec(host_ip, CONTAINER_PORT, CONTAINER_USER, parallel_cmd, exec_timeout=30)
 
     # 解析并行输出
@@ -1312,7 +1312,7 @@ def collect_device_raw_data(host_ip: str) -> dict:
             collect_parts.append(
                 f"echo 'TOPIC:{topic}'; cat /tmp/hz_{safe_name}.txt 2>/dev/null; echo '---END---'"
             )
-        parallel_cmd = " ; ".join(check_parts) + " ; wait ; " + " ; ".join(collect_parts)
+        parallel_cmd = " ".join(check_parts) + " wait; " + "; ".join(collect_parts)
         stdout, _, _ = ssh_exec(host_ip, CONTAINER_PORT, CONTAINER_USER, parallel_cmd, exec_timeout=30)
 
         raw["topic_rates"] = {}
