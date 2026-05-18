@@ -9,20 +9,20 @@ Defines:
 
 Architecture:
   Agent (LLM + tools) → ToolNode → Agent → ... → final response
-  State (messages + last_ip/last_project) persisted via MemorySaver
+  State (messages + last_ip/last_project) persisted via AsyncSqliteSaver (SQLite)
 """
 
 import json
 import sys
 from pathlib import Path
-from typing import TypedDict, Annotated, Literal
+from typing import TypedDict, Annotated, Literal, Optional
 
 SELF_AGENT_DIR = Path(__file__).parent
 sys.path.insert(0, str(SELF_AGENT_DIR))
 
 from langgraph.graph import StateGraph, END, add_messages
 from langgraph.prebuilt import ToolNode, tools_condition
-from langgraph.checkpoint.memory import MemorySaver
+from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
 from langchain_core.messages import BaseMessage, AIMessage, ToolMessage, HumanMessage
 from langchain_openai import ChatOpenAI
 
@@ -39,10 +39,15 @@ class AgentState(TypedDict):
     - messages: chat history (managed by LangGraph's add_messages reducer)
     - last_ip: last device IP operated on (for context inheritance)
     - last_project: last project operated on
+    - conversation_intent: LLM-extracted intent summary for this conversation turn
+    - pending_feedback: whether to ask for user feedback after this turn
     """
     messages: Annotated[list, add_messages]
     last_ip: str
     last_project: str
+    conversation_intent: Optional[str]
+    pending_feedback: bool
+    auto_correctness: Optional[int]
 
 
 def _extract_context_from_messages(messages: list) -> tuple:
@@ -135,7 +140,19 @@ def agent_node(state: AgentState) -> dict:
 11. 当用户想看日志内容、配置文件等灵活查询时，使用 ssh_exec_command
 12. ssh_exec_command 的 ros_env 参数控制是否需要 ROS 环境初始化。涉及 rostopic/rosnode/rosservice 等 ROS 命令时必须传 ros_env=True
 13. 当 diagnose_device 返回诊断结果后，直接原样展示给用户，不要重新组织成表格或其他格式
-14. 基本诊断（diagnose_device）能确定问题的直接给出结果；原因不明确时才调用 llm_diagnose_device 做深度分析"""
+14. 基本诊断（diagnose_device）能确定问题的直接给出结果；原因不明确时才调用 llm_diagnose_device 做深度分析
+15. SSH连接策略：系统会先尝试公钥登录，公钥失败后自动尝试数据库中的密码登录；如果都失败，会返回数据库中记录的历史状态信息。当设备离线时，诊断结果会包含数据库记录供参考
+16. 当诊断结果显示"数据库记录"时，说明该数据是历史快照，不是实时数据，回答时需要说明这一点
+17. 回复末尾不要输出任何数字评分或分数，不要附加无关的数字。回答结束时不要带任何单独的数字行或末尾数字
+
+诊断维度说明：
+- 物理机：SSH可达性、运行时间、硬盘占用率（/ 和 /data）
+- 物理机离线：飞书报告中的物理机离线设备（独立于容器/图片问题，优先级最高）
+- 容器：Docker运行状态、SSH连接
+- 进程：supervisor进程状态、日志错误分析（驱动异常/ROS连接失败/OOM）
+- ROS：roscore运行状态、topic频率
+- 数据源：今日图片数量
+- 传感器：摄像头和雷达在线率"""
 
     # Add context from previous tool calls
     ctx_ip = state.get("last_ip", "") or _extract_context_from_messages(messages)[0]
@@ -170,6 +187,72 @@ def update_context_node(state: AgentState) -> dict:
 
 
 # ──────────────────────────────────────────────
+# Feedback node: log intent and mark for feedback
+# ──────────────────────────────────────────────
+def feedback_node(state: AgentState) -> dict:
+    """Log conversation intent and set pending_feedback for non-trivial turns."""
+    messages = state["messages"]
+    if not messages:
+        return {"pending_feedback": False}
+
+    # Find the user's last message and the last AI response
+    last_user_msg = None
+    last_ai_msg = None
+    for msg in reversed(messages):
+        if isinstance(msg, HumanMessage) and last_user_msg is None:
+            last_user_msg = msg.content
+        if isinstance(msg, AIMessage) and last_ai_msg is None:
+            last_ai_msg = msg.content
+        if last_user_msg and last_ai_msg:
+            break
+
+    if not last_user_msg:
+        return {"pending_feedback": False}
+
+    # Check if any tools were called in this turn
+    tool_called = any(isinstance(m, ToolMessage) for m in messages[-10:])
+
+    # Determine if this is a substantive turn worth feedback
+    trivial_patterns = ["好的", "谢谢", "ok", "嗯", "明白", "知道了", "再见", "bye"]
+    is_trivial = any(p in last_user_msg.lower() for p in trivial_patterns) and not tool_called
+
+    # Extract intent using LLM if tools were called
+    intent = ""
+    auto_score = None
+    if tool_called and not is_trivial:
+        llm, _ = _get_llm()
+        intent_prompt = (
+            "请用一句话概括用户本次对话中用户的意图（20字以内），仅输出概括内容：\n"
+            f"用户消息: {last_user_msg[:200]}\n"
+            f"AI回复: {last_ai_msg[:200] if last_ai_msg else ''}"
+        )
+        try:
+            intent_resp = llm.invoke([("human", intent_prompt)])
+            intent = intent_resp.content.strip()[:100]
+        except Exception:
+            intent = last_user_msg[:50]
+
+        # Self-evaluate correctness based on tool results
+        auto_prompt = (
+            "请评估本次诊断是否成功完成。仅输出0-10的整数分数（10=完美）:\n"
+            f"用户意图: {intent}\n"
+            f"AI回复: {last_ai_msg[:500] if last_ai_msg else ''}"
+        )
+        try:
+            score_resp = llm.invoke([("human", auto_prompt)])
+            score_text = score_resp.content.strip()
+            auto_score = max(0, min(10, int(score_text)))
+        except Exception:
+            pass
+
+    return {
+        "conversation_intent": intent,
+        "pending_feedback": tool_called and not is_trivial,
+        "auto_correctness": auto_score,
+    }
+
+
+# ──────────────────────────────────────────────
 # Conditional edge: continue to tools or end
 # ──────────────────────────────────────────────
 def should_continue(state: AgentState) -> Literal["tools", "update_context", "__end__"]:
@@ -183,8 +266,13 @@ def should_continue(state: AgentState) -> Literal["tools", "update_context", "__
 # ──────────────────────────────────────────────
 # Build graph
 # ──────────────────────────────────────────────
-def build_agent():
-    """Build and compile the LangGraph agent."""
+async def build_agent():
+    """Build and compile the LangGraph agent with async SQLite checkpointer.
+
+    Returns (compiled_graph, context_manager) — the context_manager must be
+    kept alive (not exited) for the database connection to stay open.
+    Call `await context_manager.aclose()` on shutdown.
+    """
     tool_node = ToolNode(TOOLS)
 
     graph = StateGraph(AgentState)
@@ -192,6 +280,7 @@ def build_agent():
     graph.add_node("agent", agent_node)
     graph.add_node("tools", tool_node)
     graph.add_node("update_context", update_context_node)
+    graph.add_node("feedback", feedback_node)
 
     graph.set_entry_point("agent")
 
@@ -206,12 +295,12 @@ def build_agent():
     )
 
     graph.add_edge("tools", "agent")
-    graph.add_edge("update_context", END)
+    graph.add_edge("update_context", "feedback")
+    graph.add_edge("feedback", END)
 
-    # Use MemorySaver for checkpointing (persists conversation state)
-    memory = MemorySaver()
-
-    return graph.compile(checkpointer=memory)
+    ctx = AsyncSqliteSaver.from_conn_string(str(SELF_AGENT_DIR / "checkpoints.db"))
+    memory = await ctx.__aenter__()
+    return graph.compile(checkpointer=memory), ctx
 
 
 # ──────────────────────────────────────────────

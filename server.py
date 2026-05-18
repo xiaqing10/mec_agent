@@ -7,9 +7,7 @@ Self-Agent API Server - MEC日志分析与设备诊断Agent (LangGraph版)
   - 流式响应: SSE 流式输出 LLM 生成和工具执行过程
   - Markdown渲染: WebUI 支持代码高亮
   - 会话自动清理: 7天无访问自动清除
-
-启动:
-  python3 server.py
+  - 用户反馈: 对话结束后收集用户评价，用于持续优化
 """
 import json
 import sys
@@ -26,7 +24,9 @@ SELF_AGENT_DIR = Path(__file__).parent
 sys.path.insert(0, str(SELF_AGENT_DIR))
 os.chdir(str(SELF_AGENT_DIR))
 
-from config import API_HOST, API_PORT, API_KEY
+from config import API_HOST, API_PORT, API_KEY, USERS
+
+from feedback_store import create_feedback_record, update_rating, get_feedback_stats, get_recent_feedback
 
 try:
     from aiohttp import web
@@ -37,23 +37,24 @@ except ImportError:
 
 # ========== 懒加载 LangGraph Agent ==========
 _agent = None
+_agent_checkpointer_ctx = None
 _agent_lock = asyncio.Lock()
 _agent_init_time = None
+_agent_init_time_since_init = [None]  # mutable container to avoid nonlocal issues
 
 async def get_agent():
-    global _agent, _agent_init_time
+    global _agent, _agent_checkpointer_ctx, _agent_init_time
     if _agent is not None:
         return _agent
     async with _agent_lock:
         if _agent is None:
             logger.info("🖤 首次初始化 LangGraph Agent (约需 20-40秒)...")
             t0 = time.time()
-            # 延迟导入（避免启动时加载 OpenAI SDK）
             from agent import build_agent
-            loop = asyncio.get_running_loop()
-            _agent = await loop.run_in_executor(None, build_agent)
+            _agent, _agent_checkpointer_ctx = await build_agent()
             _agent_init_time = time.time() - t0
-            logger.info(f"✅ LangGraph Agent 初始化完成 (用时 {_agent_init_time:.1f}秒)")
+            _agent_init_time_since_init[0] = _agent_init_time
+            logger.info(f"✅ LangGraph Agent 初始化完成 (用时 {_agent_init_time_since_init[0]:.1f}秒)")
     return _agent
 
 
@@ -89,11 +90,25 @@ async def handle_chat(request):
         )
         reply = _extract_agent_reply(final_state) or "处理完成，但未生成回复。"
 
+        # Log feedback record with username
+        username = _get_username(request) or session_id
+        intent = final_state.get("conversation_intent", "")
+        pending = final_state.get("pending_feedback", False)
+        auto_correctness = final_state.get("auto_correctness")
+        if intent:
+            try:
+                tool_msgs = [m for m in final_state.get("messages", []) if hasattr(m, 'type') and m.type == 'tool']
+                actions = [{"name": getattr(m, 'name', ''), "content": str(getattr(m, 'content', ''))[:100]} for m in tool_msgs[:10]]
+                create_feedback_record(session_id, user_id=username, intent=intent, actions=actions, auto_correctness=auto_correctness)
+            except Exception as e:
+                logger.warning("Failed to save feedback: %s", e)
+
         return web.json_response({
             "success": True,
             "action": "chat",
             "data": {"reply": reply},
-            "session_id": session_id
+            "session_id": session_id,
+            "pending_feedback": pending
         })
     except Exception as e:
         logger.error("❌ LangGraph执行失败: %s", e)
@@ -134,7 +149,16 @@ async def handle_chat_stream(request):
 
     try:
         from langchain_core.messages import HumanMessage
+
+        if _agent is None:
+            await _send("info", {"status": "initializing", "message": "首次使用正在初始化 Agent，约需 20-40 秒，请耐心等待..."})
+
         agent = await get_agent()
+
+        if _agent_init_time_since_init[0] is not None:
+            init_time = _agent_init_time_since_init[0]
+            _agent_init_time_since_init[0] = None
+            await _send("info", {"status": "initialized", "message": f"Agent 初始化完成 (用时 {init_time:.1f}秒)"})
 
         await _send("info", {"status": "started", "session_id": session_id})
 
@@ -179,6 +203,24 @@ async def handle_chat_stream(request):
 
         await _send("done", {"status": "complete"})
 
+        # Save feedback record and signal feedback request if needed
+        try:
+            final_state = await agent.ainvoke(
+                {"messages": []},
+                config
+            )
+            intent = final_state.get("conversation_intent", "")
+            pending = final_state.get("pending_feedback", False)
+            auto_correctness = final_state.get("auto_correctness")
+            if intent:
+                tool_msgs = [m for m in final_state.get("messages", []) if hasattr(m, 'type') and m.type == 'tool']
+                actions = [{"name": getattr(m, 'name', ''), "content": str(getattr(m, 'content', ''))[:100]} for m in tool_msgs[:10]]
+                create_feedback_record(session_id, user_id=_get_username(request) or session_id, intent=intent, actions=actions, auto_correctness=auto_correctness)
+            if pending:
+                await _send("feedback_request", {"session_id": session_id, "intent": intent})
+        except Exception as e:
+            logger.warning("Failed to save feedback after stream: %s", e)
+
     except Exception as e:
         logger.error("❌ SSE流失败: %s", e)
         try:
@@ -202,7 +244,7 @@ async def handle_health(request):
         "status": "ok",
         "service": "self-agent-langgraph",
         "agent_initialized": _agent is not None,
-        "init_time_s": _agent_init_time
+        "init_time_s": _agent_init_time_since_init[0] or _agent_init_time
     })
 
 
@@ -226,6 +268,59 @@ async def handle_clear_session(request):
             config
         )
         return web.json_response({"success": True, "message": f"会话 {session_id} 已清除"})
+    except Exception as e:
+        return web.json_response({"success": False, "error": str(e)}, status=500)
+
+
+async def handle_feedback(request):
+    """Submit feedback for a conversation turn."""
+    body = await _parse_body(request)
+    if not body:
+        return web.json_response({"success": False, "error": "请求体必须为JSON格式"}, status=400)
+
+    session_id = body.get("session_id", "")
+    rating = body.get("rating", "")
+    feedback_text = body.get("feedback_text", "")
+
+    if not session_id or rating not in ("satisfied", "partial", "unsatisfied"):
+        return web.json_response({"success": False, "error": "参数无效: session_id 和 rating(满足/部分/不满足) 为必填"}, status=400)
+
+    try:
+        update_rating(session_id, rating, feedback_text)
+        return web.json_response({"success": True, "message": "感谢你的反馈！"})
+    except Exception as e:
+        return web.json_response({"success": False, "error": str(e)}, status=500)
+
+
+async def handle_feedback_stats(request):
+    """Get feedback statistics."""
+    try:
+        stats = get_feedback_stats()
+        return web.json_response({"success": True, "data": stats})
+    except Exception as e:
+        return web.json_response({"success": False, "error": str(e)}, status=500)
+
+
+async def handle_feedback_list(request):
+    """List all feedback records (admin only)."""
+    username = _get_username(request)
+    if username != "admin":
+        return web.json_response({"success": False, "error": "仅管理员可查看全部反馈"}, status=403)
+    try:
+        records = get_recent_feedback(limit=200)
+        return web.json_response({"success": True, "data": records})
+    except Exception as e:
+        return web.json_response({"success": False, "error": str(e)}, status=500)
+
+
+async def handle_feedback_my(request):
+    """List current user's feedback records."""
+    username = _get_username(request)
+    if not username:
+        return web.json_response({"success": False, "error": "未登录"}, status=401)
+    try:
+        records = get_recent_feedback(limit=100, user_id=username)
+        return web.json_response({"success": True, "data": records})
     except Exception as e:
         return web.json_response({"success": False, "error": str(e)}, status=500)
 
@@ -281,19 +376,70 @@ def _parse_body(request):
         return None
 
 
+def _get_username(request) -> str:
+    """Extract username from cookie, return empty string if not logged in."""
+    cookies = request.cookies
+    return cookies.get("username", "")
+
+
+def _set_login_cookie(response, username: str):
+    response.set_cookie("username", username, max_age=86400 * 7, path="/")
+
+
+def _clear_login_cookie(response):
+    response.del_cookie("username", path="/")
+
+
+# ========== 登录/登出 API ==========
+
+async def handle_login(request):
+    body = await _parse_body(request)
+    if not body:
+        return web.json_response({"success": False, "error": "请求体必须为JSON格式"}, status=400)
+    username = body.get("username", "").strip()
+    password = body.get("password", "").strip()
+    if not username or not password:
+        return web.json_response({"success": False, "error": "用户名和密码不能为空"}, status=400)
+    if username not in USERS or USERS[username] != password:
+        return web.json_response({"success": False, "error": "用户名或密码错误"}, status=401)
+    resp = web.json_response({"success": True, "data": {"username": username}})
+    _set_login_cookie(resp, username)
+    return resp
+
+
+async def handle_logout(request):
+    resp = web.json_response({"success": True, "message": "已退出"})
+    _clear_login_cookie(resp)
+    return resp
+
+
+async def handle_me(request):
+    username = _get_username(request)
+    if not username:
+        return web.json_response({"success": False, "error": "未登录"}, status=401)
+    return web.json_response({"success": True, "data": {"username": username}})
+
+
 def _auth_middleware():
     @web.middleware
     async def auth_middleware(request, handler):
         path = request.path
-        if path in ("/", "/webui", "/api/v1/health"):
+        # Public paths: no auth required
+        if path in ("/", "/webui", "/api/v1/health",
+                     "/api/v1/login", "/api/v1/logout"):
             return await handler(request)
+        # API key auth for machine clients
         api_key = request.headers.get("X-API-Key", "")
-        if api_key != API_KEY:
-            return web.json_response(
-                {"success": False, "error": "无效的 API Key"},
-                status=401
-            )
-        return await handler(request)
+        if api_key == API_KEY:
+            return await handler(request)
+        # Cookie auth for WebUI browser clients
+        username = _get_username(request)
+        if username and username in USERS:
+            return await handler(request)
+        return web.json_response(
+            {"success": False, "error": "未登录或无效的 API Key"},
+            status=401
+        )
     return auth_middleware
 
 
@@ -309,6 +455,8 @@ WEBUI_HTML = r'''<!DOCTYPE html>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/14.1.0/markdown-it.min.js"></script>
 <style>
+.cursor { animation: blink 1s step-end infinite; }
+@keyframes blink { 50% { opacity: 0; } }
 :root { --sidebar-w: 260px; --header-h: 52px; --primary: #1a73e8; }
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
@@ -358,6 +506,12 @@ body {
   border: none; border-radius: 8px; font-size: 13px; cursor: pointer;
 }
 .sidebar-header .new-chat-btn:hover { background: #1557b0; }
+.sidebar-header .feedback-btn {
+  width: 100%; padding: 8px 12px; margin-top: 6px;
+  background: #fff; color: var(--primary); border: 1px solid var(--primary);
+  border-radius: 8px; font-size: 13px; cursor: pointer;
+}
+.sidebar-header .feedback-btn:hover { background: #e8f0fe; }
 .history-list { flex: 1; overflow-y: auto; padding: 8px 0; }
 .history-item {
   padding: 10px 14px; cursor: pointer; font-size: 13px; color: #444;
@@ -468,11 +622,73 @@ body {
 .input-box button:hover { background: #1557b0; }
 .input-box button:disabled { background: #ccc; cursor: not-allowed; }
 .input-box button svg { width: 20px; height: 20px; }
+.feedback-bar {
+  max-width: 800px; margin: 8px auto 0; padding: 10px 14px;
+  background: #f8f9fa; border: 1px solid #e5e7eb; border-radius: 10px;
+  font-size: 13px; text-align: center; display: none;
+}
+.feedback-bar .fb-intent { color: #666; font-size: 12px; margin-bottom: 6px; }
+.feedback-bar .fb-btns { display: flex; gap: 6px; justify-content: center; }
+.feedback-bar .fb-btn {
+  padding: 4px 12px; border: 1px solid #ddd; border-radius: 6px;
+  background: #fff; cursor: pointer; font-size: 12px;
+}
+.feedback-bar .fb-btn:hover { background: #e8f0fe; border-color: var(--primary); }
+.feedback-bar .fb-btn.selected { background: var(--primary); color: #fff; border-color: var(--primary); }
+.feedback-bar .fb-thanks { color: #155724; font-size: 12px; display: none; }
 @media (max-width: 768px) {
   .sidebar { position: fixed; left: 0; top: var(--header-h); bottom: 0; z-index: 50; display: none; }
   .sidebar.show { display: flex; }
   .header .menu-btn { display: block; }
 }
+/* Login page */
+.login-overlay {
+  position: fixed; inset: 0; z-index: 9999;
+  background: #f0f2f5; display: flex;
+  align-items: center; justify-content: center;
+}
+.login-box {
+  background: #fff; padding: 40px; border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.1); width: 360px;
+}
+.login-box h2 { text-align: center; margin-bottom: 24px; color: #333; }
+.login-box .field { margin-bottom: 16px; }
+.login-box label { display: block; font-size: 13px; color: #666; margin-bottom: 4px; }
+.login-box input {
+  width: 100%; padding: 10px 12px; border: 1px solid #ddd;
+  border-radius: 8px; font-size: 14px; outline: none; box-sizing: border-box;
+}
+.login-box input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(26,115,232,0.15); }
+.login-box .login-btn {
+  width: 100%; padding: 10px; background: var(--primary); color: #fff;
+  border: none; border-radius: 8px; font-size: 14px; cursor: pointer;
+}
+.login-box .login-btn:hover { background: #1557b0; }
+.login-box .login-error { color: #d00; font-size: 13px; text-align: center; margin-top: 8px; display: none; }
+/* User header */
+.user-info { display: flex; align-items: center; gap: 8px; margin-left: auto; font-size: 13px; }
+.user-info .logout-btn {
+  background: none; border: 1px solid rgba(255,255,255,0.3); color: #fff; border-radius: 4px;
+  padding: 2px 8px; font-size: 11px; cursor: pointer;
+}
+.user-info .logout-btn:hover { background: rgba(255,255,255,0.15); }
+/* Feedback page */
+.page-feedback { display: none; }
+.feedback-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.feedback-table th, .feedback-table td { border: 1px solid #e5e7eb; padding: 6px 10px; text-align: left; }
+.feedback-table th { background: #f6f8fa; font-weight: 600; }
+.feedback-table .rating-satisfied { color: #155724; }
+.feedback-table .rating-partial { color: #856404; }
+.feedback-table .rating-unsatisfied { color: #721c24; }
+.fb-scope-btn { padding:4px 12px;background:#f0f0f0;border:1px solid #ccc;border-radius:6px;cursor:pointer;font-size:12px; }
+.fb-scope-btn.active { background:var(--primary);color:#fff;border-color:var(--primary); }
+.fb-scope-btn:not(.active):hover { background:#e0e0e0; }
+.nav-tabs { display: flex; gap: 0; margin-bottom: 12px; border-bottom: 1px solid #e5e7eb; }
+.nav-tabs button {
+  padding: 8px 16px; border: none; background: none; cursor: pointer;
+  font-size: 13px; color: #666; border-bottom: 2px solid transparent;
+}
+.nav-tabs button.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 500; }
 </style>
 </head>
 <body>
@@ -480,33 +696,231 @@ body {
   <button class="menu-btn" onclick="toggleSidebar()">☰</button>
   <h1>Self-Agent MEC诊断助手</h1>
   <span class="badge">v3.1 流式</span>
-  <div style="margin-left:auto;font-size:12px;opacity:0.7">流式输出 · Markdown</div>
+  <div class="user-info" id="userInfo" style="display:none">
+    <span id="userNameDisplay"></span>
+    <button class="logout-btn" onclick="logout()">退出</button>
+  </div>
 </div>
 <div class="layout">
 <div class="sidebar" id="sidebar">
   <div class="sidebar-header">
     <button class="new-chat-btn" onclick="newConversation()">+ 新建对话</button>
+    <button class="feedback-btn" onclick="showFeedbackPage()">📊 我的反馈</button>
   </div>
   <div class="history-list" id="historyList"></div>
 </div>
 <div class="main">
   <div class="messages" id="messages"></div>
-  <div class="input-area">
+  <div class="input-area" id="input-area">
     <div class="input-box">
       <textarea id="input" rows="1" placeholder="说话或输入操作... (Enter发送, Shift+Enter换行)" onkeydown="if((event.key==='Enter'||event.keyCode===13)&&!event.shiftKey){event.preventDefault();send();}"></textarea>
       <button id="sendBtn" onclick="send()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
       </button>
     </div>
+    <div class="feedback-bar" id="feedbackBar">
+      <div class="fb-intent" id="fbIntent"></div>
+      <div class="fb-btns" id="fbBtns">
+        <button class="fb-btn" data-rating="satisfied" onclick="submitFeedback('satisfied')">👍 满足</button>
+        <button class="fb-btn" data-rating="partial" onclick="showFeedbackReason('partial')">🤔 部分</button>
+        <button class="fb-btn" data-rating="unsatisfied" onclick="showFeedbackReason('unsatisfied')">👎 不满足</button>
+      </div>
+      <div id="fbReasonArea" style="display:none;margin-top:8px">
+        <textarea id="fbReasonInput" placeholder="请描述不满意的原因..." style="width:100%;height:50px;padding:6px;border:1px solid #ccc;border-radius:6px;resize:none;font-size:12px;box-sizing:border-box" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();confirmFeedbackReason()}"></textarea>
+        <div style="display:flex;gap:6px;justify-content:flex-end;margin-top:4px">
+          <button onclick="cancelFeedbackReason()" style="padding:3px 10px;background:#f0f0f0;border:1px solid #ccc;border-radius:6px;cursor:pointer;font-size:12px">取消</button>
+          <button onclick="confirmFeedbackReason()" id="fbReasonSubmitBtn" style="padding:3px 10px;background:var(--primary);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:12px">提交</button>
+        </div>
+      </div>
+      <div class="fb-thanks" id="fbThanks">感谢你的反馈！</div>
+    </div>
   </div>
 </div>
 </div>
+
+<!-- Login overlay -->
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-box">
+    <h2>Self-Agent 登录</h2>
+    <div class="field">
+      <label>用户名</label>
+      <input type="text" id="loginUser" placeholder="请输入用户名" onkeydown="if(event.key==='Enter') document.getElementById('loginPass').focus()">
+    </div>
+    <div class="field">
+      <label>密码</label>
+      <input type="password" id="loginPass" placeholder="请输入密码" onkeydown="if(event.key==='Enter') doLogin()">
+    </div>
+    <button class="login-btn" onclick="doLogin()">登录</button>
+    <div class="login-error" id="loginError"></div>
+  </div>
+</div>
+
+<!-- Feedback history page -->
+<div class="main" id="feedbackPage" style="display:none">
+  <div style="padding:20px 16px;max-width:1000px;margin:0 auto">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <div>
+        <h3 style="display:inline;margin-right:12px">📊 反馈记录</h3>
+        <span id="feedbackScope" style="font-size:13px;color:#666">我的反馈</span>
+      </div>
+      <div>
+        <span id="adminToggle" style="display:none">
+          <button onclick="loadMyFeedback()" id="fbMyBtn" class="fb-scope-btn active">我的</button>
+          <button onclick="loadAllFeedback()" id="fbAllBtn" class="fb-scope-btn">全部</button>
+        </span>
+        <button onclick="showChatPage()" style="margin-left:8px;padding:6px 14px;background:var(--primary);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:13px">← 返回对话</button>
+      </div>
+    </div>
+    <div id="feedbackList"><p style="color:#999">加载中...</p></div>
+  </div>
+</div>
+
 <script>
 var API_KEY = __API_KEY__;
 var STORAGE_KEY = 'mec_chat_sessions_v3';
 var currentSessionId = null;
 var sessions = [];
-var md = window.markdownit({ html: true, linkify: true, typographer: true, breaks: true });
+var currentUser = '';
+var md = (function() {
+  try {
+    if (typeof window.markdownit === 'function') return window.markdownit({ html: true, linkify: true, typographer: true, breaks: true });
+  } catch(e) {}
+  return { render: function(t) { return '<pre>' + escapeHtml(t) + '</pre>'; } };
+})();
+
+// ========== Auth ==========
+function checkAuth() {
+  fetch('/api/v1/me', { credentials: 'same-origin' })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (d.success) {
+        currentUser = d.data.username;
+        document.getElementById('userInfo').style.display = 'flex';
+        document.getElementById('userNameDisplay').textContent = '👤 ' + currentUser;
+        document.getElementById('loginOverlay').style.display = 'none';
+        document.getElementById('feedbackPage').style.display = 'none';
+        document.getElementById('messages').style.display = '';
+        initChat();
+      } else {
+        document.getElementById('loginOverlay').style.display = 'flex';
+      }
+    })
+    .catch(function() {
+      document.getElementById('loginOverlay').style.display = 'flex';
+    });
+}
+
+function doLogin() {
+  var user = document.getElementById('loginUser').value.trim();
+  var pass = document.getElementById('loginPass').value.trim();
+  if (!user || !pass) { showLoginError('请输入用户名和密码'); return; }
+  fetch('/api/v1/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username: user, password: pass })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(d) {
+    if (d.success) {
+      currentUser = d.data.username;
+      document.getElementById('userInfo').style.display = 'flex';
+      document.getElementById('userNameDisplay').textContent = '👤 ' + currentUser;
+      document.getElementById('loginOverlay').style.display = 'none';
+      initChat();
+    } else {
+      showLoginError(d.error || '登录失败');
+    }
+  })
+  .catch(function() { showLoginError('网络错误'); });
+}
+
+function showLoginError(msg) {
+  var el = document.getElementById('loginError');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+function logout() {
+  fetch('/api/v1/logout', { method: 'POST' })
+    .then(function() { location.reload(); })
+    .catch(function() { location.reload(); });
+}
+
+// ========== Page Navigation ==========
+function showChatPage() {
+  document.getElementById('sidebar').style.display = '';
+  document.getElementById('messages').style.display = '';
+  document.getElementById('input-area').style.display = '';
+  document.getElementById('feedbackPage').style.display = 'none';
+}
+
+function showFeedbackPage() {
+  document.getElementById('sidebar').style.display = 'none';
+  document.getElementById('messages').style.display = 'none';
+  document.getElementById('input-area').style.display = 'none';
+  document.getElementById('feedbackPage').style.display = '';
+  var toggle = document.getElementById('adminToggle');
+  if (currentUser === 'admin') {
+    toggle.style.display = 'inline-block';
+  } else {
+    toggle.style.display = 'none';
+  }
+  loadMyFeedback();
+}
+
+function loadMyFeedback() {
+  document.getElementById('fbMyBtn').className = 'fb-scope-btn active';
+  document.getElementById('fbAllBtn').className = 'fb-scope-btn';
+  document.getElementById('feedbackScope').textContent = '我的反馈';
+  fetchFeedback('/api/v1/feedback/my');
+}
+
+function loadAllFeedback() {
+  document.getElementById('fbAllBtn').className = 'fb-scope-btn active';
+  document.getElementById('fbMyBtn').className = 'fb-scope-btn';
+  document.getElementById('feedbackScope').textContent = '全部用户反馈';
+  fetchFeedback('/api/v1/feedback/list');
+}
+
+function fetchFeedback(url) {
+  var container = document.getElementById('feedbackList');
+  container.innerHTML = '<p style="color:#999">加载中...</p>';
+  fetch(url, { credentials: 'same-origin' })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (!d.success || !d.data || d.data.length === 0) {
+        container.innerHTML = '<p style="color:#999">暂无反馈记录</p>';
+        return;
+      }
+      var html = '<table class="feedback-table"><thead><tr><th>时间</th><th>用户</th><th>意图</th><th>评价</th><th>反馈</th><th>自评</th></tr></thead><tbody>';
+      for (var i = 0; i < d.data.length; i++) {
+        var r = d.data[i];
+        var ratingMap = { 'satisfied': '👍 满足', 'partial': '🤔 部分', 'unsatisfied': '👎 不满足', 'pending': '⏳ 待评价', null: '⏳ 待评价' };
+        var ratingText = ratingMap[r.rating] || '⏳ 待评价';
+        var ratingClass = 'rating-' + (r.rating || 'pending');
+        var time = r.created_at ? r.created_at.slice(0, 19).replace('T', ' ') : '';
+        var intent = r.intent || '-';
+        var score = r.auto_correctness !== null ? (r.auto_correctness * 10) + '%' : '-';
+        html += '<tr><td>' + time + '</td><td>' + (r.user_id || '-') + '</td><td>' + intent + '</td><td class="' + ratingClass + '">' + ratingText + '</td><td>' + (r.feedback_text || '-') + '</td><td>' + score + '</td></tr>';
+      }
+      html += '</tbody></table>';
+      container.innerHTML = html;
+    })
+    .catch(function() { container.innerHTML = '<p style="color:#d00">加载失败</p>'; });
+}
+
+function initChat() {
+  document.getElementById('sidebar').style.display = '';
+  document.getElementById('messages').style.display = '';
+  document.getElementById('input-area').style.display = '';
+  document.getElementById('feedbackPage').style.display = 'none';
+  sessions = loadSessions();
+  if (sessions.length > 0) {
+    currentSessionId = sessions[0].id;
+    renderHistory();
+    renderMessages();
+  }
+}
 
 function loadSessions() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch(e) { return []; } }
 function saveSessions() { localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions)); }
@@ -603,7 +1017,7 @@ function addMsgToDOM(type, content, extra, save) {
     };
     contentDiv.appendChild(copyBtn);
   } else {
-    contentDiv.textContent = content || '';
+    contentDiv.innerHTML = md.render(content || '');
   }
   div.appendChild(contentDiv);
   wrapper.appendChild(div);
@@ -683,42 +1097,39 @@ async function send() {
   var controller = new AbortController();
   var timeoutId = setTimeout(function() { controller.abort(); }, 120000);
 
-  try {
-    var response = await fetch('/api/v1/chat/stream', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-API-Key': API_KEY },
-      body: JSON.stringify({ message: msg, session_id: currentSessionId }),
-      signal: controller.signal
-    });
-    clearTimeout(timeoutId);
+try {
+      var response = await fetch('/api/v1/chat/stream', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-API-Key': API_KEY },
+        body: JSON.stringify({ message: msg, session_id: currentSessionId }),
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
 
-    var reader = response.body.getReader();
-    var decoder = new TextDecoder();
-    var buffer = '';
+      var reader = response.body.getReader();
+      var decoder = new TextDecoder();
+      var buffer = '';
 
-    while (true) {
-      var result = await reader.read();
-      if (result.done) break;
-      buffer += decoder.decode(result.value, { stream: true });
-      var lines = buffer.split('\n');
-      buffer = lines.pop() || '';
-      for (var i = 0; i < lines.length; i++) {
-        var line = lines[i];
-        if (line.startsWith('event: ')) {
-          var eventType = line.slice(7).trim();
-          var dataLine = lines[i + 1];
-          if (dataLine && dataLine.startsWith('data: ')) {
-  var controller = new AbortController();
-  var timeoutId = setTimeout(function() { controller.abort(); }, 120000);
-
-  try {
-              var data = JSON.parse(dataLine.slice(6));
-              handleEvent(eventType, data);
-            } catch(e) {}
+      while (true) {
+        var result = await reader.read();
+        if (result.done) break;
+        buffer += decoder.decode(result.value, { stream: true });
+        var lines = buffer.split('\n');
+        buffer = lines.pop() || '';
+        for (var i = 0; i < lines.length; i++) {
+          var line = lines[i];
+          if (line.startsWith('event: ')) {
+            var eventType = line.slice(7).trim();
+            var dataLine = lines[i + 1];
+            if (dataLine && dataLine.startsWith('data: ')) {
+              try {
+                var data = JSON.parse(dataLine.slice(6));
+                handleEvent(eventType, data);
+              } catch(e) {}
+            }
           }
         }
       }
-    }
     } catch (e) {
       clearTimeout(timeoutId);
       removeTyping();
@@ -730,10 +1141,17 @@ async function send() {
 
   function handleEvent(type, data) {
     try {
+      if (type === 'info') {
+        var msg = data.message || '';
+        fullText += (fullText ? '\n' : '') + '💬 ' + msg;
+        contentDiv.innerHTML = md.render(fullText) + '<span class="cursor">▌</span>';
+        scrollToBottom();
+        return;
+      }
       removeTyping();
       if (type === 'token') {
         fullText += data.content || '';
-        contentDiv.textContent = fullText + '▌';
+        contentDiv.innerHTML = md.render(fullText) + '<span class="cursor">▌</span>';
         scrollToBottom();
       } else if (type === 'tool_start') {
         toolCount++;
@@ -752,7 +1170,7 @@ async function send() {
         var resultText = data.output || '';
         if (resultText.length > 6000) resultText = resultText.slice(0, 6000) + '\n\n...(截断)';
         fullText += '\n\n--- ' + (data.name || '工具') + ' 返回结果 ---\n\n' + resultText + '\n\n---';
-        contentDiv.textContent = fullText + '▌';
+        contentDiv.innerHTML = md.render(fullText) + '<span class="cursor">▌</span>';
         scrollToBottom();
       } else if (type === 'error') {
         var errMsg = (data.message || '');
@@ -760,11 +1178,11 @@ async function send() {
           errMsg = 'LLM API 配额超限，请稍后再试（每日 00:48 重置）。已执行的工具结果见上方。';
         }
         fullText += '\n\n[提示] ' + errMsg;
-        contentDiv.textContent = fullText;
+        contentDiv.innerHTML = md.render(fullText);
         btn.disabled = false;
         var streamMsg = document.getElementById('streaming-msg');
         if (streamMsg) streamMsg.classList.remove('streaming');
-      } else if (type === 'done') {
+} else if (type === 'done') {
         contentDiv.innerHTML = md.render(fullText);
         try {
           contentDiv.querySelectorAll('pre code').forEach(function(block) {
@@ -790,12 +1208,73 @@ async function send() {
         if (streamMsg) streamMsg.classList.remove('streaming');
         scrollToBottom();
         btn.disabled = false;
+      } else if (type === 'feedback_request') {
+        var fbBar = document.getElementById('feedbackBar');
+        var fbIntent = document.getElementById('fbIntent');
+        if (fbBar && fbIntent) {
+          fbIntent.textContent = '本轮意图: ' + (data.intent || '诊断分析');
+          fbBar.style.display = 'block';
+        }
       }
     } catch(e) {
       // 避免handleEvent内任何错误影响流式处理
       console.error('handleEvent error:', e);
     }
   }
+}
+
+var _pendingRating = null;
+
+function showFeedbackReason(rating) {
+  _pendingRating = rating;
+  document.getElementById('fbBtns').style.display = 'none';
+  document.getElementById('fbReasonArea').style.display = '';
+  document.getElementById('fbReasonInput').value = '';
+  document.getElementById('fbReasonInput').focus();
+}
+
+function cancelFeedbackReason() {
+  _pendingRating = null;
+  document.getElementById('fbReasonArea').style.display = 'none';
+  document.getElementById('fbBtns').style.display = '';
+}
+
+function confirmFeedbackReason() {
+  var text = document.getElementById('fbReasonInput').value.trim();
+  submitFeedback(_pendingRating, text || undefined);
+}
+
+function submitFeedback(rating, reason) {
+  var fbBar = document.getElementById('feedbackBar');
+  var fbThanks = document.getElementById('fbThanks');
+  if (!fbBar) return;
+
+  // Reset reason UI
+  document.getElementById('fbReasonArea').style.display = 'none';
+  document.getElementById('fbBtns').style.display = '';
+  _pendingRating = null;
+
+  // Highlight selected
+  var btns = fbBar.querySelectorAll('.fb-btn');
+  for (var i = 0; i < btns.length; i++) { btns[i].classList.remove('selected'); }
+  var selected = fbBar.querySelector('.fb-btn[data-rating="' + rating + '"]');
+  if (selected) selected.classList.add('selected');
+
+  // Submit to server
+  var sessionId = currentSessionId;
+  var body = { session_id: sessionId, rating: rating };
+  if (reason) body.feedback_text = reason;
+  fetch('/api/v1/feedback', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-API-Key': API_KEY },
+    body: JSON.stringify(body)
+  }).then(function(r) { return r.json(); }).then(function(d) {
+    if (d.success) {
+      fbBar.querySelector('.fb-btns').style.display = 'none';
+      fbThanks.style.display = 'block';
+      setTimeout(function() { fbBar.style.display = 'none'; fbThanks.style.display = 'none'; fbBar.querySelector('.fb-btns').style.display = ''; }, 3000);
+    }
+  }).catch(function(e) { console.error('Feedback error:', e); });
 }
 
 var inputEl = document.getElementById('input');
@@ -805,12 +1284,7 @@ inputEl.addEventListener('input', function() {
 });
 function toggleSidebar() { document.getElementById('sidebar').classList.toggle('show'); }
 
-sessions = loadSessions();
-if (sessions.length > 0) {
-  currentSessionId = sessions[0].id;
-  renderHistory();
-  renderMessages();
-}
+checkAuth();
 </script>
 </body>
 </html>'''
@@ -831,11 +1305,18 @@ def create_app():
     app.router.add_get("/api/v1/health", handle_health)
     app.router.add_get("/", handle_webui)
     app.router.add_get("/webui", handle_webui)
+    app.router.add_post("/api/v1/login", handle_login)
+    app.router.add_post("/api/v1/logout", handle_logout)
+    app.router.add_get("/api/v1/me", handle_me)
     app.router.add_post("/api/v1/chat", handle_chat)
     app.router.add_post("/api/v1/chat/stream", handle_chat_stream)
     app.router.add_post("/api/v1/diagnose", handle_raw_diagnose)
     app.router.add_get("/api/v1/version", handle_version)
     app.router.add_post("/api/v1/session/clear", handle_clear_session)
+    app.router.add_post("/api/v1/feedback", handle_feedback)
+    app.router.add_get("/api/v1/feedback/stats", handle_feedback_stats)
+    app.router.add_get("/api/v1/feedback/list", handle_feedback_list)
+    app.router.add_get("/api/v1/feedback/my", handle_feedback_my)
     return app
 
 

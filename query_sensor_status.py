@@ -277,6 +277,259 @@ def format_sensor_status_short(sensor_info: dict) -> str:
     return " | ".join(parts)
 
 
+def get_device_db_info(device_ip: str) -> dict:
+    """从MySQL获取设备的完整数据库信息（当SSH不可达时的回退数据源）。
+
+    返回设备的在线状态、离线时长、系统指标、物理机信息、进程状态、历史图片等。
+
+    Args:
+        device_ip: 设备IP地址
+
+    Returns:
+        {
+            "name": str, "ip": str, "project": str, "is_active": bool,
+            "ssh_status": bool, "last_ssh_check": str,
+            "last_connected": str, "offline_duration": str,
+            "cpu_usage": float, "mem_usage": float, "disk_usage": float,
+            "event_jpg_count": int, "last_event_check": str,
+            "physical_machine": {...},
+            "supervisor_processes": [...],
+            "image_history": [...],
+        }
+    """
+    result = {
+        "ip": device_ip, "name": "", "project": "",
+        "is_active": None, "ssh_status": None, "last_ssh_check": "",
+        "last_connected": "", "offline_duration": "",
+        "cpu_usage": None, "mem_usage": None, "mem_total_gb": None,
+        "disk_usage": None, "disk_total_gb": None,
+        "event_jpg_count": None, "last_event_check": "",
+        "physical_machine": {}, "supervisor_processes": [], "image_history": [],
+    }
+
+    if not device_ip:
+        return result
+
+    try:
+        conn = _get_conn()
+    except Exception:
+        return result
+
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute(
+                """
+                SELECT md.id, md.name, md.host, md.project, md.is_active,
+                       md.ssh_status, md.last_ssh_check, md.last_connected,
+                       md.cpu_usage, md.mem_usage, md.mem_total_gb,
+                       md.disk_usage, md.disk_total_gb,
+                       md.event_jpg_count, md.last_event_check,
+                       md.system_uptime, md.last_stats_update,
+                       md.physical_machine_id,
+                       pm.hostname, pm.host AS pm_host, pm.is_healthy,
+                       pm.last_check AS pm_last_check, pm.first_failure_at,
+                       pm.running_containers, pm.gpu_info, pm.gpu_count,
+                       pm.disk_usage_percent AS pm_disk_usage,
+                       pm.memory_total_gb AS pm_mem_total
+                FROM mec_device md
+                LEFT JOIN physical_machine pm ON md.physical_machine_id = pm.id
+                WHERE md.host = %s
+                """,
+                (device_ip,),
+            )
+            row = cursor.fetchone()
+
+            if not row:
+                return result
+
+            result["name"] = row["name"] or ""
+            result["project"] = row["project"] or ""
+            result["is_active"] = bool(row["is_active"]) if row["is_active"] is not None else None
+            result["ssh_status"] = bool(row["ssh_status"]) if row["ssh_status"] is not None else None
+            result["last_ssh_check"] = str(row["last_ssh_check"]) if row["last_ssh_check"] else ""
+            result["last_connected"] = str(row["last_connected"]) if row["last_connected"] else ""
+            result["cpu_usage"] = row["cpu_usage"]
+            result["mem_usage"] = row["mem_usage"]
+            result["mem_total_gb"] = row["mem_total_gb"]
+            result["disk_usage"] = row["disk_usage"]
+            result["disk_total_gb"] = row["disk_total_gb"]
+            result["event_jpg_count"] = row["event_jpg_count"]
+            result["last_event_check"] = str(row["last_event_check"]) if row["last_event_check"] else ""
+            result["system_uptime"] = row["system_uptime"]
+            result["last_stats_update"] = str(row["last_stats_update"]) if row["last_stats_update"] else ""
+
+            if row["last_connected"]:
+                try:
+                    from datetime import datetime
+                    last = row["last_connected"]
+                    if isinstance(last, str):
+                        last = datetime.fromisoformat(last)
+                    now = datetime.now()
+                    delta = now - last
+                    days = delta.days
+                    hours = delta.seconds // 3600
+                    if days > 0:
+                        result["offline_duration"] = f"{days}天{hours}小时"
+                    else:
+                        result["offline_duration"] = f"{hours}小时"
+                except Exception:
+                    pass
+
+            if row["physical_machine_id"]:
+                result["physical_machine"] = {
+                    "hostname": row["hostname"] or "",
+                    "host": row["pm_host"] or "",
+                    "is_healthy": bool(row["is_healthy"]) if row["is_healthy"] is not None else None,
+                    "last_check": str(row["pm_last_check"]) if row["pm_last_check"] else "",
+                    "first_failure_at": str(row["first_failure_at"]) if row["first_failure_at"] else "",
+                    "running_containers": row["running_containers"],
+                    "gpu_info": row["gpu_info"] or "",
+                    "gpu_count": row["gpu_count"],
+                    "disk_usage": row["pm_disk_usage"],
+                    "mem_total_gb": row["pm_mem_total"],
+                }
+
+            device_id = row["id"]
+
+            cursor.execute(
+                """
+                SELECT program_name, pid, status, uptime_str, started_at, updated_at
+                FROM supervisor_process
+                WHERE device_id = %s
+                ORDER BY program_name
+                """,
+                (device_id,),
+            )
+            procs = cursor.fetchall()
+            for p in procs:
+                result["supervisor_processes"].append({
+                    "name": p["program_name"],
+                    "pid": p["pid"],
+                    "status": "running" if p["status"] == 1 else "stopped",
+                    "uptime": p["uptime_str"] or "",
+                    "started_at": str(p["started_at"]) if p["started_at"] else "",
+                    "updated_at": str(p["updated_at"]) if p["updated_at"] else "",
+                })
+
+            cursor.execute(
+                """
+                SELECT count_date, jpg_count, updated_at
+                FROM event_image_history
+                WHERE device_id = %s
+                ORDER BY count_date DESC
+                LIMIT 14
+                """,
+                (device_id,),
+            )
+            imgs = cursor.fetchall()
+            for img in imgs:
+                result["image_history"].append({
+                    "date": str(img["count_date"]),
+                    "count": img["jpg_count"],
+                    "updated_at": str(img["updated_at"]) if img["updated_at"] else "",
+                })
+
+    except Exception:
+        pass
+    finally:
+        conn.close()
+
+    return result
+
+
+def format_device_db_info(db_info: dict) -> str:
+    """将数据库信息格式化为可读字符串，用于诊断结果补充。"""
+    if not db_info or not db_info.get("name"):
+        return ""
+
+    parts = []
+    name = db_info.get("name", "")
+    project = db_info.get("project", "")
+    if name:
+        parts.append(f"设备名: {name}")
+    if project:
+        parts.append(f"项目: {project}")
+
+    ssh_ok = db_info.get("ssh_status")
+    last_check = db_info.get("last_ssh_check", "")
+    if ssh_ok is not None:
+        parts.append(f"容器SSH: {'在线 ✓' if ssh_ok else '离线 ❌'}（最近检查: {last_check or '未知'}）")
+    else:
+        parts.append(f"容器SSH: 无记录")
+
+    offline = db_info.get("offline_duration", "")
+    last_conn = db_info.get("last_connected", "")
+    if offline:
+        parts.append(f"离线时长: {offline}（最后连接: {last_conn}）")
+    elif last_conn:
+        parts.append(f"最后连接: {last_conn}")
+
+    cpu = db_info.get("cpu_usage")
+    mem = db_info.get("mem_usage")
+    mem_total = db_info.get("mem_total_gb")
+    disk = db_info.get("disk_usage")
+    disk_total = db_info.get("disk_total_gb")
+    stats = []
+    if cpu is not None:
+        stats.append(f"CPU: {cpu:.1f}%")
+    if mem is not None:
+        mem_str = f"内存: {mem:.1f}%"
+        if mem_total:
+            mem_str += f" ({mem_total:.0f}GB)"
+        stats.append(mem_str)
+    if disk is not None:
+        disk_str = f"硬盘: {disk:.1f}%"
+        if disk_total:
+            disk_str += f" ({disk_total:.0f}GB)"
+        stats.append(disk_str)
+    if stats:
+        last_stats = db_info.get("last_stats_update", "")
+        stats_suffix = f"（更新: {last_stats}）" if last_stats else ""
+        parts.append("系统指标: " + ", ".join(stats) + stats_suffix)
+
+    jpg = db_info.get("event_jpg_count")
+    last_ec = db_info.get("last_event_check", "")
+    if jpg is not None:
+        parts.append(f"今日图片: {jpg} 张（检查: {last_ec or '未知'}）")
+
+    pm = db_info.get("physical_machine", {})
+    if pm:
+        pm_parts = []
+        if pm.get("is_healthy") is not None:
+            pm_parts.append(f"健康: {'是 ✓' if pm['is_healthy'] else '否 ❌'}")
+        if pm.get("running_containers") is not None:
+            pm_parts.append(f"运行容器数: {pm['running_containers']}")
+        if pm.get("last_check"):
+            pm_parts.append(f"最近检查: {pm['last_check']}")
+        if pm.get("first_failure_at"):
+            pm_parts.append(f"首次故障: {pm['first_failure_at']}")
+        if pm.get("gpu_info"):
+            pm_parts.append(f"GPU: {pm['gpu_info']}")
+        if pm_parts:
+            parts.append("物理机: " + ", ".join(pm_parts))
+
+    procs = db_info.get("supervisor_processes", [])
+    if procs:
+        running = [p for p in procs if p["status"] == "running"]
+        stopped = [p for p in procs if p["status"] != "running"]
+        proc_str = f"{len(running)}/{len(procs)} 运行中"
+        if stopped:
+            proc_str += f"（异常: {', '.join(p['name'] for p in stopped)}）"
+        last_proc = procs[0].get("updated_at", "") if procs else ""
+        if last_proc:
+            proc_str += f"（更新: {last_proc}）"
+        parts.append(f"进程: {proc_str}")
+
+    history = db_info.get("image_history", [])
+    if history:
+        h_parts = []
+        for h in history[:7]:
+            h_parts.append(f"{h['date']}: {h['count']}张")
+        parts.append("近7天图片: " + ", ".join(h_parts))
+
+    return "\n".join(parts)
+
+
 if __name__ == "__main__":
     import sys
     query = sys.argv[1] if len(sys.argv) > 1 else "10.145.4.1"

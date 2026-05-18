@@ -20,19 +20,36 @@ from langchain_core.tools import tool
 # ──────────────────────────────────────────────
 # Tool 1: diagnose_device
 # ──────────────────────────────────────────────
+
+def _summarize_log_errors(log_errors: dict) -> str:
+    parts = []
+    for proc_name, info in log_errors.items():
+        if proc_name == "_system":
+            continue
+        errors = info.get("errors", [])
+        cat = info.get("error_category", "")
+        if cat == "driver":
+            parts.append(f"{proc_name}(驱动异常)")
+        elif cat == "ros_master":
+            parts.append(f"{proc_name}(ROS连接失败)")
+        elif cat == "oom":
+            parts.append(f"{proc_name}(OOM)")
+        elif errors:
+            parts.append(f"{proc_name}({len(errors)}条错误)")
+    return "; ".join(parts) if parts else ""
 @tool
 def diagnose_device(ip: str, project: str = "") -> str:
     """诊断单台MEC设备。
 
-    通过SSH远程检查设备的6个维度：物理机在线状态、容器运行状态、
-    进程健康度、ROS运行状态、图片数据量、传感器在线状态。
+    通过SSH远程检查设备的6个维度：物理机在线状态（含硬盘占用率）、容器运行状态、
+    进程健康度（含日志错误分析）、ROS运行状态、图片数据量、传感器在线状态。
 
     Args:
         ip: 设备IP地址或设备名（如 mec_1002、zk26_690）
         project: 设备所属项目名（可选，用于设备名模糊匹配时缩小范围）
     """
     from diagnose_mec import diagnose_container_offline, diagnose_zero_images, _resolve_device
-    from query_sensor_status import get_sensor_status
+    from query_sensor_status import get_sensor_status, get_device_db_info, format_device_db_info
 
     if not ip:
         return json.dumps({"error": "未指定设备IP或设备名"}, ensure_ascii=False)
@@ -72,13 +89,29 @@ def diagnose_device(ip: str, project: str = "") -> str:
         dimensions.append({"name": "物理机", "status": "error", "detail": ce, "problem": "ssh_unreachable"})
         for dim_name in ["容器", "进程", "ROS", "数据源", "传感器"]:
             dimensions.append({"name": dim_name, "status": "skip", "detail": "物理机不可达，跳过"})
+        db_info = get_device_db_info(ip)
+        db_detail = format_device_db_info(db_info)
+        if db_detail:
+            dimensions.append({"name": "数据库记录", "status": "warning", "detail": db_detail})
+        if "Permission denied" in ce or "公钥" in ce:
+            dimensions.append({"name": "登录建议", "status": "warning", "detail": "公钥认证失败，已尝试密码登录也失败。可能原因：1)设备SSH配置不允许密码登录 2)密码已变更 3)网络中间层阻断"})
+        elif "超时" in ce or "Timeout" in ce.lower():
+            dimensions.append({"name": "网络建议", "status": "warning", "detail": "SSH连接超时，可能原因：1)设备关机或断网 2)网络路由不通 3)防火墙阻断SSH端口"})
         return _fmt(ip, dimensions, "physical_unreachable")
 
     pu = cd.get("physical_uptime", "未知")
-    dimensions.append({"name": "物理机", "status": "ok", "detail": f"在线，运行 {pu}"})
+    disk_root = cd.get("disk_root", "")
+    disk_data = cd.get("disk_data", "")
+    disk_detail_parts = [f"在线，运行 {pu}"]
+    if disk_root:
+        disk_detail_parts.append(f"/: {disk_root}")
+    if disk_data:
+        disk_detail_parts.append(f"/data: {disk_data}")
+    dimensions.append({"name": "物理机", "status": "ok", "detail": " | ".join(disk_detail_parts)})
 
     cs = cd.get("container_status", "")
     cst = cd.get("container_started", "")
+    dev_cont = cd.get("dev_container", "")
     container_ssh = cd.get("container_ssh_connect", "")
     issue_text = cd.get("issue", "")
 
@@ -91,7 +124,11 @@ def diagnose_device(ip: str, project: str = "") -> str:
         else:
             dimensions.append({"name": "容器", "status": "ok", "detail": container_detail})
     else:
-        if "Docker" in (issue_text or ""):
+        if "不存在" in (dev_cont or ""):
+            problem, detail = "dev_container_missing", "dev容器不存在"
+        elif "未运行" in (dev_cont or ""):
+            problem, detail = "dev_container_stopped", f"dev容器存在但未运行（{dev_cont}）"
+        elif "Docker" in (issue_text or ""):
             problem, detail = "docker_service_down", "Docker服务未运行"
         elif "docker exec" in (issue_text or ""):
             problem, detail = "container_exec_failed", "docker exec失败"
@@ -111,6 +148,10 @@ def diagnose_device(ip: str, project: str = "") -> str:
             dimensions.append({"name": "传感器", "status": sensor_status, "detail": sensor_detail})
         else:
             dimensions.append({"name": "传感器", "status": "skip", "detail": "无传感器数据"})
+        db_info = get_device_db_info(ip)
+        db_detail = format_device_db_info(db_info)
+        if db_detail:
+            dimensions.append({"name": "数据库记录", "status": "warning", "detail": db_detail})
         return _fmt(ip, dimensions, problem)
 
     img = diagnose_zero_images(ip)
@@ -120,6 +161,7 @@ def diagnose_device(ip: str, project: str = "") -> str:
     sv = iz.get("supervisor", {})
     abnormals = iz.get("abnormal_processes", [])
     sv_raw = iz.get("supervisor_output", "")
+    log_errors = iz.get("log_errors", {})
 
     if abnormals:
         proc_parts = []
@@ -136,8 +178,20 @@ def diagnose_device(ip: str, project: str = "") -> str:
             problem = "gpu_driver_error" if iz.get("error_category") == "driver" else "process_fatal"
         else:
             problem = "process_error"
-        dimensions.append({"name": "进程", "status": "error", "detail": "; ".join(proc_parts),
+        detail = "; ".join(proc_parts)
+        if log_errors:
+            log_summary = _summarize_log_errors(log_errors)
+            if log_summary:
+                detail += f" | 日志: {log_summary}"
+        dimensions.append({"name": "进程", "status": "error", "detail": detail,
                           "problem": problem, "supervisor_raw": sv_raw})
+    elif log_errors:
+        log_summary = _summarize_log_errors(log_errors)
+        error_category_val = iz.get("error_category", "process")
+        problem_map = {"driver": "gpu_driver_error", "ros_master": "ros_master_error",
+                       "oom": "oom_error", "process": "process_log_error"}
+        dimensions.append({"name": "进程", "status": "error", "detail": f"supervisor正常但日志异常: {log_summary}",
+                          "problem": problem_map.get(error_category_val, "process_log_error")})
     elif isinstance(sv, dict) and sv.get("total", 0) > 0:
         dimensions.append({"name": "进程", "status": "ok", "detail": f"{sv.get('running',0)}/{sv.get('total',0)} 运行正常"})
     elif isinstance(sv, str) and "异常" in sv:
@@ -158,14 +212,13 @@ def diagnose_device(ip: str, project: str = "") -> str:
         dimensions.append({"name": "ROS", "status": "error", "detail": "roscore未运行", "problem": "roscore_down"})
     elif topic_rates:
         zero_topics = [t for t, r in topic_rates.items() if "0 Hz" in r or "无数据" in r]
-        topic_list_str = "; ".join(f"{t}: {r}" for t, r in topic_rates.items())
+        topic_list_str = "\n  - ".join(f"{t}: {r}" for t, r in topic_rates.items())
         if len(zero_topics) == len(topic_rates) and topic_rates:
-            detail = f"所有topic无数据({len(topic_rates)}个)"
+            detail = f"所有topic无数据({len(topic_rates)}个)\n  - {topic_list_str}"
         elif zero_topics:
-            detail = f"{len(zero_topics)}/{len(topic_rates)} topic无数据"
+            detail = f"{len(zero_topics)}/{len(topic_rates)} topic无数据\n  - {topic_list_str}"
         else:
-            detail = f"roscore运行，{len(topic_rates)} topic有数据"
-        detail += f" | 详情: {topic_list_str}"
+            detail = f"roscore运行，{len(topic_rates)} topic有数据\n  - {topic_list_str}"
         dimensions.append({"name": "ROS话题", "status": "error" if len(zero_topics)==len(topic_rates) and topic_rates else "warning" if zero_topics else "ok", "detail": detail})
     elif abnormals:
         dimensions.append({"name": "ROS", "status": "skip", "detail": "进程异常，跳过"})
@@ -260,8 +313,9 @@ def device_info(ip: str, info_type: str = "disk") -> str:
             history - 历史图片数据天数
             示例："disk,memory" 同时查硬盘和内存
     """
-    from diagnose_mec import ssh_exec, find_physical_user, _docker_cmd, CONTAINER_PORT, CONTAINER_USER
+    from diagnose_mec import ssh_exec, find_physical_user, _docker_cmd, _get_device_credentials, CONTAINER_PORT, CONTAINER_USER
     from diagnose_mec import _resolve_device
+    from query_sensor_status import get_device_db_info, format_device_db_info
 
     if not ip:
         return json.dumps({"error": "未指定设备IP"}, ensure_ascii=False)
@@ -275,8 +329,22 @@ def device_info(ip: str, info_type: str = "disk") -> str:
 
     info = {"ip": ip, "info_type": info_type}
     user = find_physical_user(ip)
-    if user not in ("root", "lcfc", "nvidia"):
-        return json.dumps({"error": f"物理机不可达: {user}"}, ensure_ascii=False)
+
+    is_password_login = isinstance(user, str) and user.startswith("password:")
+    if is_password_login:
+        login_user = user.split(":", 1)[1]
+        creds = _get_device_credentials(ip)
+        ssh_password = creds.get("pm_password") or creds.get("password", "")
+        user = login_user
+    else:
+        ssh_password = ""
+
+    if user not in ("root", "lcfc", "nvidia") and not is_password_login:
+        db_info = get_device_db_info(ip)
+        db_detail = format_device_db_info(db_info)
+        if db_detail:
+            return f"⚠️ 设备 {ip} 物理机不可达（{user}），以下为数据库记录：\n\n{db_detail}"
+        return json.dumps({"error": f"物理机不可达: {user}，且无数据库记录"}, ensure_ascii=False)
 
     types = [t.strip() for t in info_type.split(",")] if info_type else ["disk"]
     if not types:
@@ -284,32 +352,32 @@ def device_info(ip: str, info_type: str = "disk") -> str:
 
     for t in types:
         if t == "disk":
-            stdout, _, _ = ssh_exec(ip, 22, user, "df -h / /home 2>/dev/null || df -h /", exec_timeout=8)
+            stdout, _, _ = ssh_exec(ip, 22, user, "df -h / /home 2>/dev/null || df -h /", exec_timeout=8, password=ssh_password)
             info["disk"] = stdout.strip() if stdout.strip() else "无法获取"
             cont_out, _, _ = ssh_exec(ip, CONTAINER_PORT, CONTAINER_USER, "df -h / /home 2>/dev/null || df -h /", exec_timeout=8)
             if cont_out.strip():
                 info["disk_container"] = cont_out.strip()
         elif t == "memory":
-            stdout, _, _ = ssh_exec(ip, 22, user, "free -h", exec_timeout=8)
+            stdout, _, _ = ssh_exec(ip, 22, user, "free -h", exec_timeout=8, password=ssh_password)
             info["memory"] = stdout.strip() if stdout.strip() else "无法获取"
             cont_out, _, _ = ssh_exec(ip, CONTAINER_PORT, CONTAINER_USER, "free -h", exec_timeout=8)
             if cont_out.strip():
                 info["memory_container"] = cont_out.strip()
         elif t == "cpu":
-            stdout, _, _ = ssh_exec(ip, 22, user, "top -bn1 | head -5", exec_timeout=8)
+            stdout, _, _ = ssh_exec(ip, 22, user, "top -bn1 | head -5", exec_timeout=8, password=ssh_password)
             info["cpu"] = stdout.strip() if stdout.strip() else "无法获取"
             cont_out, _, _ = ssh_exec(ip, CONTAINER_PORT, CONTAINER_USER, "top -bn1 | head -5", exec_timeout=8)
             if cont_out.strip():
                 info["cpu_container"] = cont_out.strip()
         elif t == "network":
-            stdout, _, _ = ssh_exec(ip, 22, user, "ip addr show | grep 'inet ' | awk '{print $2, $NF}'", exec_timeout=8)
+            stdout, _, _ = ssh_exec(ip, 22, user, "ip addr show | grep 'inet ' | awk '{print $2, $NF}'", exec_timeout=8, password=ssh_password)
             info["network"] = stdout.strip() if stdout.strip() else "无法获取"
         elif t == "uptime":
-            stdout, _, _ = ssh_exec(ip, 22, user, "uptime", exec_timeout=8)
+            stdout, _, _ = ssh_exec(ip, 22, user, "uptime", exec_timeout=8, password=ssh_password)
             info["uptime"] = stdout.strip() if stdout.strip() else "无法获取"
         elif t == "history":
             cmd = "ls -d /home/files/nfsroot/20[0-9][0-9]-[0-9][0-9]-[0-9][0-9] 2>/dev/null | sort"
-            stdout, _, _ = ssh_exec(ip, 22, user, cmd, exec_timeout=8)
+            stdout, _, _ = ssh_exec(ip, 22, user, cmd, exec_timeout=8, password=ssh_password)
             if stdout.strip():
                 dirs = [d.strip().split('/')[-1] for d in stdout.strip().split('\n') if d.strip()]
                 import datetime
@@ -317,7 +385,7 @@ def device_info(ip: str, info_type: str = "disk") -> str:
                 day_details = []
                 for d in dirs[:30]:
                     count_cmd = f"ls /home/files/nfsroot/{d}/*.jpg 2>/dev/null | wc -l"
-                    cnt_out, _, _ = ssh_exec(ip, 22, user, count_cmd, exec_timeout=5)
+                    cnt_out, _, _ = ssh_exec(ip, 22, user, count_cmd, exec_timeout=5, password=ssh_password)
                     cnt = cnt_out.strip() if cnt_out.strip() else "0"
                     marker = " (今天)" if d == today_str else ""
                     day_details.append(f"  {d}: {cnt} 张{marker}")
@@ -372,6 +440,16 @@ def analyze_logs(project: str = "") -> str:
     history = load_structured_history()
     comparison = compare_with_history(parsed, history)
     report_text_output = generate_report(parsed, comparison, history)
+
+    # Include physical_offline_devices summary in result
+    phys_off_summary = {}
+    for pname, pdata in parsed.get("projects", {}).items():
+        phys_off = pdata.get("physical_offline_devices", [])
+        if phys_off:
+            phys_off_summary[pname] = {
+                "count": len(phys_off),
+                "devices": [{"name": d.get("name", ""), "ip": d.get("ip", "")} for d in phys_off]
+            }
 
     result = {"timestamp": parsed.get("timestamp", ""), "comparison": comparison, "report": report_text_output}
 
@@ -470,6 +548,7 @@ def llm_diagnose_device(ip: str, project: str = "") -> str:
     """
     from diagnose_mec import collect_device_raw_data, _resolve_device
     from project_history import save_diagnosis, load_project_records
+    from query_sensor_status import get_device_db_info, format_device_db_info
 
     if not ip:
         return json.dumps({"error": "未指定设备IP或设备名"}, ensure_ascii=False)
@@ -490,8 +569,13 @@ def llm_diagnose_device(ip: str, project: str = "") -> str:
     raw_data = raw_result.get("raw_data", {})
 
     physical_ssh = raw_data.get("physical_ssh", "")
-    if "失败" in physical_ssh or "不可达" in physical_ssh or "超時" in physical_ssh:
-        return f"⚠️ 设备 {ip} 物理机不可达（{physical_ssh}），无法采集数据。\n\n可能原因：\n1. 设备关机或断网\n2. 网络路由不通\n3. SSH服务异常\n\n建议：先确认网络可达性（ping {ip}），再尝试诊断。"
+    if "失败" in physical_ssh or "不可达" in physical_ssh or "超時" in physical_ssh or "连接失败" in physical_ssh:
+        db_info = get_device_db_info(ip)
+        db_detail = format_device_db_info(db_info)
+        msg = f"⚠️ 设备 {ip} 物理机不可达（{physical_ssh}），无法SSH采集数据。\n\n可能原因：\n1. 设备关机或断网\n2. 网络路由不通\n3. SSH服务异常或认证配置问题\n\n建议：先确认网络可达性（ping {ip}），再尝试诊断。"
+        if db_detail:
+            msg += f"\n\n--- 数据库记录 ---\n{db_detail}"
+        return msg
 
     device_project = device_info.get("project", "") if device_info else ""
     device_name = device_info.get("name", "") if device_info else ""
@@ -608,22 +692,52 @@ def query_abnormal() -> str:
     summary = {"timestamp": parsed.get("timestamp", ""), "projects": {}, "total": {"abnormal": 0}}
 
     for pname, pdata in projects.items():
+        from code_analyze import classify_priority
+        priority, _ = classify_priority(pname, pdata)
+        if priority == "OK":
+            continue
+
         offline = pdata.get("container_offline_but_pm_online", [])
         zero_img = pdata.get("zero_images_devices", [])
-        abnormal_count = len(offline) + len(zero_img)
-        if abnormal_count > 0 or pdata.get("container", {}).get("rate", 100) < 100:
-            container_rate = pdata.get("container", {}).get("rate", 100)
-            sensor_rate = pdata.get("sensor", {}).get("rate", 100)
-            summary["projects"][pname] = {
-                "异常设备数": abnormal_count,
-                "容器离线": len(offline),
-                "图片为0": len(zero_img),
-                "容器健康率": f"{container_rate:.1f}%",
-                "传感器健康率": f"{sensor_rate:.1f}%"
-            }
-            summary["total"]["abnormal"] += abnormal_count
+        phys_off = pdata.get("physical_offline_devices", [])
+        abnormal_count = len(offline) + len(zero_img) + len(phys_off)
+        phys_rate = pdata.get("physical", {}).get("rate", 100)
+        container_rate = pdata.get("container", {}).get("rate", 100)
+        sensor_rate = pdata.get("sensor", {}).get("rate", 100)
 
-    return json.dumps(summary, ensure_ascii=False)
+        # 当全离线时 device 列表可能为空，用 total 推算离线数
+        if abnormal_count == 0:
+            phys = pdata.get("physical", {})
+            cont = pdata.get("container", {})
+            if phys.get("rate", 100) == 0 and phys.get("total", 0) > 0:
+                abnormal_count = phys.get("total", 0)
+            elif cont.get("rate", 100) == 0 and cont.get("total", 0) > 0:
+                abnormal_count = cont.get("total", 0)
+
+        summary["projects"][pname] = {
+            "异常级别": priority,
+            "异常设备数": abnormal_count,
+            "物理机离线": len(phys_off),
+            "容器离线": len(offline),
+            "图片为0": len(zero_img),
+            "物理机健康率": f"{phys_rate:.1f}%",
+            "容器健康率": f"{container_rate:.1f}%",
+            "传感器健康率": f"{sensor_rate:.1f}%"
+        }
+        summary["total"]["abnormal"] += abnormal_count
+
+    # Format as aligned markdown table
+    lines = [f"📊 **异常项目概览**（{summary['timestamp']}）\n"]
+    lines.append("| 项目 | 级别 | 异常数 | 物理机离线 | 容器离线 | 图片为0 | 物理机健康率 | 容器健康率 | 传感器健康率 |")
+    lines.append("|------|------|--------|-----------|---------|---------|-------------|-----------|-------------|")
+    for pname, ps in summary["projects"].items():
+        lines.append(
+            f"| {pname} | {ps['异常级别']} | {ps['异常设备数']} | {ps['物理机离线']} | "
+            f"{ps['容器离线']} | {ps['图片为0']} | {ps['物理机健康率']} | "
+            f"{ps['容器健康率']} | {ps['传感器健康率']} |"
+        )
+    lines.append(f"\n🔄 共 **{summary['total']['abnormal']}** 台异常设备")
+    return "\n".join(lines)
 
 
 # ──────────────────────────────────────────────
@@ -666,7 +780,7 @@ def ssh_exec_command(ip: str, command: str, container: bool = False, ros_env: bo
         ros_env: 是否需要ROS环境初始化（设为True会自动 source ROS setup.bash）。
                  执行 rostopic、rosnode、rosservice 等ROS命令时必须设为 True。
     """
-    from diagnose_mec import ssh_exec, find_physical_user, _resolve_device, CONTAINER_PORT, CONTAINER_USER
+    from diagnose_mec import ssh_exec, find_physical_user, _resolve_device, _get_device_credentials, CONTAINER_PORT, CONTAINER_USER
 
     if not ip:
         return json.dumps({"error": "未指定设备IP"}, ensure_ascii=False)
@@ -683,12 +797,20 @@ def ssh_exec_command(ip: str, command: str, container: bool = False, ros_env: bo
     if not re.match(r'^\d+\.\d+\.\d+\.\d+$', ip):
         return json.dumps({"error": f"无法解析设备 '{ip}'"}, ensure_ascii=False)
 
+    ssh_password = ""
+
     if container:
         port, user = CONTAINER_PORT, CONTAINER_USER
     else:
         user = find_physical_user(ip)
         port = 22
-        if user not in ("root", "lcfc", "nvidia"):
+        is_password_login = isinstance(user, str) and user.startswith("password:")
+        if is_password_login:
+            login_user = user.split(":", 1)[1]
+            creds = _get_device_credentials(ip)
+            ssh_password = creds.get("pm_password") or creds.get("password", "")
+            user = login_user
+        elif user not in ("root", "lcfc", "nvidia"):
             return json.dumps({"error": f"物理机不可达: {user}"}, ensure_ascii=False)
 
     if ros_env:
@@ -696,12 +818,25 @@ def ssh_exec_command(ip: str, command: str, container: bool = False, ros_env: bo
     elif container and any(kw in command for kw in ['rostopic', 'rosnode', 'rosservice', 'rosrun', 'roslaunch']):
         command = f"source /home/files/rvf/setup.bash 2>/dev/null && {command}"
 
-    stdout, stderr, _ = ssh_exec(ip, port, user, command, exec_timeout=15)
+    stdout, stderr, rc = ssh_exec(ip, port, user, command, exec_timeout=15, password=ssh_password)
+
+    if (rc != 0 and not stdout.strip()) or "Permission denied" in stderr:
+        if not ssh_password and container:
+            creds = _get_device_credentials(ip)
+            cont_pass = creds.get("password", "")
+            if cont_pass:
+                stdout2, stderr2, rc2 = ssh_exec(ip, port, user, command, exec_timeout=15, password=cont_pass)
+                if rc2 == 0 and stdout2.strip():
+                    stdout, stderr, rc = stdout2, stderr2, rc2
+
     result = stdout.strip() if stdout.strip() else ""
     if stderr.strip():
         result += "\n[STDERR]\n" + stderr.strip()
     if not result:
-        result = "命令执行无输出"
+        if rc == -1:
+            result = "SSH连接超时或不可达，可能原因：设备关机/断网/防火墙阻断"
+        else:
+            result = "命令执行无输出"
     return result[:8000]
 
 

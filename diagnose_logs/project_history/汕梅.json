@@ -1,0 +1,30 @@
+{
+  "project": "汕梅",
+  "devices": {
+    "mz4k88_800": {
+      "name": "mz4k88_800",
+      "ip": "44.42.122.140",
+      "records": [
+        {
+          "timestamp": "2026-05-18T14:01:07",
+          "diag_type": "zero_images",
+          "issue": "进程错误: error_kafka_event(2条错误), error_radar_bridge(1条错误), error_rosbridge_websocket(4条错误), error_rtsp(7条错误), error_traffic(7条错误), error_zmq_bridge(7条错误), out_calibration_project(1条错误), out_kafka_monitor(1条错误)",
+          "error": "",
+          "physical_uptime": "",
+          "container_status": "",
+          "today_image_count": 0
+        },
+        {
+          "timestamp": "2026-05-18T14:01:29",
+          "diag_type": "",
+          "issue": "",
+          "error": "",
+          "physical_uptime": "",
+          "container_status": "",
+          "today_image_count": -1
+        }
+      ]
+    }
+  },
+  "updated_at": "2026-05-18T14:01:29"
+}

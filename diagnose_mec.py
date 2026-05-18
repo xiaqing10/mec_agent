@@ -122,10 +122,11 @@ def cleanup_old_logs(days: int = 7) -> int:
     return count
 
 
-def ssh_exec(host_ip: str, port: int, user: str, command: str, exec_timeout: int = 30) -> tuple:
-    """使用SSH密钥执行远程命令。
+def ssh_exec(host_ip: str, port: int, user: str, command: str, exec_timeout: int = 30, password: str = "") -> tuple:
+    """使用SSH密钥或密码执行远程命令。
 
-    通过Windows OpenSSH连接MEC设备，使用ed25519密钥认证。
+    优先使用ed25519密钥认证（Windows ssh.exe）；若提供password参数，
+    则使用paramiko密码认证（因为sshpass无法配合Windows ssh.exe使用）。
     ConnectTimeout固定5秒，快速判断不可达设备；
     exec_timeout控制命令总执行时长上限（含连接+执行）。
 
@@ -135,6 +136,7 @@ def ssh_exec(host_ip: str, port: int, user: str, command: str, exec_timeout: int
         user: SSH用户名
         command: 要执行的远程命令
         exec_timeout: 命令总执行超时秒数，默认30秒
+        password: SSH密码（为空则使用密钥认证）
 
     Returns:
         (stdout, stderr, returncode) 三元组
@@ -143,6 +145,28 @@ def ssh_exec(host_ip: str, port: int, user: str, command: str, exec_timeout: int
         - returncode: 命令返回码，超时为-1
     """
     connect_timeout = 5
+
+    if password:
+        try:
+            import paramiko
+            client = paramiko.SSHClient()
+            client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            client.connect(
+                hostname=host_ip, port=port, username=user, password=password,
+                timeout=connect_timeout, banner_timeout=connect_timeout,
+                allow_agent=False, look_for_keys=False,
+            )
+            try:
+                stdin_fd, stdout_fd, stderr_fd = client.exec_command(command, timeout=exec_timeout)
+                stdout = stdout_fd.read().decode('utf-8', errors='replace').strip()
+                stderr = stderr_fd.read().decode('utf-8', errors='replace').strip()
+                return stdout, stderr, stdout_fd.channel.recv_exit_status()
+            finally:
+                client.close()
+        except Exception as e:
+            logger.warning("Paramiko密码登录失败 %s@%s:%d - %s", user, host_ip, port, e)
+            return "", str(e), -1
+
     cmd = [
         SSH_CMD,
         "-i", SSH_KEY,
@@ -166,7 +190,44 @@ def ssh_exec(host_ip: str, port: int, user: str, command: str, exec_timeout: int
         return "", str(e), -1
 
 
-def _combined_ssh(host_ip: str, port: int, user: str, commands: list, exec_timeout: int = 30) -> dict:
+def _get_device_credentials(host_ip: str) -> dict:
+    """从MySQL数据库查询设备SSH凭据（用户名+密码）。
+
+    Args:
+        host_ip: 设备IP地址
+
+    Returns:
+        {"username": str, "password": str, "pm_username": str, "pm_password": str}
+        若查询失败返回空dict
+    """
+    try:
+        from query_sensor_status import _get_conn
+        conn = _get_conn()
+        with conn.cursor() as cursor:
+            cursor.execute(
+                """
+                SELECT md.username, md.password, pm.username AS pm_username, pm.password AS pm_password
+                FROM mec_device md
+                LEFT JOIN physical_machine pm ON md.physical_machine_id = pm.id
+                WHERE md.host = %s
+                """,
+                (host_ip,),
+            )
+            row = cursor.fetchone()
+        conn.close()
+        if row:
+            return {
+                "username": row["username"] or "",
+                "password": row["password"] or "",
+                "pm_username": row["pm_username"] or "",
+                "pm_password": row["pm_password"] or "",
+            }
+    except Exception as e:
+        logger.debug("查询设备凭据失败: %s", e)
+    return {}
+
+
+def _combined_ssh(host_ip: str, port: int, user: str, commands: list, exec_timeout: int = 30, password: str = "") -> dict:
     """合并多条命令为一次SSH调用，用标记分隔输出。
 
     Args:
@@ -175,6 +236,7 @@ def _combined_ssh(host_ip: str, port: int, user: str, commands: list, exec_timeo
         user: SSH用户名
         commands: [(name, command), ...] 命令列表
         exec_timeout: 总超时秒数
+        password: SSH密码（为空则使用密钥认证）
 
     Returns:
         {name: stdout, ...} 解析后的输出字典
@@ -185,7 +247,7 @@ def _combined_ssh(host_ip: str, port: int, user: str, commands: list, exec_timeo
         parts.append(f"echo '{marker}{name}' && ({cmd}) 2>&1")
     full_cmd = "; ".join(parts)
 
-    stdout, _, _ = ssh_exec(host_ip, port, user, full_cmd, exec_timeout=exec_timeout)
+    stdout, _, _ = ssh_exec(host_ip, port, user, full_cmd, exec_timeout=exec_timeout, password=password)
 
     result = {}
     current_name = None
@@ -204,33 +266,65 @@ def _combined_ssh(host_ip: str, port: int, user: str, commands: list, exec_timeo
 
 
 def find_physical_user(host_ip: str):
-    """尝试多个物理机用户，找到能免密登录的那个。
+    """尝试多个物理机用户，找到能登录的那个。
 
-    依次尝试 PHYSICAL_USERS 列表中的用户（root, nvidia），
-    找到第一个能成功 echo OK 的用户即返回。
+    1. 先从数据库查询凭据（用户名+密码），用数据库中的用户名优先尝试
+    2. 数据库有凭据 → 先公钥登录，失败则密码登录
+    3. 数据库无凭据 → 依次尝试 PHYSICAL_USERS 列表公钥登录
+    4. 全部失败，返回错误信息
 
     Args:
         host_ip: 物理机IP地址
 
     Returns:
-        成功时返回用户名字符串，失败时返回最后一条错误信息
+        成功时返回用户名字符串，密码登录时返回 "password:用户名"，
+        失败时返回最后一条错误信息
     """
-    logger.info("🔐 尝试免密登录物理机 %s...", host_ip)
+    logger.info("🔐 登录物理机 %s...", host_ip)
 
     last_error = "未知错误"
+    creds = _get_device_credentials(host_ip)
+    pm_user = creds.get("pm_username", "")
+    pm_pass = creds.get("pm_password", "")
 
+    if not pm_user or not pm_pass:
+        pm_user = creds.get("username", "")
+        pm_pass = creds.get("password", "")
+
+    if pm_user:
+        logger.info("  📋 数据库记录用户: %s，优先尝试", pm_user)
+        stdout, stderr, code = ssh_exec(host_ip, 22, pm_user, "echo 'OK'", exec_timeout=10)
+        if code == 0 and "OK" in stdout:
+            logger.info("  ✅ 公钥登录成功: %s", pm_user)
+            return pm_user
+        logger.debug("  ❌ 公钥登录失败: %s", stderr)
+        last_error = stderr
+
+        if pm_pass:
+            logger.debug("  🔄 尝试密码登录: %s", pm_user)
+            stdout, stderr, code = ssh_exec(host_ip, 22, pm_user, "echo 'OK'", exec_timeout=10, password=pm_pass)
+            if code == 0 and "OK" in stdout:
+                logger.info("  ✅ 密码登录成功: %s", pm_user)
+                return f"password:{pm_user}"
+            logger.debug("  ❌ 密码登录也失败: %s", stderr)
+            last_error = f"公钥和密码登录均失败（密码登录: {stderr}）"
+
+        logger.warning("  ❌ 物理机 %s 数据库用户登录失败: %s", host_ip, last_error)
+        return last_error
+
+    logger.info("  📋 数据库无凭据，依次尝试默认用户...")
     for user in PHYSICAL_USERS:
-        logger.debug("  尝试用户: %s", user)
+        logger.debug("  尝试公钥用户: %s", user)
         stdout, stderr, code = ssh_exec(host_ip, 22, user, "echo 'OK'", exec_timeout=10)
 
         if code == 0 and "OK" in stdout:
-            logger.info("  ✅ 登录成功: %s", user)
+            logger.info("  ✅ 公钥登录成功: %s", user)
             return user
         else:
-            logger.debug("  ❌ 登录失败: %s", stderr)
+            logger.debug("  ❌ 公钥登录失败: %s", stderr)
             last_error = stderr
 
-    logger.warning("  ❌ 物理机 %s 所有用户均失败: %s", host_ip, last_error)
+    logger.warning("  ❌ 物理机 %s 所有登录方式均失败: %s", host_ip, last_error)
     return last_error
 
 
@@ -347,31 +441,50 @@ def diagnose_container_offline(host_ip: str) -> dict:
     # ========== 步骤1: 检查物理机SSH连接 ==========
     physical_user = find_physical_user(host_ip)
 
-    if physical_user not in PHYSICAL_USERS:
+    is_password_login = isinstance(physical_user, str) and physical_user.startswith("password:")
+    if is_password_login:
+        login_user = physical_user.split(":", 1)[1]
+    else:
+        login_user = physical_user
+
+    if login_user not in PHYSICAL_USERS and not is_password_login:
         result["diagnosis"]["error"] = f"物理机无法连接：{physical_user}"
         logger.warning("❌ 物理机无法连接: %s", physical_user)
         return _add_sensor_status(result, host_ip)
 
-    result["diagnosis"]["physical_machine"] = f"{physical_user}@{host_ip}:22 ✓"
+    login_method = "密码" if is_password_login else "公钥"
+    result["diagnosis"]["physical_machine"] = f"{login_user}@{host_ip}:22 ✓ ({login_method})"
+
+    if is_password_login:
+        creds = _get_device_credentials(host_ip)
+        ssh_password = creds.get("pm_password") or creds.get("password", "")
+    else:
+        ssh_password = ""
 
     # ========== 步骤2-4: 一次SSH获取所有物理机信息 ==========
     logger.info("🐳 一次SSH采集物理机所有信息...")
     dc = _docker_cmd
-    combined = _combined_ssh(host_ip, 22, physical_user, [
-        ("DOCKER_STATUS", dc(physical_user, "systemctl is-active docker")),
-        ("EXEC_OK", dc(physical_user, "docker exec dev bash -c 'echo EXEC_OK' 2>&1")),
-        ("SSH_STATUS", dc(physical_user, "docker exec dev bash -c 'service ssh status 2>&1 || systemctl status sshd 2>&1 || ps aux | grep sshd' 2>&1")),
+    combined = _combined_ssh(host_ip, 22, login_user, [
+        ("DOCKER_STATUS", dc(login_user, "systemctl is-active docker")),
+        ("DEV_CONTAINER_ALL", dc(login_user, "docker ps -a --filter name=dev --format='{{.Names}} {{.Status}}' 2>&1")),
+        ("EXEC_OK", dc(login_user, "docker exec dev bash -c 'echo EXEC_OK' 2>&1")),
+        ("SSH_STATUS", dc(login_user, "docker exec dev bash -c 'service ssh status 2>&1 || systemctl status sshd 2>&1 || ps aux | grep sshd' 2>&1")),
         ("UPTIME", "cat /proc/uptime | awk '{print int($1/86400)\"天 \"int(($1%86400)/3600)\"小时\"}'"),
-        ("DOCKER_PS", dc(physical_user, "docker ps --filter name=dev --format='{{.Status}}'")),
+        ("DOCKER_PS", dc(login_user, "docker ps --filter name=dev --format='{{.Status}}'")),
         ("DOCKER_INSPECT", "docker inspect dev --format='{{.State.StartedAt}}' 2>/dev/null | cut -c1-19"),
-    ], exec_timeout=30)
+        ("DISK_ROOT", "df -h / 2>/dev/null | awk 'NR==2{print $5\" (\"$3\"/\"$2\")\"}'"),
+        ("DISK_DATA", "df -h /data 2>/dev/null | awk 'NR==2{print $5\" (\"$3\"/\"$2\")\"}'"),
+    ], exec_timeout=30, password=ssh_password)
 
     docker_status = combined.get("DOCKER_STATUS", "").strip()
+    dev_container_all = combined.get("DEV_CONTAINER_ALL", "").strip()
     exec_ok = combined.get("EXEC_OK", "").strip()
     ssh_status = combined.get("SSH_STATUS", "").strip()
     uptime = combined.get("UPTIME", "").strip()
     docker_ps = combined.get("DOCKER_PS", "").strip()
     docker_inspect = combined.get("DOCKER_INSPECT", "").strip()
+    disk_root = combined.get("DISK_ROOT", "").strip()
+    disk_data = combined.get("DISK_DATA", "").strip()
 
     if "active" in docker_status:
         result["diagnosis"]["docker_service"] = "运行中 ✓"
@@ -379,6 +492,17 @@ def diagnose_container_offline(host_ip: str) -> dict:
     else:
         result["diagnosis"]["docker_service"] = f"未运行 ({docker_status})" if docker_status else "未运行"
         logger.warning("❌ Docker服务未运行")
+
+    if dev_container_all:
+        if "Up" in dev_container_all:
+            result["diagnosis"]["dev_container"] = f"存在且运行中 ✓ ({dev_container_all})"
+            logger.info("✅ dev容器存在且运行中: %s", dev_container_all)
+        else:
+            result["diagnosis"]["dev_container"] = f"存在但未运行 ⚠️ ({dev_container_all})"
+            logger.warning("⚠️ dev容器存在但未运行: %s", dev_container_all)
+    else:
+        result["diagnosis"]["dev_container"] = "不存在 ❌"
+        logger.warning("❌ dev容器不存在")
 
     if "EXEC_OK" in exec_ok:
         result["diagnosis"]["container_exec"] = "正常 ✓"
@@ -391,6 +515,12 @@ def diagnose_container_offline(host_ip: str) -> dict:
 
     if uptime:
         result["diagnosis"]["physical_uptime"] = uptime
+    if disk_root:
+        result["diagnosis"]["disk_root"] = disk_root
+    if disk_data:
+        result["diagnosis"]["disk_root"] = disk_root
+    if disk_data:
+        result["diagnosis"]["disk_data"] = disk_data
     if docker_ps:
         result["diagnosis"]["container_status"] = docker_ps
     if docker_inspect:
@@ -402,6 +532,15 @@ def diagnose_container_offline(host_ip: str) -> dict:
         host_ip, CONTAINER_PORT, CONTAINER_USER, "echo 'SSH_OK'", exec_timeout=10
     )
 
+    if ssh_code != 0 or "SSH_OK" not in ssh_stdout:
+        cont_creds = _get_device_credentials(host_ip)
+        cont_pass = cont_creds.get("password", "")
+        if cont_pass:
+            logger.info("  🔄 容器公钥失败，尝试密码登录...")
+            ssh_stdout, ssh_stderr, ssh_code = ssh_exec(
+                host_ip, CONTAINER_PORT, CONTAINER_USER, "echo 'SSH_OK'", exec_timeout=10, password=cont_pass
+            )
+
     if ssh_code == 0 and "SSH_OK" in ssh_stdout:
         result["diagnosis"]["container_ssh_connect"] = "可连接 ✓"
         if "失败" in result["diagnosis"].get("container_exec", ""):
@@ -412,10 +551,22 @@ def diagnose_container_offline(host_ip: str) -> dict:
             logger.info("✅ 容器SSH可连接（监控显示离线）")
     else:
         ssh_error = (ssh_stderr or ssh_stdout).strip()[:200]
-        result["diagnosis"]["container_ssh_connect"] = f"不可连接: {ssh_error}"
-        if "issue" not in result["diagnosis"]:
-            result["diagnosis"]["issue"] = f"容器内SSH服务不可连接: {ssh_error}"
-        logger.warning("❌ 容器SSH不可连接: %s", ssh_error[:100])
+        dev_exists = result["diagnosis"].get("dev_container", "").startswith("存在")
+        if dev_exists and "失败" in result["diagnosis"].get("container_exec", ""):
+            result["diagnosis"]["container_ssh_connect"] = f"不可连接 ❌ (SSH服务未运行或端口不可达)"
+            if "issue" not in result["diagnosis"]:
+                result["diagnosis"]["issue"] = f"dev容器存在但SSH不可连接，容器内SSH服务可能未启动: {ssh_error}"
+            logger.warning("❌ dev容器存在但SSH不可连接: %s", ssh_error[:100])
+        elif not dev_exists:
+            result["diagnosis"]["container_ssh_connect"] = "不可连接 ❌ (dev容器不存在)"
+            if "issue" not in result["diagnosis"]:
+                result["diagnosis"]["issue"] = "dev容器不存在，无法通过SSH连接"
+            logger.warning("❌ dev容器不存在，SSH不可连接")
+        else:
+            result["diagnosis"]["container_ssh_connect"] = f"不可连接 ❌: {ssh_error}"
+            if "issue" not in result["diagnosis"]:
+                result["diagnosis"]["issue"] = f"容器内SSH服务不可连接: {ssh_error}"
+            logger.warning("❌ 容器SSH不可连接: %s", ssh_error[:100])
 
     return _add_sensor_status(result, host_ip)
 
@@ -1170,23 +1321,37 @@ def collect_device_raw_data(host_ip: str) -> dict:
     # ========== 1. 物理机连通性 ==========
     logger.info("🔐 步骤1: 物理机连通性...")
     physical_user = find_physical_user(host_ip)
-    if physical_user not in PHYSICAL_USERS:
+
+    is_password_login = isinstance(physical_user, str) and physical_user.startswith("password:")
+    if is_password_login:
+        login_user = physical_user.split(":", 1)[1]
+    else:
+        login_user = physical_user
+
+    if login_user not in PHYSICAL_USERS and not is_password_login:
         raw["physical_ssh"] = f"连接失败: {physical_user}"
         raw["container_ssh"] = "未尝试（物理机不可达）"
         logger.warning("❌ 物理机无法连接")
         return _add_sensor_status(result, host_ip)
 
-    raw["physical_ssh"] = f"{physical_user}@{host_ip}:22 连接成功"
+    login_method = "密码" if is_password_login else "公钥"
+    raw["physical_ssh"] = f"{login_user}@{host_ip}:22 连接成功 ({login_method})"
+
+    if is_password_login:
+        creds = _get_device_credentials(host_ip)
+        ssh_password = creds.get("pm_password") or creds.get("password", "")
+    else:
+        ssh_password = ""
 
     # 一次SSH获取所有物理机信息
     logger.info("📦 一次SSH采集物理机信息...")
     dc = _docker_cmd
-    phys_data = _combined_ssh(host_ip, 22, physical_user, [
+    phys_data = _combined_ssh(host_ip, 22, login_user, [
         ("UPTIME", "cat /proc/uptime | awk '{print int($1/86400)\"天 \"int(($1%86400)/3600)\"小时\"}'"),
-        ("DOCKER_STATUS", dc(physical_user, "systemctl is-active docker")),
-        ("DOCKER_PS", dc(physical_user, "docker ps --filter name=dev --format='{{.Status}}'")),
+        ("DOCKER_STATUS", dc(login_user, "systemctl is-active docker")),
+        ("DOCKER_PS", dc(login_user, "docker ps --filter name=dev --format='{{.Status}}'")),
         ("DOCKER_INSPECT", "docker inspect dev --format='{{.State.StartedAt}}' 2>/dev/null | cut -c1-19"),
-    ], exec_timeout=30)
+    ], exec_timeout=30, password=ssh_password)
 
     raw["physical_uptime"] = phys_data.get("UPTIME", "").strip() or "未知"
     raw["docker_status"] = phys_data.get("DOCKER_STATUS", "").strip() or "未知"
@@ -1200,6 +1365,14 @@ def collect_device_raw_data(host_ip: str) -> dict:
     ssh_stdout, ssh_stderr, ssh_code = ssh_exec(
         host_ip, CONTAINER_PORT, CONTAINER_USER, "echo 'SSH_OK'", exec_timeout=10
     )
+    if ssh_code != 0 or "SSH_OK" not in ssh_stdout:
+        cont_creds = _get_device_credentials(host_ip)
+        cont_pass = cont_creds.get("password", "")
+        if cont_pass:
+            logger.info("  🔄 容器公钥失败，尝试密码登录...")
+            ssh_stdout, ssh_stderr, ssh_code = ssh_exec(
+                host_ip, CONTAINER_PORT, CONTAINER_USER, "echo 'SSH_OK'", exec_timeout=10, password=cont_pass
+            )
     if ssh_code != 0 or "SSH_OK" not in ssh_stdout:
         raw["container_ssh"] = f"不可连接: {(ssh_stderr or ssh_stdout).strip()[:200]}"
         logger.warning("❌ 容器SSH不可连接，采集到此为止")

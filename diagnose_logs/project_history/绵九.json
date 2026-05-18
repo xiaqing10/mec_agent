@@ -33,7 +33,31 @@
           "today_image_count": -1
         }
       ]
+    },
+    "mzk579_354": {
+      "name": "mzk579_354",
+      "ip": "10.142.46.128",
+      "records": [
+        {
+          "timestamp": "2026-05-18T15:41:01",
+          "diag_type": "zero_images",
+          "issue": "设备已恢复正常，今日图片数: 15",
+          "error": "",
+          "physical_uptime": "",
+          "container_status": "",
+          "today_image_count": 15
+        },
+        {
+          "timestamp": "2026-05-18T15:53:20",
+          "diag_type": "zero_images",
+          "issue": "设备已恢复正常，今日图片数: 15",
+          "error": "",
+          "physical_uptime": "",
+          "container_status": "",
+          "today_image_count": 15
+        }
+      ]
     }
   },
-  "updated_at": "2026-05-15T08:41:12"
+  "updated_at": "2026-05-18T15:53:20"
 }

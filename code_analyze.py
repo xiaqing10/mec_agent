@@ -77,6 +77,7 @@ def parse_mec_report(report_text):
 
         proj_data = {
             "physical": {"total": 0, "healthy": 0, "rate": 0.0},
+            "physical_offline_devices": [],
             "container": {"total": 0, "healthy": 0, "rate": 0.0},
             "sensor": {"total": 0, "healthy": 0, "rate": 0.0},
             "container_offline_but_pm_online": [],
@@ -95,14 +96,33 @@ def parse_mec_report(report_text):
             rate = round(healthy / total * 100, 1) if total > 0 else 0.0
             proj_data["physical"] = {"total": total, "healthy": healthy, "rate": rate}
         else:
-            # 尝试只匹配在线数（无离线）
-            phys_match2 = re.search(
-                r'\*\*物理机\*\*[^:\n]*[:：]\s*✅\s*在线[:：]\s*(\d+)\s*台',
+            # 尝试格式2: 🔴 **物理机**: 0/34 健康 (0.0%)  + 换行 ❌ 离线: 34 台
+            phys_match3 = re.search(
+                r'\*\*物理机\*\*[^:\n]*[:：]\s*(\d+)/(\d+)',
                 block
             )
-            if phys_match2:
-                healthy = int(phys_match2.group(1))
-                proj_data["physical"] = {"total": healthy, "healthy": healthy, "rate": 100.0}
+            if phys_match3:
+                healthy = int(phys_match3.group(1))
+                total = int(phys_match3.group(2))
+                rate = round(healthy / total * 100, 1) if total > 0 else 0.0
+                proj_data["physical"] = {"total": total, "healthy": healthy, "rate": rate}
+            else:
+                # 尝试只匹配在线数（无离线）
+                phys_match2 = re.search(
+                    r'\*\*物理机\*\*[^:\n]*[:：]\s*✅\s*在线[:：]\s*(\d+)\s*台',
+                    block
+                )
+                if phys_match2:
+                    healthy = int(phys_match2.group(1))
+                    proj_data["physical"] = {"total": healthy, "healthy": healthy, "rate": 100.0}
+
+        # 解析物理机离线设备列表: 行中含 "离线" + JSON 设备列表（在物理机段落内）
+        for line in block.split('\n'):
+            if '离线' in line and '"name"' in line and '"ip"' in line:
+                phys_off_devices = _parse_device_json(line)
+                if phys_off_devices:
+                    proj_data["physical_offline_devices"] = phys_off_devices
+                    break
 
         # 解析容器: **容器在线**: ✅ 在线: 3 台 - ❌ 离线: 1 台 - 🟡 2 天未上报: 1 台
         cont_match = re.search(
@@ -116,14 +136,25 @@ def parse_mec_report(report_text):
             rate = round(online / total * 100, 1) if total > 0 else 0.0
             proj_data["container"] = {"total": total, "healthy": online, "rate": rate}
         else:
-            # 尝试只匹配在线数
-            cont_match2 = re.search(
-                r'\*\*容器在线\*\*[^:\n]*[:：]\s*✅\s*在线[:：]\s*(\d+)\s*台',
+            # 尝试格式2: 🔴 **容器在线**: 0/34 台 (0.0%)  + 换行 ❌ 离线: 34 台
+            cont_match3 = re.search(
+                r'\*\*容器在线\*\*[^:\n]*[:：]\s*(\d+)/(\d+)',
                 block
             )
-            if cont_match2:
-                online = int(cont_match2.group(1))
-                proj_data["container"] = {"total": online, "healthy": online, "rate": 100.0}
+            if cont_match3:
+                online = int(cont_match3.group(1))
+                total = int(cont_match3.group(2))
+                rate = round(online / total * 100, 1) if total > 0 else 0.0
+                proj_data["container"] = {"total": total, "healthy": online, "rate": rate}
+            else:
+                # 尝试只匹配在线数
+                cont_match2 = re.search(
+                    r'\*\*容器在线\*\*[^:\n]*[:：]\s*✅\s*在线[:：]\s*(\d+)\s*台',
+                    block
+                )
+                if cont_match2:
+                    online = int(cont_match2.group(1))
+                    proj_data["container"] = {"total": online, "healthy": online, "rate": 100.0}
 
         # 解析传感器: **传感器**: ✅ 在线: 7 台 - 🔴 离线: 2 台
         sens_match = re.search(
@@ -260,9 +291,17 @@ def classify_priority(proj_name, proj_data):
     priority = "OK"
 
     # P0: 项目完全离线 (phys_rate==0 且 cont_rate==0)
-    if phys_rate == 0 and cont_rate == 0 and physical.get("total", 0) > 0:
+    # 注意: 不检查 total>0，因为当飞书报告正则匹配失败时 total 可能为 0
+    # 但只要 phys_rate==0 且 cont_rate==0 就说明全部离线
+    if phys_rate == 0 and cont_rate == 0:
+        total_phys = physical.get("total", 0)
+        total_cont = container.get("total", 0)
+        if total_phys > 0 or total_cont > 0:
+            reason = f"项目完全离线 (物理机{total_phys}台/容器{total_cont}台均不可达)"
+        else:
+            reason = "项目完全离线 (物理机和容器均无在线设备)"
         priority = "P0"
-        reasons.append(f"项目完全离线 (物理机{physical.get('total',0)}台/容器{container.get('total',0)}台均不可达)")
+        reasons.append(reason)
         return priority, reasons
 
     # P0: phys_rate<50
@@ -709,11 +748,17 @@ def _get_suggestion(priority, proj_data):
     zero_img = proj_data.get("zero_images_devices", [])
     if not zero_img:
         zero_img = proj_data.get("container_online_zero_images", [])
+    phys_offline = proj_data.get("physical_offline_devices", [])
 
+    has_phys_offline = len(phys_offline) > 0
     has_cont_off = len(cont_off) > 0
     has_zero_img = len(zero_img) > 0
     phys_all_offline = phys.get("total", 0) > 0 and phys.get("rate", 0) == 0
     cont_all_offline = cont.get("total", 0) > 0 and cont.get("rate", 0) == 0
+
+    # 物理机离线（最高优先级）
+    if has_phys_offline:
+        return "检查离线物理机的网络连接、电源状态，确认是否关机或断网"
 
     # 完全离线
     if phys_all_offline or cont_all_offline:
@@ -831,7 +876,10 @@ def generate_report(current, comparison, history=None):
         zero_img = proj_data.get("zero_images_devices", [])
         if not zero_img:
             zero_img = proj_data.get("container_online_zero_images", [])
+        phys_offline = proj_data.get("physical_offline_devices", [])
 
+        if phys_offline:
+            issues.append(f"物理机离线({len(phys_offline)}台)")
         if cont_off:
             issues.append(f"容器不可连({len(cont_off)}台)")
         if zero_img:
@@ -901,6 +949,14 @@ def generate_report(current, comparison, history=None):
             zero_img = proj_data.get("zero_images_devices", [])
             if not zero_img:
                 zero_img = proj_data.get("container_online_zero_images", [])
+            phys_offline = proj_data.get("physical_offline_devices", [])
+
+            if phys_offline:
+                msg += f"- ❌ 物理机离线({len(phys_offline)}台): "
+                msg += ", ".join(f"{d.get('name','?')}({d.get('ip','')})" for d in phys_offline[:5])
+                if len(phys_offline) > 5:
+                    msg += f" 等{len(phys_offline)}台"
+                msg += "\n"
 
             if cont_off:
                 msg += f"- 🔴 容器不可连({len(cont_off)}台): "
