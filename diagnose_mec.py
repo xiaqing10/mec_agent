@@ -43,6 +43,9 @@ import time
 from datetime import datetime
 from pathlib import Path
 
+# Docker exec命令前缀：在物理机上通过docker exec进入dev容器执行命令
+_DOCKER_EXEC_PREFIX = "docker exec dev supervisorctl status 2>&1; docker exec dev ps -ef 2>/dev/null | grep roscore | grep -v grep; docker exec dev ls /home/files/nfsroot/ 2>/dev/null | tail -5"
+
 from query_sensor_status import get_sensor_status, format_sensor_status_short, lookup_device
 
 # ============================================================================
@@ -409,6 +412,121 @@ def _resolve_device(query: str, project: str = None) -> tuple:
     return devices[0]['ip'], devices[0]
 
 
+def _docker_exec_cmd(host_ip: str, physical_user: str, command: str, exec_timeout: int = 15, password: str = "") -> tuple:
+    """通过物理机SSH执行docker exec进入容器内运行命令。
+
+    Args:
+        host_ip: 物理机IP
+        physical_user: 物理机SSH用户名
+        command: 容器内要执行的命令（不含外层引号，会自动包装）
+        exec_timeout: 超时秒数
+        password: SSH密码
+
+    Returns:
+        (stdout, stderr, return_code)
+    """
+    exec_cmd = _docker_cmd(physical_user, f"docker exec dev bash -c '{command}'")
+    return ssh_exec(host_ip, 22, physical_user, exec_cmd, exec_timeout=exec_timeout, password=password)
+
+
+def _parse_ssh_failure_reason(diag_stdout: str, diag_stderr: str) -> str:
+    """解析docker exec探查结果，判断容器SSH不可达原因。"""
+    full = (diag_stdout or "").strip()
+    if not full:
+        return f"探查命令无输出({(diag_stderr or '无错误').strip()[:100]})"
+
+    reasons = []
+
+    # 检查sshd服务状态
+    if "===SSHD_STATUS===" in full:
+        ss = full.split("===SSHD_STATUS===")[1].split("===SSHD_LISTEN===")[0].strip()
+        if "not running" in ss.lower() or "stopped" in ss.lower() or "dead" in ss.lower():
+            reasons.append(f"sshd服务未运行({ss[:60]})")
+        elif "could not be found" in ss.lower() or "unrecognized" in ss.lower():
+            reasons.append("容器内未安装sshd服务")
+        elif "running" in ss.lower() or "active" in ss.lower():
+            reasons.append("sshd服务运行中")
+        else:
+            reasons.append(f"sshd状态未知({ss[:60]})")
+
+    # 检查端口监听
+    if "===SSHD_LISTEN===" in full:
+        pl = full.split("===SSHD_LISTEN===")[1].split("===SSHD_PROCESS===")[0].strip()
+        if "NOT_LISTENING" in pl:
+            reasons.append("sshd未监听端口")
+        elif "10022" in pl:
+            reasons.append("10022端口在监听")
+        else:
+            reasons.append("sshd未监听10022端口")
+
+    # 检查sshd进程
+    if "===SSHD_PROCESS===" in full:
+        pp = full.split("===SSHD_PROCESS===")[1].split("===FIREWALL===")[0].strip()
+        if "SSHD_NOT_RUNNING" in pp:
+            if not any("sshd未运行" in r for r in reasons):
+                reasons.append("sshd进程不存在")
+        else:
+            pass
+
+    # 检查防火墙
+    if "===FIREWALL===" in full:
+        fw = full.split("===FIREWALL===")[1].split("===SSHD_CONFIG===")[0].strip()
+        if "DROP" in fw or "REJECT" in fw:
+            reasons.append("防火墙可能拦截了10022端口")
+        elif "NO_10022_RULE" in fw:
+            pass
+
+    # 检查sshd配置
+    if "===SSHD_CONFIG===" in full:
+        sc = full.split("===SSHD_CONFIG===")[1].strip()
+        if "READ_FAILED" not in sc:
+            if "Port 10022" not in sc and "Port 22" not in sc:
+                reasons.append("sshd_config中未配置10022端口")
+            if "PermitRootLogin no" in sc or "PermitRootLogin prohibit-password" in sc:
+                pass
+            if "PasswordAuthentication no" in sc:
+                reasons.append("sshd_config禁止密码登录")
+            if "PubkeyAuthentication no" in sc:
+                reasons.append("sshd_config禁止公钥登录")
+        else:
+            reasons.append("无法读取sshd配置")
+
+    return "; ".join(reasons) if reasons else f"无法确定原因({full[:100]})"
+
+
+def _parse_docker_exec_diag(result: dict, diag_stdout: str):
+    """解析docker exec采集的容器诊断数据并写入result。"""
+    if "===SUPERVISOR===" in diag_stdout:
+        sv = diag_stdout.split("===SUPERVISOR===")[1].split("===ROSCORE===")[0].strip()
+        if sv and "SUPERVISORCTL_FAILED" not in sv:
+            processes, abnormal_processes, running_count = _parse_supervisor_status(sv)
+            result["diagnosis"]["supervisor"] = {
+                "total": len(processes), "running": running_count, "abnormal": len(abnormal_processes)
+            }
+            result["diagnosis"]["supervisor_output"] = sv
+            if abnormal_processes:
+                result["diagnosis"]["abnormal_processes"] = abnormal_processes
+                if "issue" not in result["diagnosis"]:
+                    result["diagnosis"]["issue"] = _format_abnormal_summary(abnormal_processes)
+
+    if "===ROSCORE===" in diag_stdout:
+        rc = diag_stdout.split("===ROSCORE===")[1].split("===SSHD_CHECK===")[0].strip()
+        if rc and "ROSCORE_NOT_RUNNING" not in rc:
+            result["diagnosis"]["roscore"] = f"运行中: {rc[:150]}"
+        else:
+            result["diagnosis"]["roscore"] = "未运行"
+            if "issue" not in result["diagnosis"]:
+                result["diagnosis"]["issue"] = "roscore未运行"
+
+    if "===SSHD_CHECK===" in diag_stdout:
+        sc = diag_stdout.split("===SSHD_CHECK===")[1].split("===PORT_CHECK===")[0].strip()
+        result["diagnosis"]["container_sshd_check"] = sc[:100] if sc else "无输出"
+
+    if "===PORT_CHECK===" in diag_stdout:
+        pc = diag_stdout.split("===PORT_CHECK===")[1].strip()
+        result["diagnosis"]["container_port_check"] = pc[:100] if pc else "无输出"
+
+
 # ============================================================================
 # 诊断逻辑：容器离线
 # ============================================================================
@@ -551,17 +669,63 @@ def diagnose_container_offline(host_ip: str) -> dict:
             logger.info("✅ 容器SSH可连接（监控显示离线）")
     else:
         ssh_error = (ssh_stderr or ssh_stdout).strip()[:200]
+        exec_working = "EXEC_OK" in exec_ok
         dev_exists = result["diagnosis"].get("dev_container", "").startswith("存在")
-        if dev_exists and "失败" in result["diagnosis"].get("container_exec", ""):
-            result["diagnosis"]["container_ssh_connect"] = f"不可连接 ❌ (SSH服务未运行或端口不可达)"
-            if "issue" not in result["diagnosis"]:
-                result["diagnosis"]["issue"] = f"dev容器存在但SSH不可连接，容器内SSH服务可能未启动: {ssh_error}"
-            logger.warning("❌ dev容器存在但SSH不可连接: %s", ssh_error[:100])
-        elif not dev_exists:
+
+        if not dev_exists:
             result["diagnosis"]["container_ssh_connect"] = "不可连接 ❌ (dev容器不存在)"
             if "issue" not in result["diagnosis"]:
                 result["diagnosis"]["issue"] = "dev容器不存在，无法通过SSH连接"
             logger.warning("❌ dev容器不存在，SSH不可连接")
+        elif exec_working:
+            # docker exec可进入容器但SSH端口不可达 → 通过docker exec探查SSH原因
+            logger.info("🔍 容器SSH不可达但docker exec可用，通过docker exec探查原因并继续诊断...")
+            ssh_reason_cmd = (
+                "echo '===SSHD_STATUS===' && "
+                "service ssh status 2>&1 || systemctl status sshd 2>&1 || true; "
+                "echo '===SSHD_LISTEN===' && "
+                "ss -tlnp 2>/dev/null | grep 10022 || netstat -tlnp 2>/dev/null | grep 10022 || echo 'NOT_LISTENING'; "
+                "echo '===SSHD_PROCESS===' && "
+                "ps aux | grep ssh[d] 2>/dev/null || echo 'SSHD_NOT_RUNNING'; "
+                "echo '===FIREWALL===' && "
+                "iptables -L INPUT -n 2>/dev/null | grep 10022 || echo 'NO_10022_RULE'; "
+                "echo '===SSHD_CONFIG===' && "
+                "grep -E '^Port |^PermitRootLogin |^PubkeyAuthentication |^PasswordAuthentication ' /etc/ssh/sshd_config 2>/dev/null || echo 'READ_FAILED'"
+            )
+            ssh_reason_stdout, ssh_reason_stderr, _ = _docker_exec_cmd(
+                host_ip, login_user, ssh_reason_cmd, exec_timeout=15, password=ssh_password
+            )
+
+            reason_detail = _parse_ssh_failure_reason(ssh_reason_stdout, ssh_reason_stderr)
+            result["diagnosis"]["container_ssh_connect"] = f"不可连接 ❌ ({reason_detail})"
+            result["diagnosis"]["container_ssh_fallback"] = "docker exec"
+            result["diagnosis"]["container_ssh_failure_reason"] = reason_detail
+
+            if "issue" not in result["diagnosis"]:
+                result["diagnosis"]["issue"] = (
+                    f"容器SSH(10022端口)不可达，已通过物理机docker exec进入容器诊断。"
+                    f"SSH不可达原因: {reason_detail}"
+                )
+            logger.warning("❌ 容器SSH不可达(docker exec可用)，原因: %s", reason_detail)
+
+            # 通过docker exec获取容器内诊断数据
+            logger.info("🐳 通过docker exec采集容器诊断数据...")
+            docker_diag_cmd = (
+                "echo '===SUPERVISOR===' && "
+                "supervisorctl status 2>&1 || echo 'SUPERVISORCTL_FAILED'; "
+                "echo '===ROSCORE===' && "
+                "ps -ef | grep roscore | grep -v grep || echo 'ROSCORE_NOT_RUNNING'; "
+                "echo '===SSHD_CHECK===' && "
+                "service ssh status 2>&1 || systemctl status sshd 2>&1 || echo 'SSHD_DOWN'; "
+                "echo '===PORT_CHECK===' && "
+                "ss -tlnp 2>/dev/null | grep -E '10022|22' || "
+                "netstat -tlnp 2>/dev/null | grep -E '10022|22' || echo 'PORT_NOT_LISTENING'"
+            )
+            diag_stdout, diag_stderr, _ = _docker_exec_cmd(
+                host_ip, login_user, docker_diag_cmd, exec_timeout=15, password=ssh_password
+            )
+            if diag_stdout:
+                _parse_docker_exec_diag(result, diag_stdout)
         else:
             result["diagnosis"]["container_ssh_connect"] = f"不可连接 ❌: {ssh_error}"
             if "issue" not in result["diagnosis"]:
@@ -621,29 +785,109 @@ def diagnose_zero_images(host_ip: str) -> dict:
     logger.info("📡 步骤0: 检查容器连通性...")
     stdout, stderr, code = ssh_exec(host_ip, CONTAINER_PORT, CONTAINER_USER, "echo 'OK'", exec_timeout=10)
 
+    use_docker_exec = False
+    physical_user = None
+    ssh_password = ""
+
     if code != 0 or "OK" not in stdout:
         logger.info("   首次连接失败，重试中...")
-        import time
         time.sleep(1)
         stdout, stderr, code = ssh_exec(host_ip, CONTAINER_PORT, CONTAINER_USER, "echo 'OK'", exec_timeout=10)
 
     if code != 0 or "OK" not in stdout:
-        result["diagnosis"]["issue"] = f"容器SSH无法连接: {(stderr or stdout).strip()[:200]}"
-        logger.warning("❌ 容器无法连接")
-        return _add_sensor_status(result, host_ip)
+        # 容器SSH直连失败 → 尝试通过物理机docker exec
+        logger.info("  容器SSH直连失败，尝试通过物理机docker exec...")
+        physical_user = find_physical_user(host_ip)
+        is_password_login = isinstance(physical_user, str) and physical_user.startswith("password:")
+        if is_password_login:
+            login_user = physical_user.split(":", 1)[1]
+        else:
+            login_user = physical_user
 
-    logger.info("✅ 容器连接正常")
+        if login_user in PHYSICAL_USERS or is_password_login:
+            if is_password_login:
+                creds = _get_device_credentials(host_ip)
+                ssh_password = creds.get("pm_password") or creds.get("password", "")
+            dc = _docker_cmd
+            exec_test_stdout, _, exec_test_code = ssh_exec(
+                host_ip, 22, login_user,
+                dc(login_user, "docker exec dev bash -c 'echo OK' 2>&1"),
+                exec_timeout=10, password=ssh_password
+            )
+            if exec_test_code == 0 and "OK" in exec_test_stdout:
+                logger.info("  ✅ 物理机docker exec可用，通过docker exec诊断")
+                use_docker_exec = True
+                result["diagnosis"]["container_ssh_fallback"] = "docker exec"
+                # 探查SSH失败原因
+                ssh_reason_cmd = (
+                    "echo '===SSHD_STATUS===' && "
+                    "service ssh status 2>&1 || systemctl status sshd 2>&1 || true; "
+                    "echo '===SSHD_LISTEN===' && "
+                    "ss -tlnp 2>/dev/null | grep 10022 || netstat -tlnp 2>/dev/null | grep 10022 || echo 'NOT_LISTENING'; "
+                    "echo '===SSHD_PROCESS===' && "
+                    "ps aux | grep ssh[d] 2>/dev/null || echo 'SSHD_NOT_RUNNING'; "
+                    "echo '===FIREWALL===' && "
+                    "iptables -L INPUT -n 2>/dev/null | grep 10022 || echo 'NO_10022_RULE'; "
+                    "echo '===SSHD_CONFIG===' && "
+                    "grep -E '^Port |^PermitRootLogin |^PubkeyAuthentication |^PasswordAuthentication ' /etc/ssh/sshd_config 2>/dev/null || echo 'READ_FAILED'"
+                )
+                reason_stdout, reason_stderr, _ = _docker_exec_cmd(
+                    host_ip, login_user, ssh_reason_cmd, exec_timeout=15, password=ssh_password
+                )
+                reason_detail = _parse_ssh_failure_reason(reason_stdout, reason_stderr)
+                result["diagnosis"]["container_ssh_connect"] = f"不可连接 ❌ ({reason_detail})"
+                result["diagnosis"]["container_ssh_failure_reason"] = reason_detail
+                logger.warning("  容器SSH不可达原因: %s", reason_detail)
+            else:
+                logger.warning("  ❌ 物理机docker exec也失败")
+        else:
+            logger.warning("  ❌ 物理机无法连接")
+
+        if not use_docker_exec:
+            result["diagnosis"]["issue"] = f"容器SSH无法连接: {(stderr or stdout).strip()[:200]}"
+            logger.warning("❌ 容器无法连接")
+            return _add_sensor_status(result, host_ip)
+
+    if not use_docker_exec:
+        logger.info("✅ 容器连接正常")
 
     # ========== 步骤0.5-2: 一次SSH获取所有初始数据 ==========
     today_str = datetime.now().strftime("%Y-%m-%d")
     logger.info("📦 一次SSH采集容器初始数据...")
-    combined = _combined_ssh(host_ip, CONTAINER_PORT, CONTAINER_USER, [
-        ("SUPERVISOR", "supervisorctl status 2>&1"),
-        ("ROSCORE", "ps -ef | grep roscore | grep -v grep"),
-        ("IMG_COUNT", f"ls /home/files/nfsroot/{today_str}/ 2>/dev/null | wc -l"),
-        ("IMG_INFO", f"ls -lt --time-style='+%Y-%m-%d %H:%M:%S' /home/files/nfsroot/{today_str}/ 2>/dev/null | head -2"),
-        ("GREP_CONF", "grep -hE 'stdout_logfile=|stderr_logfile=' /etc/supervisor/conf.d/*.conf 2>/dev/null | sort -u"),
-    ], exec_timeout=30)
+
+    if use_docker_exec:
+        # 通过docker exec采集
+        docker_cmds = (
+            "echo '===SUPERVISOR===' && supervisorctl status 2>&1; "
+            "echo '===ROSCORE===' && ps -ef | grep roscore | grep -v grep || echo 'ROSCORE_NOT_RUNNING'; "
+            f"echo '===IMG_COUNT===' && ls /home/files/nfsroot/{today_str}/ 2>/dev/null | wc -l; "
+            f"echo '===IMG_INFO===' && ls -lt --time-style='+%Y-%m-%d %H:%M:%S' /home/files/nfsroot/{today_str}/ 2>/dev/null | head -2; "
+            "echo '===GREP_CONF===' && grep -hE 'stdout_logfile=|stderr_logfile=' /etc/supervisor/conf.d/*.conf 2>/dev/null | sort -u"
+        )
+        exec_full, _, _ = _docker_exec_cmd(host_ip, login_user, docker_cmds, exec_timeout=30, password=ssh_password)
+        # 手动解析marker
+        combined = {}
+        for marker in ["SUPERVISOR", "ROSCORE", "IMG_COUNT", "IMG_INFO", "GREP_CONF"]:
+            if f"==={marker}===" in exec_full:
+                parts = exec_full.split(f"==={marker}===")
+                remaining = parts[1] if len(parts) > 1 else ""
+                next_marker = None
+                for m in ["SUPERVISOR", "ROSCORE", "IMG_COUNT", "IMG_INFO", "GREP_CONF"]:
+                    if m != marker and f"==={m}===" in remaining:
+                        next_marker = f"==={m}==="
+                        break
+                if next_marker:
+                    combined[marker] = remaining.split(next_marker)[0].strip()
+                else:
+                    combined[marker] = remaining.strip()
+    else:
+        combined = _combined_ssh(host_ip, CONTAINER_PORT, CONTAINER_USER, [
+            ("SUPERVISOR", "supervisorctl status 2>&1"),
+            ("ROSCORE", "ps -ef | grep roscore | grep -v grep"),
+            ("IMG_COUNT", f"ls /home/files/nfsroot/{today_str}/ 2>/dev/null | wc -l"),
+            ("IMG_INFO", f"ls -lt --time-style='+%Y-%m-%d %H:%M:%S' /home/files/nfsroot/{today_str}/ 2>/dev/null | head -2"),
+            ("GREP_CONF", "grep -hE 'stdout_logfile=|stderr_logfile=' /etc/supervisor/conf.d/*.conf 2>/dev/null | sort -u"),
+        ], exec_timeout=30)
 
     sv_raw = combined.get("SUPERVISOR", "").strip()
     ros_raw = combined.get("ROSCORE", "").strip()
@@ -710,7 +954,10 @@ def diagnose_zero_images(host_ip: str) -> dict:
 
     # ========== 步骤3: 检查各进程日志（独立SSH，操作较重） ==========
     logger.info("📋 步骤3: 检查各进程日志...")
+    if use_docker_exec:
+        result["_exec_ctx"] = {"method": "docker_exec", "login_user": login_user, "ssh_password": ssh_password}
     result, has_log_errors, error_category = _check_process_logs(host_ip, result)
+    result.pop("_exec_ctx", None)
     if error_category:
         result["diagnosis"]["error_category"] = error_category
     if has_log_errors and "issue" not in result["diagnosis"]:
@@ -736,7 +983,10 @@ def diagnose_zero_images(host_ip: str) -> dict:
 
     # ========== 步骤4: rostopic hz 检查关键主题 ==========
     logger.info("📡 步骤4: rostopic hz 检查...")
+    if use_docker_exec:
+        result["_exec_ctx"] = {"method": "docker_exec", "login_user": login_user, "ssh_password": ssh_password}
     result = _check_rostopic_hz(host_ip, result, bool(result.get("diagnosis", {}).get("log_errors")))
+    result.pop("_exec_ctx", None)
 
     # 汇总issue（如果前面都没设）
     if "issue" not in result["diagnosis"]:
@@ -893,9 +1143,16 @@ def _check_process_logs(host_ip: str, result: dict):
         - has_log_errors: 是否发现日志错误
         - error_category: 错误分类，值为 "driver"（驱动未加载）/"process"（进程错误）/None
     """
+    ctx = result.get("_exec_ctx", {})
+    if ctx.get("method") == "docker_exec":
+        _run_in_container = lambda cmd: _docker_exec_cmd(
+            host_ip, ctx["login_user"], cmd, exec_timeout=20, password=ctx.get("ssh_password", "")
+        )
+    else:
+        _run_in_container = lambda cmd: ssh_exec(host_ip, CONTAINER_PORT, CONTAINER_USER, cmd, exec_timeout=20)
+
     # ========== 1. 从supervisor配置中提取进程日志路径 ==========
-    stdout_conf, _, _ = ssh_exec(
-        host_ip, CONTAINER_PORT, CONTAINER_USER,
+    stdout_conf, _, _ = _run_in_container(
         "grep -hE 'stdout_logfile=|stderr_logfile=' /etc/supervisor/conf.d/*.conf 2>/dev/null | sort -u"
     )
 
@@ -981,7 +1238,7 @@ def _check_process_logs(host_ip: str, result: dict):
         )
     combined_cmd = " ; ".join(shell_cmds) if shell_cmds else "echo '__NO_LOGS__'"
 
-    stdout, _, _ = ssh_exec(host_ip, CONTAINER_PORT, CONTAINER_USER, combined_cmd, exec_timeout=20)
+    stdout, _, _ = _run_in_container(combined_cmd)
 
     # ========== 4. 解析grep输出 ==========
     # 在 __START__ 和 __END__ 标记之间的行属于对应进程的日志错误
@@ -1118,9 +1375,7 @@ def _check_process_logs(host_ip: str, result: dict):
             check_cmd = pat.get("check_cmd")
             if not check_cmd:
                 continue
-            stdout_dmesg, _, _ = ssh_exec(
-                host_ip, CONTAINER_PORT, CONTAINER_USER, check_cmd, exec_timeout=15
-            )
+            stdout_dmesg, _, _ = _run_in_container(check_cmd)
             if stdout_dmesg.strip():
                 error_category = pat["category"]
                 result["diagnosis"]["log_errors"]["_system"] = {
@@ -1151,11 +1406,17 @@ def _check_rostopic_hz(host_ip: str, result: dict, has_log_errors: bool) -> dict
     """
     result["diagnosis"]["topic_rates"] = {}
 
+    ctx = result.get("_exec_ctx", {})
+    if ctx.get("method") == "docker_exec":
+        _run_in_container = lambda cmd: _docker_exec_cmd(
+            host_ip, ctx["login_user"], cmd, exec_timeout=20, password=ctx.get("ssh_password", "")
+        )
+    else:
+        _run_in_container = lambda cmd: ssh_exec(host_ip, CONTAINER_PORT, CONTAINER_USER, cmd, exec_timeout=20)
+
     # 先列出所有topic
-    stdout, _, _ = ssh_exec(
-        host_ip, CONTAINER_PORT, CONTAINER_USER,
-        f"{ROS_ENV_CMD} && rostopic list 2>/dev/null",
-        exec_timeout=15
+    stdout, _, _ = _run_in_container(
+        f"{ROS_ENV_CMD} && rostopic list 2>/dev/null"
     )
 
     if not stdout.strip():
