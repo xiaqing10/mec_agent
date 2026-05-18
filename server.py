@@ -26,7 +26,7 @@ os.chdir(str(SELF_AGENT_DIR))
 
 from config import API_HOST, API_PORT, API_KEY, USERS
 
-from feedback_store import create_feedback_record, update_rating, get_feedback_stats, get_recent_feedback
+from feedback_store import create_feedback_record, update_rating, get_feedback_stats, get_recent_feedback, update_feedback_by_id, delete_feedback_by_id
 
 try:
     from aiohttp import web
@@ -282,8 +282,19 @@ async def handle_feedback(request):
     rating = body.get("rating", "")
     feedback_text = body.get("feedback_text", "")
 
-    if not session_id or rating not in ("satisfied", "partial", "unsatisfied"):
-        return web.json_response({"success": False, "error": "参数无效: session_id 和 rating(满足/部分/不满足) 为必填"}, status=400)
+    if not session_id:
+        return web.json_response({"success": False, "error": "session_id 为必填"}, status=400)
+
+    if rating == "pending":
+        # Reset to unrated (undo)
+        try:
+            update_rating(session_id, None, "")
+            return web.json_response({"success": True, "message": "已撤销评价"})
+        except Exception as e:
+            return web.json_response({"success": False, "error": str(e)}, status=500)
+
+    if rating not in ("satisfied", "partial", "unsatisfied"):
+        return web.json_response({"success": False, "error": "rating 必须为 satisfied/partial/unsatisfied"}, status=400)
 
     try:
         update_rating(session_id, rating, feedback_text)
@@ -321,6 +332,49 @@ async def handle_feedback_my(request):
     try:
         records = get_recent_feedback(limit=100, user_id=username)
         return web.json_response({"success": True, "data": records})
+    except Exception as e:
+        return web.json_response({"success": False, "error": str(e)}, status=500)
+
+
+async def handle_feedback_update(request):
+    """Update a feedback record by id (own records only)."""
+    username = _get_username(request)
+    if not username:
+        return web.json_response({"success": False, "error": "未登录"}, status=401)
+    body = await _parse_body(request)
+    if not body:
+        return web.json_response({"success": False, "error": "请求体必须为JSON格式"}, status=400)
+    record_id = body.get("id")
+    rating = body.get("rating")
+    feedback_text = body.get("feedback_text", "")
+    if not record_id or rating not in ("satisfied", "partial", "unsatisfied"):
+        return web.json_response({"success": False, "error": "参数无效"}, status=400)
+    try:
+        records = get_recent_feedback(limit=1, user_id=username)
+        record = next((r for r in get_recent_feedback(limit=100, user_id=username) if r["id"] == record_id), None)
+        if not record:
+            return web.json_response({"success": False, "error": "记录不存在或不属于你"}, status=403)
+        update_feedback_by_id(record_id, rating, feedback_text)
+        return web.json_response({"success": True, "message": "已更新"})
+    except Exception as e:
+        return web.json_response({"success": False, "error": str(e)}, status=500)
+
+
+async def handle_feedback_delete(request):
+    """Delete a feedback record by id (own records only)."""
+    username = _get_username(request)
+    if not username:
+        return web.json_response({"success": False, "error": "未登录"}, status=401)
+    record_id = request.match_info.get("id")
+    if not record_id:
+        return web.json_response({"success": False, "error": "缺少id"}, status=400)
+    try:
+        record_id = int(record_id)
+        record = next((r for r in get_recent_feedback(limit=100, user_id=username) if r["id"] == record_id), None)
+        if not record:
+            return web.json_response({"success": False, "error": "记录不存在或不属于你"}, status=403)
+        delete_feedback_by_id(record_id)
+        return web.json_response({"success": True, "message": "已删除"})
     except Exception as e:
         return web.json_response({"success": False, "error": str(e)}, status=500)
 
@@ -569,8 +623,11 @@ body {
 }
 .msg.bot ul, .msg.bot ol { padding-left: 20px; }
 .msg.bot table { border-collapse: collapse; margin: 8px 0; font-size: 13px; }
-.msg.bot th, .msg.bot td { border: 1px solid #e5e7eb; padding: 6px 10px; text-align: left; }
+.msg.bot th, .msg.bot td { border: 1px solid #e5e7eb; padding: 6px 10px; text-align: left; white-space: nowrap; }
 .msg.bot th { background: #f6f8fa; font-weight: 600; }
+.msg.bot table tbody tr:nth-child(even) { background: #f9fafb; }
+.msg.bot table tbody tr:nth-child(odd) { background: #fff; }
+.msg.bot table tbody tr:hover { background: #eef2ff; }
 .msg.error { background: #fff0f0; color: #d00; border: 1px solid #fcc; }
 .msg.streaming { border-left: 3px solid var(--primary); }
 #streaming-content { white-space: pre-wrap; }
@@ -689,6 +746,16 @@ body {
   font-size: 13px; color: #666; border-bottom: 2px solid transparent;
 }
 .nav-tabs button.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 500; }
+.user-info { position: relative; }
+.guide-btn { padding:4px 10px;background:transparent;border:1px solid rgba(255,255,255,0.4);color:#fff;border-radius:4px;cursor:pointer;font-size:12px;margin-right:8px; }
+.guide-btn:hover { background:rgba(255,255,255,0.15); }
+.guide-dropdown { display:none;position:absolute;top:100%;right:0;z-index:100;width:320px;max-height:400px;overflow-y:auto;background:#fff;border:1px solid #e5e7eb;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.12);padding:12px 14px;margin-top:4px; }
+.guide-dropdown.show { display:block; }
+.guide-dropdown h4 { margin:8px 0 4px;font-size:13px;color:var(--primary); }
+.guide-dropdown table { width:100%;border-collapse:collapse;font-size:12px; }
+.guide-dropdown td { padding:3px 4px;vertical-align:top; }
+.guide-dropdown td:first-child { color:#333;font-weight:500;white-space:nowrap; }
+.guide-dropdown td:last-child { color:#666; }
 </style>
 </head>
 <body>
@@ -698,7 +765,30 @@ body {
   <span class="badge">v3.1 流式</span>
   <div class="user-info" id="userInfo" style="display:none">
     <span id="userNameDisplay"></span>
+    <button class="guide-btn" onclick="toggleGuide()">📖 指南</button>
     <button class="logout-btn" onclick="logout()">退出</button>
+    <div class="guide-dropdown" id="guideDropdown">
+      <h4>📋 查看日志</h4>
+      <table>
+        <tr><td>获取飞书日志</td><td>返回飞书报告原文，不做分析</td></tr>
+        <tr><td>分析XX日志</td><td>解析报告+P0-P3分级</td></tr>
+        <tr><td>LLM分析XX日志</td><td>LLM深度分析日志</td></tr>
+        <tr><td>异常设备统计</td><td>各项目异常数+健康率表格</td></tr>
+      </table>
+      <h4>🔧 诊断设备</h4>
+      <table>
+        <tr><td>诊断单台设备</td><td>SSH 6维度检查</td></tr>
+        <tr><td>LLM深度诊断</td><td>SSH采集+LLM根因分析</td></tr>
+        <tr><td>批量诊断项目</td><td>诊断项目下所有异常设备</td></tr>
+        <tr><td>查设备信息</td><td>硬盘/内存/CPU详情</td></tr>
+      </table>
+      <h4>🛠 其他</h4>
+      <table>
+        <tr><td>执行SSH命令</td><td>设备上执行任意命令</td></tr>
+        <tr><td>推送钉钉</td><td>推送消息到钉钉</td></tr>
+      </table>
+    </div>
+  </div>
   </div>
 </div>
 <div class="layout">
@@ -892,7 +982,7 @@ function fetchFeedback(url) {
         container.innerHTML = '<p style="color:#999">暂无反馈记录</p>';
         return;
       }
-      var html = '<table class="feedback-table"><thead><tr><th>时间</th><th>用户</th><th>意图</th><th>评价</th><th>反馈</th><th>自评</th></tr></thead><tbody>';
+      var html = '<table class="feedback-table"><thead><tr><th>时间</th><th>用户</th><th>意图</th><th>评价</th><th>反馈</th><th>自评</th><th>操作</th></tr></thead><tbody>';
       for (var i = 0; i < d.data.length; i++) {
         var r = d.data[i];
         var ratingMap = { 'satisfied': '👍 满足', 'partial': '🤔 部分', 'unsatisfied': '👎 不满足', 'pending': '⏳ 待评价', null: '⏳ 待评价' };
@@ -901,12 +991,38 @@ function fetchFeedback(url) {
         var time = r.created_at ? r.created_at.slice(0, 19).replace('T', ' ') : '';
         var intent = r.intent || '-';
         var score = r.auto_correctness !== null ? (r.auto_correctness * 10) + '%' : '-';
-        html += '<tr><td>' + time + '</td><td>' + (r.user_id || '-') + '</td><td>' + intent + '</td><td class="' + ratingClass + '">' + ratingText + '</td><td>' + (r.feedback_text || '-') + '</td><td>' + score + '</td></tr>';
+        var actionsHtml = '<button onclick="editFeedback(' + r.id + ',\'' + (r.rating||'') + '\',\'' + (r.feedback_text||'').replace(/'/g,"\\'") + '\')" style="padding:2px 6px;background:transparent;border:1px solid #ccc;border-radius:4px;cursor:pointer;font-size:11px;margin-right:4px">✏️</button>' +
+          '<button onclick="deleteFeedback(' + r.id + ')" style="padding:2px 6px;background:transparent;border:1px solid #fcc;border-radius:4px;cursor:pointer;font-size:11px;color:#d00">🗑️</button>';
+        html += '<tr><td>' + time + '</td><td>' + (r.user_id || '-') + '</td><td>' + intent + '</td><td class="' + ratingClass + '">' + ratingText + '</td><td>' + (r.feedback_text || '-') + '</td><td>' + score + '</td><td>' + actionsHtml + '</td></tr>';
       }
       html += '</tbody></table>';
       container.innerHTML = html;
     })
     .catch(function() { container.innerHTML = '<p style="color:#d00">加载失败</p>'; });
+}
+
+function editFeedback(id, rating, text) {
+  var newRating = prompt('修改评价 (satisfied/partial/unsatisfied):', rating);
+  if (!newRating || !['satisfied','partial','unsatisfied'].includes(newRating)) return;
+  var newText = prompt('修改反馈内容 (可选):', text || '');
+  if (newText === null) return;
+  fetch('/api/v1/feedback/update', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-API-Key': API_KEY },
+    body: JSON.stringify({ id: id, rating: newRating, feedback_text: newText || '' })
+  }).then(function(r){return r.json()}).then(function(d){
+    if(d.success){alert('已更新');loadMyFeedback();}else{alert(d.error||'更新失败');}
+  }).catch(function(){alert('网络错误');});
+}
+
+function deleteFeedback(id) {
+  if (!confirm('确定删除这条反馈记录吗？')) return;
+  fetch('/api/v1/feedback/' + id, {
+    method: 'DELETE',
+    headers: { 'X-API-Key': API_KEY }
+  }).then(function(r){return r.json()}).then(function(d){
+    if(d.success){loadMyFeedback();}else{alert(d.error||'删除失败');}
+  }).catch(function(){alert('网络错误');});
 }
 
 function initChat() {
@@ -1272,9 +1388,27 @@ function submitFeedback(rating, reason) {
     if (d.success) {
       fbBar.querySelector('.fb-btns').style.display = 'none';
       fbThanks.style.display = 'block';
-      setTimeout(function() { fbBar.style.display = 'none'; fbThanks.style.display = 'none'; fbBar.querySelector('.fb-btns').style.display = ''; }, 3000);
+      fbThanks.innerHTML = '感谢你的反馈！ <button onclick="undoFeedback()" style="margin-left:8px;padding:2px 8px;background:#fff;border:1px solid #155724;border-radius:4px;cursor:pointer;font-size:11px;color:#155724">修改</button>';
+      setTimeout(function() { fbBar.style.display = 'none'; fbThanks.style.display = 'none'; fbBar.querySelector('.fb-btns').style.display = ''; fbThanks.innerHTML = '感谢你的反馈！'; }, 30000);
     }
   }).catch(function(e) { console.error('Feedback error:', e); });
+}
+
+function undoFeedback() {
+  var fbBar = document.getElementById('feedbackBar');
+  if (!fbBar) return;
+  var fbThanks = document.getElementById('fbThanks');
+  fbThanks.style.display = 'none';
+  fbThanks.innerHTML = '感谢你的反馈！';
+  fbBar.querySelector('.fb-btns').style.display = '';
+  var btns = fbBar.querySelectorAll('.fb-btn');
+  for (var i = 0; i < btns.length; i++) { btns[i].classList.remove('selected'); }
+  // Re-submit with rating=null to clear previous rating
+  fetch('/api/v1/feedback', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-API-Key': API_KEY },
+    body: JSON.stringify({ session_id: currentSessionId, rating: 'pending' })
+  }).catch(function(e) { console.error('Undo error:', e); });
 }
 
 var inputEl = document.getElementById('input');
@@ -1283,6 +1417,16 @@ inputEl.addEventListener('input', function() {
   this.style.height = Math.min(this.scrollHeight, 120) + 'px';
 });
 function toggleSidebar() { document.getElementById('sidebar').classList.toggle('show'); }
+function toggleGuide() {
+  var el = document.getElementById('guideDropdown');
+  el.classList.toggle('show');
+}
+document.addEventListener('click', function(e) {
+  var gd = document.getElementById('guideDropdown');
+  if (gd && gd.classList.contains('show') && !e.target.closest('.user-info')) {
+    gd.classList.remove('show');
+  }
+});
 
 checkAuth();
 </script>
@@ -1317,6 +1461,8 @@ def create_app():
     app.router.add_get("/api/v1/feedback/stats", handle_feedback_stats)
     app.router.add_get("/api/v1/feedback/list", handle_feedback_list)
     app.router.add_get("/api/v1/feedback/my", handle_feedback_my)
+    app.router.add_post("/api/v1/feedback/update", handle_feedback_update)
+    app.router.add_delete("/api/v1/feedback/{id}", handle_feedback_delete)
     return app
 
 

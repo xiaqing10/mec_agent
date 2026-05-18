@@ -61,6 +61,10 @@ def create_feedback_record(conversation_id: str, user_id: str = "default",
                            auto_correctness: int = None) -> int:
     conn = _get_conn()
     now = datetime.now().isoformat()
+    # Remove previous unrated records for same conversation (keep only the latest)
+    conn.execute("""
+        DELETE FROM feedback WHERE conversation_id = ? AND rating IS NULL
+    """, (conversation_id,))
     cur = conn.execute("""
         INSERT INTO feedback (conversation_id, user_id, intent, actions,
                               rating, feedback_text, auto_correctness, created_at)
@@ -115,6 +119,22 @@ def get_recent_feedback(limit: int = 20, user_id: str = None) -> list:
             (limit,)
         ).fetchall()
     return [dict(r) for r in rows]
+
+
+def update_feedback_by_id(record_id: int, rating: str, feedback_text: str = ""):
+    conn = _get_conn()
+    now = datetime.now().isoformat()
+    conn.execute("""
+        UPDATE feedback SET rating = ?, feedback_text = ?, updated_at = ?
+        WHERE id = ?
+    """, (rating, feedback_text, now, record_id))
+    conn.commit()
+
+
+def delete_feedback_by_id(record_id: int):
+    conn = _get_conn()
+    conn.execute("DELETE FROM feedback WHERE id = ?", (record_id,))
+    conn.commit()
 
 
 def close():
