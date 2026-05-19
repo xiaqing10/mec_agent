@@ -21,6 +21,18 @@ from langchain_core.tools import tool
 # Tool 1: diagnose_device
 # ──────────────────────────────────────────────
 
+# 进度回调注册：server.py 注入后，diagnose_device 每完成一个维度就回调
+_diag_progress_callback = None
+
+def set_diag_progress_callback(cb):
+    global _diag_progress_callback
+    _diag_progress_callback = cb
+
+def _notify_progress(name, status, detail):
+    cb = _diag_progress_callback
+    if cb:
+        cb(name, status, detail)
+
 def _summarize_log_errors(log_errors: dict) -> str:
     parts = []
     for proc_name, info in log_errors.items():
@@ -69,7 +81,7 @@ def diagnose_device(ip: str, project: str = "") -> str:
 
     dimensions = []
 
-    cont = diagnose_container_offline(ip)
+    cont = diagnose_container_offline(ip, progress_cb=_diag_progress_callback)
     cd = cont.get("diagnosis", {})
 
     ce = cd.get("error", "")
@@ -86,6 +98,7 @@ def diagnose_device(ip: str, project: str = "") -> str:
         return "\n".join(lines)
 
     if ce:
+        _notify_progress("物理机", "error", ce[:80])
         dimensions.append({"name": "物理机", "status": "error", "detail": ce, "problem": "ssh_unreachable"})
         for dim_name in ["容器", "进程", "ROS", "数据源", "传感器"]:
             dimensions.append({"name": dim_name, "status": "skip", "detail": "物理机不可达，跳过"})
@@ -107,6 +120,7 @@ def diagnose_device(ip: str, project: str = "") -> str:
         disk_detail_parts.append(f"/: {disk_root}")
     if disk_data:
         disk_detail_parts.append(f"/data: {disk_data}")
+    _notify_progress("物理机", "ok", " | ".join(disk_detail_parts))
     dimensions.append({"name": "物理机", "status": "ok", "detail": " | ".join(disk_detail_parts)})
 
     cs = cd.get("container_status", "")
@@ -120,8 +134,10 @@ def diagnose_device(ip: str, project: str = "") -> str:
         if cst:
             container_detail += f"，启动于 {cst[:10]} {cst[11:16]}"
         if "不可连接" in (container_ssh or ""):
+            _notify_progress("容器", "error", f"容器运行({cs})，但SSH不可连接")
             dimensions.append({"name": "容器", "status": "error", "detail": f"容器运行({cs})，但SSH不可连接", "problem": "container_ssh_down"})
         else:
+            _notify_progress("容器", "ok", container_detail)
             dimensions.append({"name": "容器", "status": "ok", "detail": container_detail})
     else:
         if "不存在" in (dev_cont or ""):
@@ -136,6 +152,7 @@ def diagnose_device(ip: str, project: str = "") -> str:
             problem, detail = "container_ssh_down", "容器内SSH服务不可连接"
         else:
             problem, detail = "container_offline", issue_text or "容器不可用"
+        _notify_progress("容器", "error", detail)
         dimensions.append({"name": "容器", "status": "error", "detail": detail, "problem": problem})
         for dim_name in ["进程", "ROS", "数据源"]:
             dimensions.append({"name": dim_name, "status": "skip", "detail": "容器不可达，跳过"})
@@ -154,7 +171,7 @@ def diagnose_device(ip: str, project: str = "") -> str:
             dimensions.append({"name": "数据库记录", "status": "warning", "detail": db_detail})
         return _fmt(ip, dimensions, problem)
 
-    img = diagnose_zero_images(ip)
+    img = diagnose_zero_images(ip, progress_cb=_diag_progress_callback)
     iz = img.get("diagnosis", {})
     ic = iz.get("today_image_count", -1)
 
@@ -185,6 +202,7 @@ def diagnose_device(ip: str, project: str = "") -> str:
                 detail += f" | 日志: {log_summary}"
         dimensions.append({"name": "进程", "status": "error", "detail": detail,
                           "problem": problem, "supervisor_raw": sv_raw})
+        _notify_progress("进程", "error", detail)
     elif log_errors:
         log_summary = _summarize_log_errors(log_errors)
         error_category_val = iz.get("error_category", "process")
@@ -192,12 +210,16 @@ def diagnose_device(ip: str, project: str = "") -> str:
                        "oom": "oom_error", "process": "process_log_error"}
         dimensions.append({"name": "进程", "status": "error", "detail": f"supervisor正常但日志异常: {log_summary}",
                           "problem": problem_map.get(error_category_val, "process_log_error")})
+        _notify_progress("进程", "error", f"supervisor正常但日志异常: {log_summary}")
     elif isinstance(sv, dict) and sv.get("total", 0) > 0:
         dimensions.append({"name": "进程", "status": "ok", "detail": f"{sv.get('running',0)}/{sv.get('total',0)} 运行正常"})
+        _notify_progress("进程", "ok", f"{sv.get('running',0)}/{sv.get('total',0)} 运行正常")
     elif isinstance(sv, str) and "异常" in sv:
         dimensions.append({"name": "进程", "status": "error", "detail": "Supervisor服务异常", "problem": "supervisor_error"})
+        _notify_progress("进程", "error", "Supervisor服务异常")
     else:
         dimensions.append({"name": "进程", "status": "warning", "detail": "未获取到进程状态"})
+        _notify_progress("进程", "warning", "未获取到进程状态")
 
     roscore = iz.get("roscore", "")
     topic_rates = iz.get("topic_rates", {})
@@ -219,7 +241,9 @@ def diagnose_device(ip: str, project: str = "") -> str:
             detail = f"{len(zero_topics)}/{len(topic_rates)} topic无数据\n  - {topic_list_str}"
         else:
             detail = f"roscore运行，{len(topic_rates)} topic有数据\n  - {topic_list_str}"
-        dimensions.append({"name": "ROS话题", "status": "error" if len(zero_topics)==len(topic_rates) and topic_rates else "warning" if zero_topics else "ok", "detail": detail})
+        ros_status = "error" if len(zero_topics)==len(topic_rates) and topic_rates else "warning" if zero_topics else "ok"
+        dimensions.append({"name": "ROS话题", "status": ros_status, "detail": detail})
+        _notify_progress("ROS话题", ros_status, detail[:60])
     elif abnormals:
         dimensions.append({"name": "ROS", "status": "skip", "detail": "进程异常，跳过"})
     else:
@@ -231,10 +255,13 @@ def diagnose_device(ip: str, project: str = "") -> str:
         if latest_time:
             dim5 += f"，最新 {latest_time}"
         dimensions.append({"name": "数据源", "status": "ok", "detail": dim5})
+        _notify_progress("数据源", "ok", dim5)
     elif ic == 0:
         dimensions.append({"name": "数据源", "status": "error", "detail": "今日图片: 0 张", "problem": "zero_images"})
+        _notify_progress("数据源", "error", "今日图片: 0 张")
     else:
         dimensions.append({"name": "数据源", "status": "warning", "detail": "无法获取图片数"})
+        _notify_progress("数据源", "warning", "无法获取图片数")
 
     si = get_sensor_status(ip)
     if si and (si.get("cameras") or si.get("radars")):
@@ -248,9 +275,12 @@ def diagnose_device(ip: str, project: str = "") -> str:
         has_problem = cam_off > 0 or rad_off > 0
         sensor_detail = "在线" if not has_problem else "部分离线"
         sensor_detail += " (" + ", ".join(parts) + ")"
-        dimensions.append({"name": "传感器", "status": "warning" if has_problem else "ok", "detail": sensor_detail})
+        sensor_status = "warning" if has_problem else "ok"
+        dimensions.append({"name": "传感器", "status": sensor_status, "detail": sensor_detail})
+        _notify_progress("传感器", sensor_status, sensor_detail)
     else:
         dimensions.append({"name": "传感器", "status": "skip", "detail": "无传感器数据"})
+        _notify_progress("传感器", "skip", "无传感器数据")
 
     has_error = any(d["status"] == "error" for d in dimensions)
     has_warning = any(d["status"] == "warning" for d in dimensions)
@@ -695,7 +725,7 @@ def query_abnormal() -> str:
                        SUM(CASE WHEN md.is_active = 0 THEN 1 ELSE 0 END) AS inactive,
                        SUM(CASE WHEN md.ssh_status = 0 THEN 1 ELSE 0 END) AS ssh_offline,
                        SUM(CASE WHEN pm.is_healthy = 0 THEN 1 ELSE 0 END) AS pm_unhealthy,
-                       SUM(CASE WHEN md.running_containers = 0 THEN 1 ELSE 0 END) AS no_container,
+                       SUM(CASE WHEN pm.running_containers = 0 OR pm.running_containers IS NULL THEN 1 ELSE 0 END) AS no_container,
                        SUM(CASE WHEN md.event_jpg_count = 0 THEN 1 ELSE 0 END) AS zero_img,
                        SUM(CASE WHEN md.event_jpg_count > 0 AND md.event_jpg_count < 100 THEN 1 ELSE 0 END) AS low_img
                 FROM mec_device md
@@ -710,9 +740,33 @@ def query_abnormal() -> str:
 
     conn.close()
 
-    lines = [f"📊 **异常项目概览**（数据库）\n"]
-    lines.append(f"数据更新时间: {date.today()}")
-    lines.append(f"> ⚠️ 数据来自MySQL数据库，非实时SSH数据\n")
+    # Determine which columns have all-zero data (excluding project/项目)
+    col_keys = ["inactive", "ssh_offline", "pm_unhealthy", "no_container", "zero_img", "low_img"]
+    col_headers = {
+        "inactive": "未激活",
+        "ssh_offline": "SSH离线",
+        "pm_unhealthy": "物理机异常",
+        "no_container": "无容器",
+        "zero_img": "图片为0",
+        "low_img": "图片偏少(<100)",
+    }
+    col_separators = {
+        "inactive": "--------",
+        "ssh_offline": "---------",
+        "pm_unhealthy": "-----------",
+        "no_container": "--------",
+        "zero_img": "---------",
+        "low_img": "---------------",
+    }
+
+    active_cols = []
+    for k in col_keys:
+        if any(r[k] != 0 for r in rows):
+            active_cols.append(k)
+
+    lines = [f"📊 **异常项目概览**\n"]
+    lines.append(f"数据来源: MySQL数据库（非实时，更新至 {date.today()}）")
+    lines.append(f"> 本数据仅来自数据库，不涉及飞书报告\n")
     lines.append("| 项目 | 总设备 | 异常数 | 未激活 | SSH离线 | 物理机异常 | 无容器 | 图片为0 | 图片偏少(<100) |")
     lines.append("|------|--------|--------|--------|---------|-----------|--------|---------|---------------|")
 
@@ -720,9 +774,11 @@ def query_abnormal() -> str:
     for r in rows:
         abnormal = r["inactive"] + r["ssh_offline"] + r["pm_unhealthy"] + r["zero_img"]
         total_abnormal += abnormal
+        def fmt(v):
+            return str(v) if v is not None else "-"
         lines.append(
-            f"| {r['project']} | {r['total']} | {abnormal} | {r['inactive']} | {r['ssh_offline']} | "
-            f"{r['pm_unhealthy']} | {r['no_container']} | {r['zero_img']} | {r['low_img']} |"
+            f"| {r['project']} | {fmt(r['total'])} | {fmt(abnormal)} | {fmt(r['inactive'])} | {fmt(r['ssh_offline'])} | "
+            f"{fmt(r['pm_unhealthy'])} | {fmt(r['no_container'])} | {fmt(r['zero_img'])} | {fmt(r['low_img'])} |"
         )
 
     lines.append(f"\n🔄 共 **{total_abnormal}** 台异常设备")

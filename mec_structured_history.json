@@ -1,2783 +1,6 @@
 {
   "reports": [
     {
-      "timestamp": "2026-05-18 10:43:49",
-      "saved_at": "2026-05-18T14:27:57.982146",
-      "projects": {
-        "南京仙新路": {
-          "physical": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": []
-        },
-        "山西灵石": {
-          "physical": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": []
-        },
-        "德会": {
-          "physical": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": []
-        },
-        "德会隧道": {
-          "physical": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": [
-            {
-              "name": "mzk68_325",
-              "ip": "10.145.58.111"
-            }
-          ]
-        },
-        "柯诸": {
-          "physical": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": []
-        },
-        "汉宜": {
-          "physical": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": []
-        },
-        "汕梅": {
-          "physical": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": [
-            {
-              "name": "mz4k88_800",
-              "ip": "44.42.122.140"
-            }
-          ]
-        },
-        "沈海": {
-          "physical": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [
-            {
-              "name": "mec_1007",
-              "ip": "172.18.33.118"
-            }
-          ],
-          "zero_images_devices": []
-        },
-        "绵九": {
-          "physical": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [
-            {
-              "name": "mk626_486",
-              "ip": "10.145.181.49"
-            },
-            {
-              "name": "mk636_385",
-              "ip": "10.145.189.102"
-            },
-            {
-              "name": "mk666_639",
-              "ip": "10.142.72.173"
-            },
-            {
-              "name": "mk672_917",
-              "ip": "10.142.80.110"
-            },
-            {
-              "name": "mk680_616",
-              "ip": "10.142.92.154"
-            }
-          ],
-          "zero_images_devices": [
-            {
-              "name": "mzk579_354",
-              "ip": "10.142.46.128"
-            },
-            {
-              "name": "s002",
-              "ip": "10.142.206.32"
-            },
-            {
-              "name": "mk625_310",
-              "ip": "10.145.181.1"
-            },
-            {
-              "name": "mzk626_296",
-              "ip": "10.145.183.19"
-            },
-            {
-              "name": "mzk636_204",
-              "ip": "10.145.191.78"
-            },
-            {
-              "name": "mzk636_500",
-              "ip": "10.145.191.90"
-            },
-            {
-              "name": "mzk636_944",
-              "ip": "10.145.191.108"
-            },
-            {
-              "name": "mzk640_650",
-              "ip": "10.145.195.95"
-            },
-            {
-              "name": "mzk641_810",
-              "ip": "10.145.195.149"
-            },
-            {
-              "name": "mzk643_115",
-              "ip": "10.145.199.49"
-            },
-            {
-              "name": "mzk662_485",
-              "ip": "10.142.64.145"
-            },
-            {
-              "name": "mzk665_926",
-              "ip": "10.142.70.74"
-            },
-            {
-              "name": "mzk666_526",
-              "ip": "10.142.70.119"
-            },
-            {
-              "name": "mzk667_246",
-              "ip": "10.142.70.173"
-            },
-            {
-              "name": "mzk670_754",
-              "ip": "10.142.74.101"
-            },
-            {
-              "name": "mk672_317",
-              "ip": "10.142.80.65"
-            },
-            {
-              "name": "mk677_965",
-              "ip": "10.142.88.127"
-            },
-            {
-              "name": "mk679_165",
-              "ip": "10.142.92.37"
-            },
-            {
-              "name": "mk679_405",
-              "ip": "10.142.92.55"
-            },
-            {
-              "name": "mk680_365",
-              "ip": "10.142.92.127"
-            },
-            {
-              "name": "mzk683_164",
-              "ip": "10.142.94.65"
-            },
-            {
-              "name": "mzk765_442",
-              "ip": "10.142.194.74"
-            },
-            {
-              "name": "mk763_834",
-              "ip": "10.142.196.1"
-            },
-            {
-              "name": "mzk717_440",
-              "ip": "10.142.136.82"
-            },
-            {
-              "name": "mzk717_800",
-              "ip": "10.142.136.109"
-            },
-            {
-              "name": "mk713_255",
-              "ip": "10.142.134.1"
-            },
-            {
-              "name": "mk713_375",
-              "ip": "10.142.134.10"
-            },
-            {
-              "name": "mk714_116",
-              "ip": "10.142.134.73"
-            },
-            {
-              "name": "mk715_030",
-              "ip": "10.142.134.136"
-            },
-            {
-              "name": "mk717_670",
-              "ip": "10.142.138.145"
-            }
-          ]
-        },
-        "贵阳": {
-          "physical": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": []
-        },
-        "青海": {
-          "physical": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": []
-        }
-      }
-    },
-    {
-      "timestamp": "2026-05-18 10:43:49",
-      "saved_at": "2026-05-18T14:40:05.016825",
-      "projects": {
-        "南京仙新路": {
-          "physical": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "physical_offline_devices": [
-            {
-              "name": "bm1684x mk9_370",
-              "ip": "172.172.8.103"
-            }
-          ],
-          "container": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": []
-        },
-        "山西灵石": {
-          "physical": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "physical_offline_devices": [],
-          "container": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": []
-        },
-        "德会": {
-          "physical": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "physical_offline_devices": [
-            {
-              "name": "NVIDIA mlk0_400",
-              "ip": "10.145.4.14"
-            },
-            {
-              "name": "NVIDIA mlk1_200",
-              "ip": "10.145.4.53"
-            },
-            {
-              "name": "RK3588 mzk5_438",
-              "ip": "10.145.22.56"
-            },
-            {
-              "name": "RK3588 mk39_840",
-              "ip": "10.145.12.1"
-            },
-            {
-              "name": "RK3588 mk58_290",
-              "ip": "10.145.16.1"
-            },
-            {
-              "name": "RK3588 mk59_090",
-              "ip": "10.145.16.14"
-            },
-            {
-              "name": "RK3588 mk59_890",
-              "ip": "10.145.16.27"
-            },
-            {
-              "name": "RK3588 mk60_690",
-              "ip": "10.145.16.28"
-            }
-          ],
-          "container": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": []
-        },
-        "德会隧道": {
-          "physical": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "physical_offline_devices": [
-            {
-              "name": "RK3588 mzk27_470",
-              "ip": "10.145.30.201"
-            },
-            {
-              "name": "RK3588 mzk31_966",
-              "ip": "10.145.38.100"
-            },
-            {
-              "name": "RK3588 mzk32_086",
-              "ip": "10.145.38.133"
-            },
-            {
-              "name": "RK3588 mzk32_326",
-              "ip": "10.145.38.144"
-            },
-            {
-              "name": "RK3588 mk31_808",
-              "ip": "10.145.40.76"
-            },
-            {
-              "name": "RK3588 mk34_075",
-              "ip": "10.145.44.21"
-            },
-            {
-              "name": "RK3588 mzk68_085",
-              "ip": "10.145.58.89"
-            },
-            {
-              "name": "RK3588 mk67_990",
-              "ip": "10.145.60.61"
-            },
-            {
-              "name": "RK3588 mzk74_425",
-              "ip": "10.145.62.18"
-            },
-            {
-              "name": "RK3588 mzk75_265",
-              "ip": "10.145.62.60"
-            }
-          ],
-          "container": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": [
-            {
-              "name": "mzk68_325",
-              "ip": "10.145.58.111"
-            }
-          ]
-        },
-        "柯诸": {
-          "physical": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "physical_offline_devices": [
-            {
-              "name": "bm1684x myk16_020",
-              "ip": "33.74.33.201"
-            }
-          ],
-          "container": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": []
-        },
-        "汉宜": {
-          "physical": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "physical_offline_devices": [],
-          "container": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": []
-        },
-        "汕梅": {
-          "physical": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "physical_offline_devices": [
-            {
-              "name": "NVIDIA mk86_834",
-              "ip": "44.42.122.60"
-            }
-          ],
-          "container": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": [
-            {
-              "name": "mz4k88_800",
-              "ip": "44.42.122.140"
-            }
-          ]
-        },
-        "沈海": {
-          "physical": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "physical_offline_devices": [
-            {
-              "name": "bm1684x mec_1006",
-              "ip": "172.18.186.148"
-            },
-            {
-              "name": "bm1684x mec_1023",
-              "ip": "172.18.73.96"
-            }
-          ],
-          "container": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [
-            {
-              "name": "mec_1007",
-              "ip": "172.18.33.118"
-            }
-          ],
-          "zero_images_devices": []
-        },
-        "绵九": {
-          "physical": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "physical_offline_devices": [],
-          "container": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [
-            {
-              "name": "mk626_486",
-              "ip": "10.145.181.49"
-            },
-            {
-              "name": "mk636_385",
-              "ip": "10.145.189.102"
-            },
-            {
-              "name": "mk666_639",
-              "ip": "10.142.72.173"
-            },
-            {
-              "name": "mk672_917",
-              "ip": "10.142.80.110"
-            },
-            {
-              "name": "mk680_616",
-              "ip": "10.142.92.154"
-            }
-          ],
-          "zero_images_devices": [
-            {
-              "name": "mzk579_354",
-              "ip": "10.142.46.128"
-            },
-            {
-              "name": "s002",
-              "ip": "10.142.206.32"
-            },
-            {
-              "name": "mk625_310",
-              "ip": "10.145.181.1"
-            },
-            {
-              "name": "mzk626_296",
-              "ip": "10.145.183.19"
-            },
-            {
-              "name": "mzk636_204",
-              "ip": "10.145.191.78"
-            },
-            {
-              "name": "mzk636_500",
-              "ip": "10.145.191.90"
-            },
-            {
-              "name": "mzk636_944",
-              "ip": "10.145.191.108"
-            },
-            {
-              "name": "mzk640_650",
-              "ip": "10.145.195.95"
-            },
-            {
-              "name": "mzk641_810",
-              "ip": "10.145.195.149"
-            },
-            {
-              "name": "mzk643_115",
-              "ip": "10.145.199.49"
-            },
-            {
-              "name": "mzk662_485",
-              "ip": "10.142.64.145"
-            },
-            {
-              "name": "mzk665_926",
-              "ip": "10.142.70.74"
-            },
-            {
-              "name": "mzk666_526",
-              "ip": "10.142.70.119"
-            },
-            {
-              "name": "mzk667_246",
-              "ip": "10.142.70.173"
-            },
-            {
-              "name": "mzk670_754",
-              "ip": "10.142.74.101"
-            },
-            {
-              "name": "mk672_317",
-              "ip": "10.142.80.65"
-            },
-            {
-              "name": "mk677_965",
-              "ip": "10.142.88.127"
-            },
-            {
-              "name": "mk679_165",
-              "ip": "10.142.92.37"
-            },
-            {
-              "name": "mk679_405",
-              "ip": "10.142.92.55"
-            },
-            {
-              "name": "mk680_365",
-              "ip": "10.142.92.127"
-            },
-            {
-              "name": "mzk683_164",
-              "ip": "10.142.94.65"
-            },
-            {
-              "name": "mzk765_442",
-              "ip": "10.142.194.74"
-            },
-            {
-              "name": "mk763_834",
-              "ip": "10.142.196.1"
-            },
-            {
-              "name": "mzk717_440",
-              "ip": "10.142.136.82"
-            },
-            {
-              "name": "mzk717_800",
-              "ip": "10.142.136.109"
-            },
-            {
-              "name": "mk713_255",
-              "ip": "10.142.134.1"
-            },
-            {
-              "name": "mk713_375",
-              "ip": "10.142.134.10"
-            },
-            {
-              "name": "mk714_116",
-              "ip": "10.142.134.73"
-            },
-            {
-              "name": "mk715_030",
-              "ip": "10.142.134.136"
-            },
-            {
-              "name": "mk717_670",
-              "ip": "10.142.138.145"
-            }
-          ]
-        },
-        "贵阳": {
-          "physical": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "physical_offline_devices": [],
-          "container": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": []
-        },
-        "青海": {
-          "physical": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "physical_offline_devices": [],
-          "container": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": []
-        }
-      }
-    },
-    {
-      "timestamp": "2026-05-18 10:43:49",
-      "saved_at": "2026-05-18T14:56:22.356266",
-      "projects": {
-        "南京仙新路": {
-          "physical": {
-            "total": 16,
-            "healthy": 15,
-            "rate": 93.8
-          },
-          "physical_offline_devices": [
-            {
-              "name": "bm1684x mk9_370",
-              "ip": "172.172.8.103"
-            }
-          ],
-          "container": {
-            "total": 16,
-            "healthy": 15,
-            "rate": 93.8
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": []
-        },
-        "山西灵石": {
-          "physical": {
-            "total": 4,
-            "healthy": 4,
-            "rate": 100.0
-          },
-          "physical_offline_devices": [],
-          "container": {
-            "total": 4,
-            "healthy": 4,
-            "rate": 100.0
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": []
-        },
-        "德会": {
-          "physical": {
-            "total": 82,
-            "healthy": 74,
-            "rate": 90.2
-          },
-          "physical_offline_devices": [
-            {
-              "name": "NVIDIA mlk0_400",
-              "ip": "10.145.4.14"
-            },
-            {
-              "name": "NVIDIA mlk1_200",
-              "ip": "10.145.4.53"
-            },
-            {
-              "name": "RK3588 mzk5_438",
-              "ip": "10.145.22.56"
-            },
-            {
-              "name": "RK3588 mk39_840",
-              "ip": "10.145.12.1"
-            },
-            {
-              "name": "RK3588 mk58_290",
-              "ip": "10.145.16.1"
-            },
-            {
-              "name": "RK3588 mk59_090",
-              "ip": "10.145.16.14"
-            },
-            {
-              "name": "RK3588 mk59_890",
-              "ip": "10.145.16.27"
-            },
-            {
-              "name": "RK3588 mk60_690",
-              "ip": "10.145.16.28"
-            }
-          ],
-          "container": {
-            "total": 82,
-            "healthy": 74,
-            "rate": 90.2
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": []
-        },
-        "德会隧道": {
-          "physical": {
-            "total": 128,
-            "healthy": 118,
-            "rate": 92.2
-          },
-          "physical_offline_devices": [
-            {
-              "name": "RK3588 mzk27_470",
-              "ip": "10.145.30.201"
-            },
-            {
-              "name": "RK3588 mzk31_966",
-              "ip": "10.145.38.100"
-            },
-            {
-              "name": "RK3588 mzk32_086",
-              "ip": "10.145.38.133"
-            },
-            {
-              "name": "RK3588 mzk32_326",
-              "ip": "10.145.38.144"
-            },
-            {
-              "name": "RK3588 mk31_808",
-              "ip": "10.145.40.76"
-            },
-            {
-              "name": "RK3588 mk34_075",
-              "ip": "10.145.44.21"
-            },
-            {
-              "name": "RK3588 mzk68_085",
-              "ip": "10.145.58.89"
-            },
-            {
-              "name": "RK3588 mk67_990",
-              "ip": "10.145.60.61"
-            },
-            {
-              "name": "RK3588 mzk74_425",
-              "ip": "10.145.62.18"
-            },
-            {
-              "name": "RK3588 mzk75_265",
-              "ip": "10.145.62.60"
-            }
-          ],
-          "container": {
-            "total": 128,
-            "healthy": 118,
-            "rate": 92.2
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": [
-            {
-              "name": "mzk68_325",
-              "ip": "10.145.58.111"
-            }
-          ]
-        },
-        "柯诸": {
-          "physical": {
-            "total": 66,
-            "healthy": 65,
-            "rate": 98.5
-          },
-          "physical_offline_devices": [
-            {
-              "name": "bm1684x myk16_020",
-              "ip": "33.74.33.201"
-            }
-          ],
-          "container": {
-            "total": 66,
-            "healthy": 65,
-            "rate": 98.5
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": []
-        },
-        "汉宜": {
-          "physical": {
-            "total": 3,
-            "healthy": 3,
-            "rate": 100.0
-          },
-          "physical_offline_devices": [],
-          "container": {
-            "total": 3,
-            "healthy": 3,
-            "rate": 100.0
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": []
-        },
-        "汕梅": {
-          "physical": {
-            "total": 14,
-            "healthy": 13,
-            "rate": 92.9
-          },
-          "physical_offline_devices": [
-            {
-              "name": "NVIDIA mk86_834",
-              "ip": "44.42.122.60"
-            }
-          ],
-          "container": {
-            "total": 14,
-            "healthy": 13,
-            "rate": 92.9
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": [
-            {
-              "name": "mz4k88_800",
-              "ip": "44.42.122.140"
-            }
-          ]
-        },
-        "沈海": {
-          "physical": {
-            "total": 23,
-            "healthy": 21,
-            "rate": 91.3
-          },
-          "physical_offline_devices": [
-            {
-              "name": "bm1684x mec_1006",
-              "ip": "172.18.186.148"
-            },
-            {
-              "name": "bm1684x mec_1023",
-              "ip": "172.18.73.96"
-            }
-          ],
-          "container": {
-            "total": 23,
-            "healthy": 20,
-            "rate": 87.0
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [
-            {
-              "name": "mec_1007",
-              "ip": "172.18.33.118"
-            }
-          ],
-          "zero_images_devices": []
-        },
-        "绵九": {
-          "physical": {
-            "total": 415,
-            "healthy": 342,
-            "rate": 82.4
-          },
-          "physical_offline_devices": [],
-          "container": {
-            "total": 415,
-            "healthy": 337,
-            "rate": 81.2
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [
-            {
-              "name": "mk626_486",
-              "ip": "10.145.181.49"
-            },
-            {
-              "name": "mk636_385",
-              "ip": "10.145.189.102"
-            },
-            {
-              "name": "mk666_639",
-              "ip": "10.142.72.173"
-            },
-            {
-              "name": "mk672_917",
-              "ip": "10.142.80.110"
-            },
-            {
-              "name": "mk680_616",
-              "ip": "10.142.92.154"
-            }
-          ],
-          "zero_images_devices": [
-            {
-              "name": "mzk579_354",
-              "ip": "10.142.46.128"
-            },
-            {
-              "name": "s002",
-              "ip": "10.142.206.32"
-            },
-            {
-              "name": "mk625_310",
-              "ip": "10.145.181.1"
-            },
-            {
-              "name": "mzk626_296",
-              "ip": "10.145.183.19"
-            },
-            {
-              "name": "mzk636_204",
-              "ip": "10.145.191.78"
-            },
-            {
-              "name": "mzk636_500",
-              "ip": "10.145.191.90"
-            },
-            {
-              "name": "mzk636_944",
-              "ip": "10.145.191.108"
-            },
-            {
-              "name": "mzk640_650",
-              "ip": "10.145.195.95"
-            },
-            {
-              "name": "mzk641_810",
-              "ip": "10.145.195.149"
-            },
-            {
-              "name": "mzk643_115",
-              "ip": "10.145.199.49"
-            },
-            {
-              "name": "mzk662_485",
-              "ip": "10.142.64.145"
-            },
-            {
-              "name": "mzk665_926",
-              "ip": "10.142.70.74"
-            },
-            {
-              "name": "mzk666_526",
-              "ip": "10.142.70.119"
-            },
-            {
-              "name": "mzk667_246",
-              "ip": "10.142.70.173"
-            },
-            {
-              "name": "mzk670_754",
-              "ip": "10.142.74.101"
-            },
-            {
-              "name": "mk672_317",
-              "ip": "10.142.80.65"
-            },
-            {
-              "name": "mk677_965",
-              "ip": "10.142.88.127"
-            },
-            {
-              "name": "mk679_165",
-              "ip": "10.142.92.37"
-            },
-            {
-              "name": "mk679_405",
-              "ip": "10.142.92.55"
-            },
-            {
-              "name": "mk680_365",
-              "ip": "10.142.92.127"
-            },
-            {
-              "name": "mzk683_164",
-              "ip": "10.142.94.65"
-            },
-            {
-              "name": "mzk765_442",
-              "ip": "10.142.194.74"
-            },
-            {
-              "name": "mk763_834",
-              "ip": "10.142.196.1"
-            },
-            {
-              "name": "mzk717_440",
-              "ip": "10.142.136.82"
-            },
-            {
-              "name": "mzk717_800",
-              "ip": "10.142.136.109"
-            },
-            {
-              "name": "mk713_255",
-              "ip": "10.142.134.1"
-            },
-            {
-              "name": "mk713_375",
-              "ip": "10.142.134.10"
-            },
-            {
-              "name": "mk714_116",
-              "ip": "10.142.134.73"
-            },
-            {
-              "name": "mk715_030",
-              "ip": "10.142.134.136"
-            },
-            {
-              "name": "mk717_670",
-              "ip": "10.142.138.145"
-            }
-          ]
-        },
-        "贵阳": {
-          "physical": {
-            "total": 10,
-            "healthy": 10,
-            "rate": 100.0
-          },
-          "physical_offline_devices": [],
-          "container": {
-            "total": 10,
-            "healthy": 10,
-            "rate": 100.0
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": []
-        },
-        "青海": {
-          "physical": {
-            "total": 34,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "physical_offline_devices": [],
-          "container": {
-            "total": 34,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": []
-        }
-      }
-    },
-    {
-      "timestamp": "2026-05-18 10:43:49",
-      "saved_at": "2026-05-18T15:25:33.254459",
-      "projects": {
-        "南京仙新路": {
-          "physical": {
-            "total": 16,
-            "healthy": 15,
-            "rate": 93.8
-          },
-          "physical_offline_devices": [
-            {
-              "name": "bm1684x mk9_370",
-              "ip": "172.172.8.103"
-            }
-          ],
-          "container": {
-            "total": 16,
-            "healthy": 15,
-            "rate": 93.8
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": []
-        },
-        "山西灵石": {
-          "physical": {
-            "total": 4,
-            "healthy": 4,
-            "rate": 100.0
-          },
-          "physical_offline_devices": [],
-          "container": {
-            "total": 4,
-            "healthy": 4,
-            "rate": 100.0
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": []
-        },
-        "德会": {
-          "physical": {
-            "total": 82,
-            "healthy": 74,
-            "rate": 90.2
-          },
-          "physical_offline_devices": [
-            {
-              "name": "NVIDIA mlk0_400",
-              "ip": "10.145.4.14"
-            },
-            {
-              "name": "NVIDIA mlk1_200",
-              "ip": "10.145.4.53"
-            },
-            {
-              "name": "RK3588 mzk5_438",
-              "ip": "10.145.22.56"
-            },
-            {
-              "name": "RK3588 mk39_840",
-              "ip": "10.145.12.1"
-            },
-            {
-              "name": "RK3588 mk58_290",
-              "ip": "10.145.16.1"
-            },
-            {
-              "name": "RK3588 mk59_090",
-              "ip": "10.145.16.14"
-            },
-            {
-              "name": "RK3588 mk59_890",
-              "ip": "10.145.16.27"
-            },
-            {
-              "name": "RK3588 mk60_690",
-              "ip": "10.145.16.28"
-            }
-          ],
-          "container": {
-            "total": 82,
-            "healthy": 74,
-            "rate": 90.2
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": []
-        },
-        "德会隧道": {
-          "physical": {
-            "total": 128,
-            "healthy": 118,
-            "rate": 92.2
-          },
-          "physical_offline_devices": [
-            {
-              "name": "RK3588 mzk27_470",
-              "ip": "10.145.30.201"
-            },
-            {
-              "name": "RK3588 mzk31_966",
-              "ip": "10.145.38.100"
-            },
-            {
-              "name": "RK3588 mzk32_086",
-              "ip": "10.145.38.133"
-            },
-            {
-              "name": "RK3588 mzk32_326",
-              "ip": "10.145.38.144"
-            },
-            {
-              "name": "RK3588 mk31_808",
-              "ip": "10.145.40.76"
-            },
-            {
-              "name": "RK3588 mk34_075",
-              "ip": "10.145.44.21"
-            },
-            {
-              "name": "RK3588 mzk68_085",
-              "ip": "10.145.58.89"
-            },
-            {
-              "name": "RK3588 mk67_990",
-              "ip": "10.145.60.61"
-            },
-            {
-              "name": "RK3588 mzk74_425",
-              "ip": "10.145.62.18"
-            },
-            {
-              "name": "RK3588 mzk75_265",
-              "ip": "10.145.62.60"
-            }
-          ],
-          "container": {
-            "total": 128,
-            "healthy": 118,
-            "rate": 92.2
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": [
-            {
-              "name": "mzk68_325",
-              "ip": "10.145.58.111"
-            }
-          ]
-        },
-        "柯诸": {
-          "physical": {
-            "total": 66,
-            "healthy": 65,
-            "rate": 98.5
-          },
-          "physical_offline_devices": [
-            {
-              "name": "bm1684x myk16_020",
-              "ip": "33.74.33.201"
-            }
-          ],
-          "container": {
-            "total": 66,
-            "healthy": 65,
-            "rate": 98.5
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": []
-        },
-        "汉宜": {
-          "physical": {
-            "total": 3,
-            "healthy": 3,
-            "rate": 100.0
-          },
-          "physical_offline_devices": [],
-          "container": {
-            "total": 3,
-            "healthy": 3,
-            "rate": 100.0
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": []
-        },
-        "汕梅": {
-          "physical": {
-            "total": 14,
-            "healthy": 13,
-            "rate": 92.9
-          },
-          "physical_offline_devices": [
-            {
-              "name": "NVIDIA mk86_834",
-              "ip": "44.42.122.60"
-            }
-          ],
-          "container": {
-            "total": 14,
-            "healthy": 13,
-            "rate": 92.9
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": [
-            {
-              "name": "mz4k88_800",
-              "ip": "44.42.122.140"
-            }
-          ]
-        },
-        "沈海": {
-          "physical": {
-            "total": 23,
-            "healthy": 21,
-            "rate": 91.3
-          },
-          "physical_offline_devices": [
-            {
-              "name": "bm1684x mec_1006",
-              "ip": "172.18.186.148"
-            },
-            {
-              "name": "bm1684x mec_1023",
-              "ip": "172.18.73.96"
-            }
-          ],
-          "container": {
-            "total": 23,
-            "healthy": 20,
-            "rate": 87.0
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [
-            {
-              "name": "mec_1007",
-              "ip": "172.18.33.118"
-            }
-          ],
-          "zero_images_devices": []
-        },
-        "绵九": {
-          "physical": {
-            "total": 415,
-            "healthy": 342,
-            "rate": 82.4
-          },
-          "physical_offline_devices": [],
-          "container": {
-            "total": 415,
-            "healthy": 337,
-            "rate": 81.2
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [
-            {
-              "name": "mk626_486",
-              "ip": "10.145.181.49"
-            },
-            {
-              "name": "mk636_385",
-              "ip": "10.145.189.102"
-            },
-            {
-              "name": "mk666_639",
-              "ip": "10.142.72.173"
-            },
-            {
-              "name": "mk672_917",
-              "ip": "10.142.80.110"
-            },
-            {
-              "name": "mk680_616",
-              "ip": "10.142.92.154"
-            }
-          ],
-          "zero_images_devices": [
-            {
-              "name": "mzk579_354",
-              "ip": "10.142.46.128"
-            },
-            {
-              "name": "s002",
-              "ip": "10.142.206.32"
-            },
-            {
-              "name": "mk625_310",
-              "ip": "10.145.181.1"
-            },
-            {
-              "name": "mzk626_296",
-              "ip": "10.145.183.19"
-            },
-            {
-              "name": "mzk636_204",
-              "ip": "10.145.191.78"
-            },
-            {
-              "name": "mzk636_500",
-              "ip": "10.145.191.90"
-            },
-            {
-              "name": "mzk636_944",
-              "ip": "10.145.191.108"
-            },
-            {
-              "name": "mzk640_650",
-              "ip": "10.145.195.95"
-            },
-            {
-              "name": "mzk641_810",
-              "ip": "10.145.195.149"
-            },
-            {
-              "name": "mzk643_115",
-              "ip": "10.145.199.49"
-            },
-            {
-              "name": "mzk662_485",
-              "ip": "10.142.64.145"
-            },
-            {
-              "name": "mzk665_926",
-              "ip": "10.142.70.74"
-            },
-            {
-              "name": "mzk666_526",
-              "ip": "10.142.70.119"
-            },
-            {
-              "name": "mzk667_246",
-              "ip": "10.142.70.173"
-            },
-            {
-              "name": "mzk670_754",
-              "ip": "10.142.74.101"
-            },
-            {
-              "name": "mk672_317",
-              "ip": "10.142.80.65"
-            },
-            {
-              "name": "mk677_965",
-              "ip": "10.142.88.127"
-            },
-            {
-              "name": "mk679_165",
-              "ip": "10.142.92.37"
-            },
-            {
-              "name": "mk679_405",
-              "ip": "10.142.92.55"
-            },
-            {
-              "name": "mk680_365",
-              "ip": "10.142.92.127"
-            },
-            {
-              "name": "mzk683_164",
-              "ip": "10.142.94.65"
-            },
-            {
-              "name": "mzk765_442",
-              "ip": "10.142.194.74"
-            },
-            {
-              "name": "mk763_834",
-              "ip": "10.142.196.1"
-            },
-            {
-              "name": "mzk717_440",
-              "ip": "10.142.136.82"
-            },
-            {
-              "name": "mzk717_800",
-              "ip": "10.142.136.109"
-            },
-            {
-              "name": "mk713_255",
-              "ip": "10.142.134.1"
-            },
-            {
-              "name": "mk713_375",
-              "ip": "10.142.134.10"
-            },
-            {
-              "name": "mk714_116",
-              "ip": "10.142.134.73"
-            },
-            {
-              "name": "mk715_030",
-              "ip": "10.142.134.136"
-            },
-            {
-              "name": "mk717_670",
-              "ip": "10.142.138.145"
-            }
-          ]
-        },
-        "贵阳": {
-          "physical": {
-            "total": 10,
-            "healthy": 10,
-            "rate": 100.0
-          },
-          "physical_offline_devices": [],
-          "container": {
-            "total": 10,
-            "healthy": 10,
-            "rate": 100.0
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": []
-        },
-        "青海": {
-          "physical": {
-            "total": 34,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "physical_offline_devices": [],
-          "container": {
-            "total": 34,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": []
-        }
-      }
-    },
-    {
-      "timestamp": "2026-05-18 10:43:49",
-      "saved_at": "2026-05-18T15:32:13.369685",
-      "projects": {
-        "南京仙新路": {
-          "physical": {
-            "total": 16,
-            "healthy": 15,
-            "rate": 93.8
-          },
-          "physical_offline_devices": [
-            {
-              "name": "bm1684x mk9_370",
-              "ip": "172.172.8.103"
-            }
-          ],
-          "container": {
-            "total": 16,
-            "healthy": 15,
-            "rate": 93.8
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": []
-        },
-        "山西灵石": {
-          "physical": {
-            "total": 4,
-            "healthy": 4,
-            "rate": 100.0
-          },
-          "physical_offline_devices": [],
-          "container": {
-            "total": 4,
-            "healthy": 4,
-            "rate": 100.0
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": []
-        },
-        "德会": {
-          "physical": {
-            "total": 82,
-            "healthy": 74,
-            "rate": 90.2
-          },
-          "physical_offline_devices": [
-            {
-              "name": "NVIDIA mlk0_400",
-              "ip": "10.145.4.14"
-            },
-            {
-              "name": "NVIDIA mlk1_200",
-              "ip": "10.145.4.53"
-            },
-            {
-              "name": "RK3588 mzk5_438",
-              "ip": "10.145.22.56"
-            },
-            {
-              "name": "RK3588 mk39_840",
-              "ip": "10.145.12.1"
-            },
-            {
-              "name": "RK3588 mk58_290",
-              "ip": "10.145.16.1"
-            },
-            {
-              "name": "RK3588 mk59_090",
-              "ip": "10.145.16.14"
-            },
-            {
-              "name": "RK3588 mk59_890",
-              "ip": "10.145.16.27"
-            },
-            {
-              "name": "RK3588 mk60_690",
-              "ip": "10.145.16.28"
-            }
-          ],
-          "container": {
-            "total": 82,
-            "healthy": 74,
-            "rate": 90.2
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": []
-        },
-        "德会隧道": {
-          "physical": {
-            "total": 128,
-            "healthy": 118,
-            "rate": 92.2
-          },
-          "physical_offline_devices": [
-            {
-              "name": "RK3588 mzk27_470",
-              "ip": "10.145.30.201"
-            },
-            {
-              "name": "RK3588 mzk31_966",
-              "ip": "10.145.38.100"
-            },
-            {
-              "name": "RK3588 mzk32_086",
-              "ip": "10.145.38.133"
-            },
-            {
-              "name": "RK3588 mzk32_326",
-              "ip": "10.145.38.144"
-            },
-            {
-              "name": "RK3588 mk31_808",
-              "ip": "10.145.40.76"
-            },
-            {
-              "name": "RK3588 mk34_075",
-              "ip": "10.145.44.21"
-            },
-            {
-              "name": "RK3588 mzk68_085",
-              "ip": "10.145.58.89"
-            },
-            {
-              "name": "RK3588 mk67_990",
-              "ip": "10.145.60.61"
-            },
-            {
-              "name": "RK3588 mzk74_425",
-              "ip": "10.145.62.18"
-            },
-            {
-              "name": "RK3588 mzk75_265",
-              "ip": "10.145.62.60"
-            }
-          ],
-          "container": {
-            "total": 128,
-            "healthy": 118,
-            "rate": 92.2
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": [
-            {
-              "name": "mzk68_325",
-              "ip": "10.145.58.111"
-            }
-          ]
-        },
-        "柯诸": {
-          "physical": {
-            "total": 66,
-            "healthy": 65,
-            "rate": 98.5
-          },
-          "physical_offline_devices": [
-            {
-              "name": "bm1684x myk16_020",
-              "ip": "33.74.33.201"
-            }
-          ],
-          "container": {
-            "total": 66,
-            "healthy": 65,
-            "rate": 98.5
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": []
-        },
-        "汉宜": {
-          "physical": {
-            "total": 3,
-            "healthy": 3,
-            "rate": 100.0
-          },
-          "physical_offline_devices": [],
-          "container": {
-            "total": 3,
-            "healthy": 3,
-            "rate": 100.0
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": []
-        },
-        "汕梅": {
-          "physical": {
-            "total": 14,
-            "healthy": 13,
-            "rate": 92.9
-          },
-          "physical_offline_devices": [
-            {
-              "name": "NVIDIA mk86_834",
-              "ip": "44.42.122.60"
-            }
-          ],
-          "container": {
-            "total": 14,
-            "healthy": 13,
-            "rate": 92.9
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": [
-            {
-              "name": "mz4k88_800",
-              "ip": "44.42.122.140"
-            }
-          ]
-        },
-        "沈海": {
-          "physical": {
-            "total": 23,
-            "healthy": 21,
-            "rate": 91.3
-          },
-          "physical_offline_devices": [
-            {
-              "name": "bm1684x mec_1006",
-              "ip": "172.18.186.148"
-            },
-            {
-              "name": "bm1684x mec_1023",
-              "ip": "172.18.73.96"
-            }
-          ],
-          "container": {
-            "total": 23,
-            "healthy": 20,
-            "rate": 87.0
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [
-            {
-              "name": "mec_1007",
-              "ip": "172.18.33.118"
-            }
-          ],
-          "zero_images_devices": []
-        },
-        "绵九": {
-          "physical": {
-            "total": 415,
-            "healthy": 342,
-            "rate": 82.4
-          },
-          "physical_offline_devices": [],
-          "container": {
-            "total": 415,
-            "healthy": 337,
-            "rate": 81.2
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [
-            {
-              "name": "mk626_486",
-              "ip": "10.145.181.49"
-            },
-            {
-              "name": "mk636_385",
-              "ip": "10.145.189.102"
-            },
-            {
-              "name": "mk666_639",
-              "ip": "10.142.72.173"
-            },
-            {
-              "name": "mk672_917",
-              "ip": "10.142.80.110"
-            },
-            {
-              "name": "mk680_616",
-              "ip": "10.142.92.154"
-            }
-          ],
-          "zero_images_devices": [
-            {
-              "name": "mzk579_354",
-              "ip": "10.142.46.128"
-            },
-            {
-              "name": "s002",
-              "ip": "10.142.206.32"
-            },
-            {
-              "name": "mk625_310",
-              "ip": "10.145.181.1"
-            },
-            {
-              "name": "mzk626_296",
-              "ip": "10.145.183.19"
-            },
-            {
-              "name": "mzk636_204",
-              "ip": "10.145.191.78"
-            },
-            {
-              "name": "mzk636_500",
-              "ip": "10.145.191.90"
-            },
-            {
-              "name": "mzk636_944",
-              "ip": "10.145.191.108"
-            },
-            {
-              "name": "mzk640_650",
-              "ip": "10.145.195.95"
-            },
-            {
-              "name": "mzk641_810",
-              "ip": "10.145.195.149"
-            },
-            {
-              "name": "mzk643_115",
-              "ip": "10.145.199.49"
-            },
-            {
-              "name": "mzk662_485",
-              "ip": "10.142.64.145"
-            },
-            {
-              "name": "mzk665_926",
-              "ip": "10.142.70.74"
-            },
-            {
-              "name": "mzk666_526",
-              "ip": "10.142.70.119"
-            },
-            {
-              "name": "mzk667_246",
-              "ip": "10.142.70.173"
-            },
-            {
-              "name": "mzk670_754",
-              "ip": "10.142.74.101"
-            },
-            {
-              "name": "mk672_317",
-              "ip": "10.142.80.65"
-            },
-            {
-              "name": "mk677_965",
-              "ip": "10.142.88.127"
-            },
-            {
-              "name": "mk679_165",
-              "ip": "10.142.92.37"
-            },
-            {
-              "name": "mk679_405",
-              "ip": "10.142.92.55"
-            },
-            {
-              "name": "mk680_365",
-              "ip": "10.142.92.127"
-            },
-            {
-              "name": "mzk683_164",
-              "ip": "10.142.94.65"
-            },
-            {
-              "name": "mzk765_442",
-              "ip": "10.142.194.74"
-            },
-            {
-              "name": "mk763_834",
-              "ip": "10.142.196.1"
-            },
-            {
-              "name": "mzk717_440",
-              "ip": "10.142.136.82"
-            },
-            {
-              "name": "mzk717_800",
-              "ip": "10.142.136.109"
-            },
-            {
-              "name": "mk713_255",
-              "ip": "10.142.134.1"
-            },
-            {
-              "name": "mk713_375",
-              "ip": "10.142.134.10"
-            },
-            {
-              "name": "mk714_116",
-              "ip": "10.142.134.73"
-            },
-            {
-              "name": "mk715_030",
-              "ip": "10.142.134.136"
-            },
-            {
-              "name": "mk717_670",
-              "ip": "10.142.138.145"
-            }
-          ]
-        },
-        "贵阳": {
-          "physical": {
-            "total": 10,
-            "healthy": 10,
-            "rate": 100.0
-          },
-          "physical_offline_devices": [],
-          "container": {
-            "total": 10,
-            "healthy": 10,
-            "rate": 100.0
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": []
-        },
-        "青海": {
-          "physical": {
-            "total": 34,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "physical_offline_devices": [],
-          "container": {
-            "total": 34,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": []
-        }
-      }
-    },
-    {
-      "timestamp": "2026-05-18 10:43:49",
-      "saved_at": "2026-05-18T15:59:38.568288",
-      "projects": {
-        "南京仙新路": {
-          "physical": {
-            "total": 16,
-            "healthy": 15,
-            "rate": 93.8
-          },
-          "physical_offline_devices": [
-            {
-              "name": "bm1684x mk9_370",
-              "ip": "172.172.8.103"
-            }
-          ],
-          "container": {
-            "total": 16,
-            "healthy": 15,
-            "rate": 93.8
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": []
-        },
-        "山西灵石": {
-          "physical": {
-            "total": 4,
-            "healthy": 4,
-            "rate": 100.0
-          },
-          "physical_offline_devices": [],
-          "container": {
-            "total": 4,
-            "healthy": 4,
-            "rate": 100.0
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": []
-        },
-        "德会": {
-          "physical": {
-            "total": 82,
-            "healthy": 74,
-            "rate": 90.2
-          },
-          "physical_offline_devices": [
-            {
-              "name": "NVIDIA mlk0_400",
-              "ip": "10.145.4.14"
-            },
-            {
-              "name": "NVIDIA mlk1_200",
-              "ip": "10.145.4.53"
-            },
-            {
-              "name": "RK3588 mzk5_438",
-              "ip": "10.145.22.56"
-            },
-            {
-              "name": "RK3588 mk39_840",
-              "ip": "10.145.12.1"
-            },
-            {
-              "name": "RK3588 mk58_290",
-              "ip": "10.145.16.1"
-            },
-            {
-              "name": "RK3588 mk59_090",
-              "ip": "10.145.16.14"
-            },
-            {
-              "name": "RK3588 mk59_890",
-              "ip": "10.145.16.27"
-            },
-            {
-              "name": "RK3588 mk60_690",
-              "ip": "10.145.16.28"
-            }
-          ],
-          "container": {
-            "total": 82,
-            "healthy": 74,
-            "rate": 90.2
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": []
-        },
-        "德会隧道": {
-          "physical": {
-            "total": 128,
-            "healthy": 118,
-            "rate": 92.2
-          },
-          "physical_offline_devices": [
-            {
-              "name": "RK3588 mzk27_470",
-              "ip": "10.145.30.201"
-            },
-            {
-              "name": "RK3588 mzk31_966",
-              "ip": "10.145.38.100"
-            },
-            {
-              "name": "RK3588 mzk32_086",
-              "ip": "10.145.38.133"
-            },
-            {
-              "name": "RK3588 mzk32_326",
-              "ip": "10.145.38.144"
-            },
-            {
-              "name": "RK3588 mk31_808",
-              "ip": "10.145.40.76"
-            },
-            {
-              "name": "RK3588 mk34_075",
-              "ip": "10.145.44.21"
-            },
-            {
-              "name": "RK3588 mzk68_085",
-              "ip": "10.145.58.89"
-            },
-            {
-              "name": "RK3588 mk67_990",
-              "ip": "10.145.60.61"
-            },
-            {
-              "name": "RK3588 mzk74_425",
-              "ip": "10.145.62.18"
-            },
-            {
-              "name": "RK3588 mzk75_265",
-              "ip": "10.145.62.60"
-            }
-          ],
-          "container": {
-            "total": 128,
-            "healthy": 118,
-            "rate": 92.2
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": [
-            {
-              "name": "mzk68_325",
-              "ip": "10.145.58.111"
-            }
-          ]
-        },
-        "柯诸": {
-          "physical": {
-            "total": 66,
-            "healthy": 65,
-            "rate": 98.5
-          },
-          "physical_offline_devices": [
-            {
-              "name": "bm1684x myk16_020",
-              "ip": "33.74.33.201"
-            }
-          ],
-          "container": {
-            "total": 66,
-            "healthy": 65,
-            "rate": 98.5
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": []
-        },
-        "汉宜": {
-          "physical": {
-            "total": 3,
-            "healthy": 3,
-            "rate": 100.0
-          },
-          "physical_offline_devices": [],
-          "container": {
-            "total": 3,
-            "healthy": 3,
-            "rate": 100.0
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": []
-        },
-        "汕梅": {
-          "physical": {
-            "total": 14,
-            "healthy": 13,
-            "rate": 92.9
-          },
-          "physical_offline_devices": [
-            {
-              "name": "NVIDIA mk86_834",
-              "ip": "44.42.122.60"
-            }
-          ],
-          "container": {
-            "total": 14,
-            "healthy": 13,
-            "rate": 92.9
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": [
-            {
-              "name": "mz4k88_800",
-              "ip": "44.42.122.140"
-            }
-          ]
-        },
-        "沈海": {
-          "physical": {
-            "total": 23,
-            "healthy": 21,
-            "rate": 91.3
-          },
-          "physical_offline_devices": [
-            {
-              "name": "bm1684x mec_1006",
-              "ip": "172.18.186.148"
-            },
-            {
-              "name": "bm1684x mec_1023",
-              "ip": "172.18.73.96"
-            }
-          ],
-          "container": {
-            "total": 23,
-            "healthy": 20,
-            "rate": 87.0
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [
-            {
-              "name": "mec_1007",
-              "ip": "172.18.33.118"
-            }
-          ],
-          "zero_images_devices": []
-        },
-        "绵九": {
-          "physical": {
-            "total": 415,
-            "healthy": 342,
-            "rate": 82.4
-          },
-          "physical_offline_devices": [],
-          "container": {
-            "total": 415,
-            "healthy": 337,
-            "rate": 81.2
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [
-            {
-              "name": "mk626_486",
-              "ip": "10.145.181.49"
-            },
-            {
-              "name": "mk636_385",
-              "ip": "10.145.189.102"
-            },
-            {
-              "name": "mk666_639",
-              "ip": "10.142.72.173"
-            },
-            {
-              "name": "mk672_917",
-              "ip": "10.142.80.110"
-            },
-            {
-              "name": "mk680_616",
-              "ip": "10.142.92.154"
-            }
-          ],
-          "zero_images_devices": [
-            {
-              "name": "mzk579_354",
-              "ip": "10.142.46.128"
-            },
-            {
-              "name": "s002",
-              "ip": "10.142.206.32"
-            },
-            {
-              "name": "mk625_310",
-              "ip": "10.145.181.1"
-            },
-            {
-              "name": "mzk626_296",
-              "ip": "10.145.183.19"
-            },
-            {
-              "name": "mzk636_204",
-              "ip": "10.145.191.78"
-            },
-            {
-              "name": "mzk636_500",
-              "ip": "10.145.191.90"
-            },
-            {
-              "name": "mzk636_944",
-              "ip": "10.145.191.108"
-            },
-            {
-              "name": "mzk640_650",
-              "ip": "10.145.195.95"
-            },
-            {
-              "name": "mzk641_810",
-              "ip": "10.145.195.149"
-            },
-            {
-              "name": "mzk643_115",
-              "ip": "10.145.199.49"
-            },
-            {
-              "name": "mzk662_485",
-              "ip": "10.142.64.145"
-            },
-            {
-              "name": "mzk665_926",
-              "ip": "10.142.70.74"
-            },
-            {
-              "name": "mzk666_526",
-              "ip": "10.142.70.119"
-            },
-            {
-              "name": "mzk667_246",
-              "ip": "10.142.70.173"
-            },
-            {
-              "name": "mzk670_754",
-              "ip": "10.142.74.101"
-            },
-            {
-              "name": "mk672_317",
-              "ip": "10.142.80.65"
-            },
-            {
-              "name": "mk677_965",
-              "ip": "10.142.88.127"
-            },
-            {
-              "name": "mk679_165",
-              "ip": "10.142.92.37"
-            },
-            {
-              "name": "mk679_405",
-              "ip": "10.142.92.55"
-            },
-            {
-              "name": "mk680_365",
-              "ip": "10.142.92.127"
-            },
-            {
-              "name": "mzk683_164",
-              "ip": "10.142.94.65"
-            },
-            {
-              "name": "mzk765_442",
-              "ip": "10.142.194.74"
-            },
-            {
-              "name": "mk763_834",
-              "ip": "10.142.196.1"
-            },
-            {
-              "name": "mzk717_440",
-              "ip": "10.142.136.82"
-            },
-            {
-              "name": "mzk717_800",
-              "ip": "10.142.136.109"
-            },
-            {
-              "name": "mk713_255",
-              "ip": "10.142.134.1"
-            },
-            {
-              "name": "mk713_375",
-              "ip": "10.142.134.10"
-            },
-            {
-              "name": "mk714_116",
-              "ip": "10.142.134.73"
-            },
-            {
-              "name": "mk715_030",
-              "ip": "10.142.134.136"
-            },
-            {
-              "name": "mk717_670",
-              "ip": "10.142.138.145"
-            }
-          ]
-        },
-        "贵阳": {
-          "physical": {
-            "total": 10,
-            "healthy": 10,
-            "rate": 100.0
-          },
-          "physical_offline_devices": [],
-          "container": {
-            "total": 10,
-            "healthy": 10,
-            "rate": 100.0
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": []
-        },
-        "青海": {
-          "physical": {
-            "total": 34,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "physical_offline_devices": [],
-          "container": {
-            "total": 34,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "sensor": {
-            "total": 0,
-            "healthy": 0,
-            "rate": 0.0
-          },
-          "container_offline_but_pm_online": [],
-          "zero_images_devices": []
-        }
-      }
-    },
-    {
       "timestamp": "2026-05-18 16:11:29",
       "saved_at": "2026-05-18T16:48:30.798841",
       "projects": {
@@ -15889,6 +13112,3340 @@
             {
               "name": "mzk765_442",
               "ip": "10.142.194.74"
+            },
+            {
+              "name": "mk763_834",
+              "ip": "10.142.196.1"
+            },
+            {
+              "name": "mzk717_440",
+              "ip": "10.142.136.82"
+            },
+            {
+              "name": "mzk717_800",
+              "ip": "10.142.136.109"
+            },
+            {
+              "name": "mk713_255",
+              "ip": "10.142.134.1"
+            },
+            {
+              "name": "mk713_375",
+              "ip": "10.142.134.10"
+            },
+            {
+              "name": "mk715_030",
+              "ip": "10.142.134.136"
+            },
+            {
+              "name": "mk717_790",
+              "ip": "10.142.138.154"
+            }
+          ]
+        },
+        "贵阳": {
+          "physical": {
+            "total": 10,
+            "healthy": 10,
+            "rate": 100.0
+          },
+          "physical_offline_devices": [],
+          "container": {
+            "total": 10,
+            "healthy": 10,
+            "rate": 100.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        },
+        "青海": {
+          "physical": {
+            "total": 34,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "physical_offline_devices": [],
+          "container": {
+            "total": 34,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        }
+      }
+    },
+    {
+      "timestamp": "2026-05-19 10:18:56",
+      "saved_at": "2026-05-19T10:42:45.725677",
+      "projects": {
+        "南京仙新路": {
+          "physical": {
+            "total": 16,
+            "healthy": 16,
+            "rate": 100.0
+          },
+          "physical_offline_devices": [],
+          "container": {
+            "total": 16,
+            "healthy": 16,
+            "rate": 100.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        },
+        "山西灵石": {
+          "physical": {
+            "total": 4,
+            "healthy": 4,
+            "rate": 100.0
+          },
+          "physical_offline_devices": [],
+          "container": {
+            "total": 4,
+            "healthy": 4,
+            "rate": 100.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        },
+        "德会": {
+          "physical": {
+            "total": 82,
+            "healthy": 74,
+            "rate": 90.2
+          },
+          "physical_offline_devices": [
+            {
+              "name": "NVIDIA mlk0_400",
+              "ip": "10.145.4.14"
+            },
+            {
+              "name": "NVIDIA mlk1_200",
+              "ip": "10.145.4.53"
+            },
+            {
+              "name": "RK3588 mzk5_438",
+              "ip": "10.145.22.56"
+            },
+            {
+              "name": "RK3588 mk39_840",
+              "ip": "10.145.12.1"
+            },
+            {
+              "name": "RK3588 mk58_290",
+              "ip": "10.145.16.1"
+            },
+            {
+              "name": "RK3588 mk59_090",
+              "ip": "10.145.16.14"
+            },
+            {
+              "name": "RK3588 mk59_890",
+              "ip": "10.145.16.27"
+            },
+            {
+              "name": "RK3588 mk60_690",
+              "ip": "10.145.16.28"
+            }
+          ],
+          "container": {
+            "total": 82,
+            "healthy": 74,
+            "rate": 90.2
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": [
+            {
+              "name": "mk2_000",
+              "ip": "10.145.4.66"
+            }
+          ]
+        },
+        "德会隧道": {
+          "physical": {
+            "total": 128,
+            "healthy": 120,
+            "rate": 93.8
+          },
+          "physical_offline_devices": [
+            {
+              "name": "RK3588 mzk27_470",
+              "ip": "10.145.30.201"
+            },
+            {
+              "name": "RK3588 mzk31_966",
+              "ip": "10.145.38.100"
+            },
+            {
+              "name": "RK3588 mk31_808",
+              "ip": "10.145.40.76"
+            },
+            {
+              "name": "RK3588 mk34_075",
+              "ip": "10.145.44.21"
+            },
+            {
+              "name": "RK3588 mzk68_085",
+              "ip": "10.145.58.89"
+            },
+            {
+              "name": "RK3588 mk67_990",
+              "ip": "10.145.60.61"
+            },
+            {
+              "name": "RK3588 mzk74_425",
+              "ip": "10.145.62.18"
+            },
+            {
+              "name": "RK3588 mzk75_265",
+              "ip": "10.145.62.60"
+            }
+          ],
+          "container": {
+            "total": 128,
+            "healthy": 120,
+            "rate": 93.8
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": [
+            {
+              "name": "mzk68_325",
+              "ip": "10.145.58.111"
+            }
+          ]
+        },
+        "柯诸": {
+          "physical": {
+            "total": 66,
+            "healthy": 65,
+            "rate": 98.5
+          },
+          "physical_offline_devices": [
+            {
+              "name": "bm1684x myk16_020",
+              "ip": "33.74.33.201"
+            }
+          ],
+          "container": {
+            "total": 66,
+            "healthy": 65,
+            "rate": 98.5
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        },
+        "汉宜": {
+          "physical": {
+            "total": 3,
+            "healthy": 3,
+            "rate": 100.0
+          },
+          "physical_offline_devices": [],
+          "container": {
+            "total": 3,
+            "healthy": 3,
+            "rate": 100.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        },
+        "汕梅": {
+          "physical": {
+            "total": 14,
+            "healthy": 14,
+            "rate": 100.0
+          },
+          "physical_offline_devices": [],
+          "container": {
+            "total": 14,
+            "healthy": 14,
+            "rate": 100.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        },
+        "沈海": {
+          "physical": {
+            "total": 23,
+            "healthy": 22,
+            "rate": 95.7
+          },
+          "physical_offline_devices": [
+            {
+              "name": "bm1684x mec_1006",
+              "ip": "172.18.186.148"
+            }
+          ],
+          "container": {
+            "total": 23,
+            "healthy": 20,
+            "rate": 87.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [
+            {
+              "name": "mec_1007",
+              "ip": "172.18.33.118"
+            },
+            {
+              "name": "mec_1023",
+              "ip": "172.18.73.96"
+            }
+          ],
+          "zero_images_devices": []
+        },
+        "绵九": {
+          "physical": {
+            "total": 415,
+            "healthy": 341,
+            "rate": 82.2
+          },
+          "physical_offline_devices": [],
+          "container": {
+            "total": 415,
+            "healthy": 336,
+            "rate": 81.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [
+            {
+              "name": "mk626_486",
+              "ip": "10.145.181.49"
+            },
+            {
+              "name": "mk636_385",
+              "ip": "10.145.189.102"
+            },
+            {
+              "name": "mk666_639",
+              "ip": "10.142.72.173"
+            },
+            {
+              "name": "mk672_917",
+              "ip": "10.142.80.110"
+            },
+            {
+              "name": "mk680_616",
+              "ip": "10.142.92.154"
+            }
+          ],
+          "zero_images_devices": [
+            {
+              "name": "mk579_409",
+              "ip": "10.142.48.137"
+            },
+            {
+              "name": "mk579_649",
+              "ip": "10.142.52.1"
+            },
+            {
+              "name": "mk580_009",
+              "ip": "10.142.52.28"
+            },
+            {
+              "name": "mk580_849",
+              "ip": "10.142.52.91"
+            },
+            {
+              "name": "s002",
+              "ip": "10.142.206.32"
+            },
+            {
+              "name": "mk625_310",
+              "ip": "10.145.181.1"
+            },
+            {
+              "name": "mzk639_016",
+              "ip": "10.145.195.43"
+            },
+            {
+              "name": "mzk639_289",
+              "ip": "10.145.195.55"
+            },
+            {
+              "name": "mzk641_085",
+              "ip": "10.145.195.119"
+            },
+            {
+              "name": "mzk641_375",
+              "ip": "10.145.195.125"
+            },
+            {
+              "name": "mzk657_085",
+              "ip": "10.142.56.110"
+            },
+            {
+              "name": "mzk657_685",
+              "ip": "10.142.56.155"
+            },
+            {
+              "name": "mzk658_885",
+              "ip": "10.142.60.55"
+            },
+            {
+              "name": "mzk659_485",
+              "ip": "10.142.60.100"
+            },
+            {
+              "name": "mzk659_725",
+              "ip": "10.142.60.118"
+            },
+            {
+              "name": "mzk660_085",
+              "ip": "10.142.60.145"
+            },
+            {
+              "name": "mzk660_325",
+              "ip": "10.142.60.163"
+            },
+            {
+              "name": "mzk661_285",
+              "ip": "10.142.64.55"
+            },
+            {
+              "name": "mzk661_525",
+              "ip": "10.142.64.73"
+            },
+            {
+              "name": "mk664_632",
+              "ip": "10.142.72.20"
+            },
+            {
+              "name": "mk664_992",
+              "ip": "10.142.72.47"
+            },
+            {
+              "name": "mk665_592",
+              "ip": "10.142.72.92"
+            },
+            {
+              "name": "mk666_432",
+              "ip": "10.142.72.155"
+            },
+            {
+              "name": "mzk665_926",
+              "ip": "10.142.70.74"
+            },
+            {
+              "name": "mzk666_166",
+              "ip": "10.142.70.92"
+            },
+            {
+              "name": "mzk666_526",
+              "ip": "10.142.70.119"
+            },
+            {
+              "name": "mzk667_246",
+              "ip": "10.142.70.173"
+            },
+            {
+              "name": "mk669_491",
+              "ip": "10.142.76.47"
+            },
+            {
+              "name": "mk670_091",
+              "ip": "10.142.76.92"
+            },
+            {
+              "name": "mzk670_514",
+              "ip": "10.142.74.83"
+            },
+            {
+              "name": "mzk670_754",
+              "ip": "10.142.74.101"
+            },
+            {
+              "name": "mzk671_114",
+              "ip": "10.142.74.128"
+            },
+            {
+              "name": "mzk671_354",
+              "ip": "10.142.74.146"
+            },
+            {
+              "name": "mzk671_714",
+              "ip": "10.142.74.173"
+            },
+            {
+              "name": "mzk671_954",
+              "ip": "10.142.78.1"
+            },
+            {
+              "name": "mzk672_314",
+              "ip": "10.142.78.28"
+            },
+            {
+              "name": "mk672_677",
+              "ip": "10.142.80.92"
+            },
+            {
+              "name": "mk673_277",
+              "ip": "10.142.80.137"
+            },
+            {
+              "name": "mk673_517",
+              "ip": "10.142.80.155"
+            },
+            {
+              "name": "mk677_005",
+              "ip": "10.142.88.55"
+            },
+            {
+              "name": "mk677_365",
+              "ip": "10.142.88.82"
+            },
+            {
+              "name": "mk677_965",
+              "ip": "10.142.88.127"
+            },
+            {
+              "name": "mk678_565",
+              "ip": "10.142.88.172"
+            },
+            {
+              "name": "mk679_165",
+              "ip": "10.142.92.37"
+            },
+            {
+              "name": "mk679_765",
+              "ip": "10.142.92.82"
+            },
+            {
+              "name": "mk680_005",
+              "ip": "10.142.92.100"
+            },
+            {
+              "name": "mk680_365",
+              "ip": "10.142.92.127"
+            },
+            {
+              "name": "mk680_605",
+              "ip": "10.142.92.145"
+            },
+            {
+              "name": "mzk680_045",
+              "ip": "10.142.90.64"
+            },
+            {
+              "name": "mzk680_405",
+              "ip": "10.142.90.91"
+            },
+            {
+              "name": "mzk680_645",
+              "ip": "10.142.90.109"
+            },
+            {
+              "name": "mzk765_442",
+              "ip": "10.142.194.74"
+            },
+            {
+              "name": "mk763_834",
+              "ip": "10.142.196.1"
+            },
+            {
+              "name": "mzk717_440",
+              "ip": "10.142.136.82"
+            },
+            {
+              "name": "mzk717_800",
+              "ip": "10.142.136.109"
+            },
+            {
+              "name": "mk713_255",
+              "ip": "10.142.134.1"
+            },
+            {
+              "name": "mk713_375",
+              "ip": "10.142.134.10"
+            },
+            {
+              "name": "mk715_030",
+              "ip": "10.142.134.136"
+            },
+            {
+              "name": "mk717_790",
+              "ip": "10.142.138.154"
+            }
+          ]
+        },
+        "贵阳": {
+          "physical": {
+            "total": 10,
+            "healthy": 10,
+            "rate": 100.0
+          },
+          "physical_offline_devices": [],
+          "container": {
+            "total": 10,
+            "healthy": 10,
+            "rate": 100.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        },
+        "青海": {
+          "physical": {
+            "total": 34,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "physical_offline_devices": [],
+          "container": {
+            "total": 34,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        }
+      }
+    },
+    {
+      "timestamp": "2026-05-19 10:18:56",
+      "saved_at": "2026-05-19T10:49:55.962135",
+      "projects": {
+        "南京仙新路": {
+          "physical": {
+            "total": 16,
+            "healthy": 16,
+            "rate": 100.0
+          },
+          "physical_offline_devices": [],
+          "container": {
+            "total": 16,
+            "healthy": 16,
+            "rate": 100.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        },
+        "山西灵石": {
+          "physical": {
+            "total": 4,
+            "healthy": 4,
+            "rate": 100.0
+          },
+          "physical_offline_devices": [],
+          "container": {
+            "total": 4,
+            "healthy": 4,
+            "rate": 100.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        },
+        "德会": {
+          "physical": {
+            "total": 82,
+            "healthy": 74,
+            "rate": 90.2
+          },
+          "physical_offline_devices": [
+            {
+              "name": "NVIDIA mlk0_400",
+              "ip": "10.145.4.14"
+            },
+            {
+              "name": "NVIDIA mlk1_200",
+              "ip": "10.145.4.53"
+            },
+            {
+              "name": "RK3588 mzk5_438",
+              "ip": "10.145.22.56"
+            },
+            {
+              "name": "RK3588 mk39_840",
+              "ip": "10.145.12.1"
+            },
+            {
+              "name": "RK3588 mk58_290",
+              "ip": "10.145.16.1"
+            },
+            {
+              "name": "RK3588 mk59_090",
+              "ip": "10.145.16.14"
+            },
+            {
+              "name": "RK3588 mk59_890",
+              "ip": "10.145.16.27"
+            },
+            {
+              "name": "RK3588 mk60_690",
+              "ip": "10.145.16.28"
+            }
+          ],
+          "container": {
+            "total": 82,
+            "healthy": 74,
+            "rate": 90.2
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": [
+            {
+              "name": "mk2_000",
+              "ip": "10.145.4.66"
+            }
+          ]
+        },
+        "德会隧道": {
+          "physical": {
+            "total": 128,
+            "healthy": 120,
+            "rate": 93.8
+          },
+          "physical_offline_devices": [
+            {
+              "name": "RK3588 mzk27_470",
+              "ip": "10.145.30.201"
+            },
+            {
+              "name": "RK3588 mzk31_966",
+              "ip": "10.145.38.100"
+            },
+            {
+              "name": "RK3588 mk31_808",
+              "ip": "10.145.40.76"
+            },
+            {
+              "name": "RK3588 mk34_075",
+              "ip": "10.145.44.21"
+            },
+            {
+              "name": "RK3588 mzk68_085",
+              "ip": "10.145.58.89"
+            },
+            {
+              "name": "RK3588 mk67_990",
+              "ip": "10.145.60.61"
+            },
+            {
+              "name": "RK3588 mzk74_425",
+              "ip": "10.145.62.18"
+            },
+            {
+              "name": "RK3588 mzk75_265",
+              "ip": "10.145.62.60"
+            }
+          ],
+          "container": {
+            "total": 128,
+            "healthy": 120,
+            "rate": 93.8
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": [
+            {
+              "name": "mzk68_325",
+              "ip": "10.145.58.111"
+            }
+          ]
+        },
+        "柯诸": {
+          "physical": {
+            "total": 66,
+            "healthy": 65,
+            "rate": 98.5
+          },
+          "physical_offline_devices": [
+            {
+              "name": "bm1684x myk16_020",
+              "ip": "33.74.33.201"
+            }
+          ],
+          "container": {
+            "total": 66,
+            "healthy": 65,
+            "rate": 98.5
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        },
+        "汉宜": {
+          "physical": {
+            "total": 3,
+            "healthy": 3,
+            "rate": 100.0
+          },
+          "physical_offline_devices": [],
+          "container": {
+            "total": 3,
+            "healthy": 3,
+            "rate": 100.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        },
+        "汕梅": {
+          "physical": {
+            "total": 14,
+            "healthy": 14,
+            "rate": 100.0
+          },
+          "physical_offline_devices": [],
+          "container": {
+            "total": 14,
+            "healthy": 14,
+            "rate": 100.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        },
+        "沈海": {
+          "physical": {
+            "total": 23,
+            "healthy": 22,
+            "rate": 95.7
+          },
+          "physical_offline_devices": [
+            {
+              "name": "bm1684x mec_1006",
+              "ip": "172.18.186.148"
+            }
+          ],
+          "container": {
+            "total": 23,
+            "healthy": 20,
+            "rate": 87.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [
+            {
+              "name": "mec_1007",
+              "ip": "172.18.33.118"
+            },
+            {
+              "name": "mec_1023",
+              "ip": "172.18.73.96"
+            }
+          ],
+          "zero_images_devices": []
+        },
+        "绵九": {
+          "physical": {
+            "total": 415,
+            "healthy": 341,
+            "rate": 82.2
+          },
+          "physical_offline_devices": [],
+          "container": {
+            "total": 415,
+            "healthy": 336,
+            "rate": 81.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [
+            {
+              "name": "mk626_486",
+              "ip": "10.145.181.49"
+            },
+            {
+              "name": "mk636_385",
+              "ip": "10.145.189.102"
+            },
+            {
+              "name": "mk666_639",
+              "ip": "10.142.72.173"
+            },
+            {
+              "name": "mk672_917",
+              "ip": "10.142.80.110"
+            },
+            {
+              "name": "mk680_616",
+              "ip": "10.142.92.154"
+            }
+          ],
+          "zero_images_devices": [
+            {
+              "name": "mk579_409",
+              "ip": "10.142.48.137"
+            },
+            {
+              "name": "mk579_649",
+              "ip": "10.142.52.1"
+            },
+            {
+              "name": "mk580_009",
+              "ip": "10.142.52.28"
+            },
+            {
+              "name": "mk580_849",
+              "ip": "10.142.52.91"
+            },
+            {
+              "name": "s002",
+              "ip": "10.142.206.32"
+            },
+            {
+              "name": "mk625_310",
+              "ip": "10.145.181.1"
+            },
+            {
+              "name": "mzk639_016",
+              "ip": "10.145.195.43"
+            },
+            {
+              "name": "mzk639_289",
+              "ip": "10.145.195.55"
+            },
+            {
+              "name": "mzk641_085",
+              "ip": "10.145.195.119"
+            },
+            {
+              "name": "mzk641_375",
+              "ip": "10.145.195.125"
+            },
+            {
+              "name": "mzk657_085",
+              "ip": "10.142.56.110"
+            },
+            {
+              "name": "mzk657_685",
+              "ip": "10.142.56.155"
+            },
+            {
+              "name": "mzk658_885",
+              "ip": "10.142.60.55"
+            },
+            {
+              "name": "mzk659_485",
+              "ip": "10.142.60.100"
+            },
+            {
+              "name": "mzk659_725",
+              "ip": "10.142.60.118"
+            },
+            {
+              "name": "mzk660_085",
+              "ip": "10.142.60.145"
+            },
+            {
+              "name": "mzk660_325",
+              "ip": "10.142.60.163"
+            },
+            {
+              "name": "mzk661_285",
+              "ip": "10.142.64.55"
+            },
+            {
+              "name": "mzk661_525",
+              "ip": "10.142.64.73"
+            },
+            {
+              "name": "mk664_632",
+              "ip": "10.142.72.20"
+            },
+            {
+              "name": "mk664_992",
+              "ip": "10.142.72.47"
+            },
+            {
+              "name": "mk665_592",
+              "ip": "10.142.72.92"
+            },
+            {
+              "name": "mk666_432",
+              "ip": "10.142.72.155"
+            },
+            {
+              "name": "mzk665_926",
+              "ip": "10.142.70.74"
+            },
+            {
+              "name": "mzk666_166",
+              "ip": "10.142.70.92"
+            },
+            {
+              "name": "mzk666_526",
+              "ip": "10.142.70.119"
+            },
+            {
+              "name": "mzk667_246",
+              "ip": "10.142.70.173"
+            },
+            {
+              "name": "mk669_491",
+              "ip": "10.142.76.47"
+            },
+            {
+              "name": "mk670_091",
+              "ip": "10.142.76.92"
+            },
+            {
+              "name": "mzk670_514",
+              "ip": "10.142.74.83"
+            },
+            {
+              "name": "mzk670_754",
+              "ip": "10.142.74.101"
+            },
+            {
+              "name": "mzk671_114",
+              "ip": "10.142.74.128"
+            },
+            {
+              "name": "mzk671_354",
+              "ip": "10.142.74.146"
+            },
+            {
+              "name": "mzk671_714",
+              "ip": "10.142.74.173"
+            },
+            {
+              "name": "mzk671_954",
+              "ip": "10.142.78.1"
+            },
+            {
+              "name": "mzk672_314",
+              "ip": "10.142.78.28"
+            },
+            {
+              "name": "mk672_677",
+              "ip": "10.142.80.92"
+            },
+            {
+              "name": "mk673_277",
+              "ip": "10.142.80.137"
+            },
+            {
+              "name": "mk673_517",
+              "ip": "10.142.80.155"
+            },
+            {
+              "name": "mk677_005",
+              "ip": "10.142.88.55"
+            },
+            {
+              "name": "mk677_365",
+              "ip": "10.142.88.82"
+            },
+            {
+              "name": "mk677_965",
+              "ip": "10.142.88.127"
+            },
+            {
+              "name": "mk678_565",
+              "ip": "10.142.88.172"
+            },
+            {
+              "name": "mk679_165",
+              "ip": "10.142.92.37"
+            },
+            {
+              "name": "mk679_765",
+              "ip": "10.142.92.82"
+            },
+            {
+              "name": "mk680_005",
+              "ip": "10.142.92.100"
+            },
+            {
+              "name": "mk680_365",
+              "ip": "10.142.92.127"
+            },
+            {
+              "name": "mk680_605",
+              "ip": "10.142.92.145"
+            },
+            {
+              "name": "mzk680_045",
+              "ip": "10.142.90.64"
+            },
+            {
+              "name": "mzk680_405",
+              "ip": "10.142.90.91"
+            },
+            {
+              "name": "mzk680_645",
+              "ip": "10.142.90.109"
+            },
+            {
+              "name": "mzk765_442",
+              "ip": "10.142.194.74"
+            },
+            {
+              "name": "mk763_834",
+              "ip": "10.142.196.1"
+            },
+            {
+              "name": "mzk717_440",
+              "ip": "10.142.136.82"
+            },
+            {
+              "name": "mzk717_800",
+              "ip": "10.142.136.109"
+            },
+            {
+              "name": "mk713_255",
+              "ip": "10.142.134.1"
+            },
+            {
+              "name": "mk713_375",
+              "ip": "10.142.134.10"
+            },
+            {
+              "name": "mk715_030",
+              "ip": "10.142.134.136"
+            },
+            {
+              "name": "mk717_790",
+              "ip": "10.142.138.154"
+            }
+          ]
+        },
+        "贵阳": {
+          "physical": {
+            "total": 10,
+            "healthy": 10,
+            "rate": 100.0
+          },
+          "physical_offline_devices": [],
+          "container": {
+            "total": 10,
+            "healthy": 10,
+            "rate": 100.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        },
+        "青海": {
+          "physical": {
+            "total": 34,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "physical_offline_devices": [],
+          "container": {
+            "total": 34,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        }
+      }
+    },
+    {
+      "timestamp": "2026-05-19 10:18:56",
+      "saved_at": "2026-05-19T11:08:38.837528",
+      "projects": {
+        "南京仙新路": {
+          "physical": {
+            "total": 16,
+            "healthy": 16,
+            "rate": 100.0
+          },
+          "physical_offline_devices": [],
+          "container": {
+            "total": 16,
+            "healthy": 16,
+            "rate": 100.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        },
+        "山西灵石": {
+          "physical": {
+            "total": 4,
+            "healthy": 4,
+            "rate": 100.0
+          },
+          "physical_offline_devices": [],
+          "container": {
+            "total": 4,
+            "healthy": 4,
+            "rate": 100.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        },
+        "德会": {
+          "physical": {
+            "total": 82,
+            "healthy": 74,
+            "rate": 90.2
+          },
+          "physical_offline_devices": [
+            {
+              "name": "NVIDIA mlk0_400",
+              "ip": "10.145.4.14"
+            },
+            {
+              "name": "NVIDIA mlk1_200",
+              "ip": "10.145.4.53"
+            },
+            {
+              "name": "RK3588 mzk5_438",
+              "ip": "10.145.22.56"
+            },
+            {
+              "name": "RK3588 mk39_840",
+              "ip": "10.145.12.1"
+            },
+            {
+              "name": "RK3588 mk58_290",
+              "ip": "10.145.16.1"
+            },
+            {
+              "name": "RK3588 mk59_090",
+              "ip": "10.145.16.14"
+            },
+            {
+              "name": "RK3588 mk59_890",
+              "ip": "10.145.16.27"
+            },
+            {
+              "name": "RK3588 mk60_690",
+              "ip": "10.145.16.28"
+            }
+          ],
+          "container": {
+            "total": 82,
+            "healthy": 74,
+            "rate": 90.2
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": [
+            {
+              "name": "mk2_000",
+              "ip": "10.145.4.66"
+            }
+          ]
+        },
+        "德会隧道": {
+          "physical": {
+            "total": 128,
+            "healthy": 120,
+            "rate": 93.8
+          },
+          "physical_offline_devices": [
+            {
+              "name": "RK3588 mzk27_470",
+              "ip": "10.145.30.201"
+            },
+            {
+              "name": "RK3588 mzk31_966",
+              "ip": "10.145.38.100"
+            },
+            {
+              "name": "RK3588 mk31_808",
+              "ip": "10.145.40.76"
+            },
+            {
+              "name": "RK3588 mk34_075",
+              "ip": "10.145.44.21"
+            },
+            {
+              "name": "RK3588 mzk68_085",
+              "ip": "10.145.58.89"
+            },
+            {
+              "name": "RK3588 mk67_990",
+              "ip": "10.145.60.61"
+            },
+            {
+              "name": "RK3588 mzk74_425",
+              "ip": "10.145.62.18"
+            },
+            {
+              "name": "RK3588 mzk75_265",
+              "ip": "10.145.62.60"
+            }
+          ],
+          "container": {
+            "total": 128,
+            "healthy": 120,
+            "rate": 93.8
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": [
+            {
+              "name": "mzk68_325",
+              "ip": "10.145.58.111"
+            }
+          ]
+        },
+        "柯诸": {
+          "physical": {
+            "total": 66,
+            "healthy": 65,
+            "rate": 98.5
+          },
+          "physical_offline_devices": [
+            {
+              "name": "bm1684x myk16_020",
+              "ip": "33.74.33.201"
+            }
+          ],
+          "container": {
+            "total": 66,
+            "healthy": 65,
+            "rate": 98.5
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        },
+        "汉宜": {
+          "physical": {
+            "total": 3,
+            "healthy": 3,
+            "rate": 100.0
+          },
+          "physical_offline_devices": [],
+          "container": {
+            "total": 3,
+            "healthy": 3,
+            "rate": 100.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        },
+        "汕梅": {
+          "physical": {
+            "total": 14,
+            "healthy": 14,
+            "rate": 100.0
+          },
+          "physical_offline_devices": [],
+          "container": {
+            "total": 14,
+            "healthy": 14,
+            "rate": 100.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        },
+        "沈海": {
+          "physical": {
+            "total": 23,
+            "healthy": 22,
+            "rate": 95.7
+          },
+          "physical_offline_devices": [
+            {
+              "name": "bm1684x mec_1006",
+              "ip": "172.18.186.148"
+            }
+          ],
+          "container": {
+            "total": 23,
+            "healthy": 20,
+            "rate": 87.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [
+            {
+              "name": "mec_1007",
+              "ip": "172.18.33.118"
+            },
+            {
+              "name": "mec_1023",
+              "ip": "172.18.73.96"
+            }
+          ],
+          "zero_images_devices": []
+        },
+        "绵九": {
+          "physical": {
+            "total": 415,
+            "healthy": 341,
+            "rate": 82.2
+          },
+          "physical_offline_devices": [],
+          "container": {
+            "total": 415,
+            "healthy": 336,
+            "rate": 81.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [
+            {
+              "name": "mk626_486",
+              "ip": "10.145.181.49"
+            },
+            {
+              "name": "mk636_385",
+              "ip": "10.145.189.102"
+            },
+            {
+              "name": "mk666_639",
+              "ip": "10.142.72.173"
+            },
+            {
+              "name": "mk672_917",
+              "ip": "10.142.80.110"
+            },
+            {
+              "name": "mk680_616",
+              "ip": "10.142.92.154"
+            }
+          ],
+          "zero_images_devices": [
+            {
+              "name": "mk579_409",
+              "ip": "10.142.48.137"
+            },
+            {
+              "name": "mk579_649",
+              "ip": "10.142.52.1"
+            },
+            {
+              "name": "mk580_009",
+              "ip": "10.142.52.28"
+            },
+            {
+              "name": "mk580_849",
+              "ip": "10.142.52.91"
+            },
+            {
+              "name": "s002",
+              "ip": "10.142.206.32"
+            },
+            {
+              "name": "mk625_310",
+              "ip": "10.145.181.1"
+            },
+            {
+              "name": "mzk639_016",
+              "ip": "10.145.195.43"
+            },
+            {
+              "name": "mzk639_289",
+              "ip": "10.145.195.55"
+            },
+            {
+              "name": "mzk641_085",
+              "ip": "10.145.195.119"
+            },
+            {
+              "name": "mzk641_375",
+              "ip": "10.145.195.125"
+            },
+            {
+              "name": "mzk657_085",
+              "ip": "10.142.56.110"
+            },
+            {
+              "name": "mzk657_685",
+              "ip": "10.142.56.155"
+            },
+            {
+              "name": "mzk658_885",
+              "ip": "10.142.60.55"
+            },
+            {
+              "name": "mzk659_485",
+              "ip": "10.142.60.100"
+            },
+            {
+              "name": "mzk659_725",
+              "ip": "10.142.60.118"
+            },
+            {
+              "name": "mzk660_085",
+              "ip": "10.142.60.145"
+            },
+            {
+              "name": "mzk660_325",
+              "ip": "10.142.60.163"
+            },
+            {
+              "name": "mzk661_285",
+              "ip": "10.142.64.55"
+            },
+            {
+              "name": "mzk661_525",
+              "ip": "10.142.64.73"
+            },
+            {
+              "name": "mk664_632",
+              "ip": "10.142.72.20"
+            },
+            {
+              "name": "mk664_992",
+              "ip": "10.142.72.47"
+            },
+            {
+              "name": "mk665_592",
+              "ip": "10.142.72.92"
+            },
+            {
+              "name": "mk666_432",
+              "ip": "10.142.72.155"
+            },
+            {
+              "name": "mzk665_926",
+              "ip": "10.142.70.74"
+            },
+            {
+              "name": "mzk666_166",
+              "ip": "10.142.70.92"
+            },
+            {
+              "name": "mzk666_526",
+              "ip": "10.142.70.119"
+            },
+            {
+              "name": "mzk667_246",
+              "ip": "10.142.70.173"
+            },
+            {
+              "name": "mk669_491",
+              "ip": "10.142.76.47"
+            },
+            {
+              "name": "mk670_091",
+              "ip": "10.142.76.92"
+            },
+            {
+              "name": "mzk670_514",
+              "ip": "10.142.74.83"
+            },
+            {
+              "name": "mzk670_754",
+              "ip": "10.142.74.101"
+            },
+            {
+              "name": "mzk671_114",
+              "ip": "10.142.74.128"
+            },
+            {
+              "name": "mzk671_354",
+              "ip": "10.142.74.146"
+            },
+            {
+              "name": "mzk671_714",
+              "ip": "10.142.74.173"
+            },
+            {
+              "name": "mzk671_954",
+              "ip": "10.142.78.1"
+            },
+            {
+              "name": "mzk672_314",
+              "ip": "10.142.78.28"
+            },
+            {
+              "name": "mk672_677",
+              "ip": "10.142.80.92"
+            },
+            {
+              "name": "mk673_277",
+              "ip": "10.142.80.137"
+            },
+            {
+              "name": "mk673_517",
+              "ip": "10.142.80.155"
+            },
+            {
+              "name": "mk677_005",
+              "ip": "10.142.88.55"
+            },
+            {
+              "name": "mk677_365",
+              "ip": "10.142.88.82"
+            },
+            {
+              "name": "mk677_965",
+              "ip": "10.142.88.127"
+            },
+            {
+              "name": "mk678_565",
+              "ip": "10.142.88.172"
+            },
+            {
+              "name": "mk679_165",
+              "ip": "10.142.92.37"
+            },
+            {
+              "name": "mk679_765",
+              "ip": "10.142.92.82"
+            },
+            {
+              "name": "mk680_005",
+              "ip": "10.142.92.100"
+            },
+            {
+              "name": "mk680_365",
+              "ip": "10.142.92.127"
+            },
+            {
+              "name": "mk680_605",
+              "ip": "10.142.92.145"
+            },
+            {
+              "name": "mzk680_045",
+              "ip": "10.142.90.64"
+            },
+            {
+              "name": "mzk680_405",
+              "ip": "10.142.90.91"
+            },
+            {
+              "name": "mzk680_645",
+              "ip": "10.142.90.109"
+            },
+            {
+              "name": "mzk765_442",
+              "ip": "10.142.194.74"
+            },
+            {
+              "name": "mk763_834",
+              "ip": "10.142.196.1"
+            },
+            {
+              "name": "mzk717_440",
+              "ip": "10.142.136.82"
+            },
+            {
+              "name": "mzk717_800",
+              "ip": "10.142.136.109"
+            },
+            {
+              "name": "mk713_255",
+              "ip": "10.142.134.1"
+            },
+            {
+              "name": "mk713_375",
+              "ip": "10.142.134.10"
+            },
+            {
+              "name": "mk715_030",
+              "ip": "10.142.134.136"
+            },
+            {
+              "name": "mk717_790",
+              "ip": "10.142.138.154"
+            }
+          ]
+        },
+        "贵阳": {
+          "physical": {
+            "total": 10,
+            "healthy": 10,
+            "rate": 100.0
+          },
+          "physical_offline_devices": [],
+          "container": {
+            "total": 10,
+            "healthy": 10,
+            "rate": 100.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        },
+        "青海": {
+          "physical": {
+            "total": 34,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "physical_offline_devices": [],
+          "container": {
+            "total": 34,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        }
+      }
+    },
+    {
+      "timestamp": "2026-05-19 10:18:56",
+      "saved_at": "2026-05-19T11:18:20.971474",
+      "projects": {
+        "南京仙新路": {
+          "physical": {
+            "total": 16,
+            "healthy": 16,
+            "rate": 100.0
+          },
+          "physical_offline_devices": [],
+          "container": {
+            "total": 16,
+            "healthy": 16,
+            "rate": 100.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        },
+        "山西灵石": {
+          "physical": {
+            "total": 4,
+            "healthy": 4,
+            "rate": 100.0
+          },
+          "physical_offline_devices": [],
+          "container": {
+            "total": 4,
+            "healthy": 4,
+            "rate": 100.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        },
+        "德会": {
+          "physical": {
+            "total": 82,
+            "healthy": 74,
+            "rate": 90.2
+          },
+          "physical_offline_devices": [
+            {
+              "name": "NVIDIA mlk0_400",
+              "ip": "10.145.4.14"
+            },
+            {
+              "name": "NVIDIA mlk1_200",
+              "ip": "10.145.4.53"
+            },
+            {
+              "name": "RK3588 mzk5_438",
+              "ip": "10.145.22.56"
+            },
+            {
+              "name": "RK3588 mk39_840",
+              "ip": "10.145.12.1"
+            },
+            {
+              "name": "RK3588 mk58_290",
+              "ip": "10.145.16.1"
+            },
+            {
+              "name": "RK3588 mk59_090",
+              "ip": "10.145.16.14"
+            },
+            {
+              "name": "RK3588 mk59_890",
+              "ip": "10.145.16.27"
+            },
+            {
+              "name": "RK3588 mk60_690",
+              "ip": "10.145.16.28"
+            }
+          ],
+          "container": {
+            "total": 82,
+            "healthy": 74,
+            "rate": 90.2
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": [
+            {
+              "name": "mk2_000",
+              "ip": "10.145.4.66"
+            }
+          ]
+        },
+        "德会隧道": {
+          "physical": {
+            "total": 128,
+            "healthy": 120,
+            "rate": 93.8
+          },
+          "physical_offline_devices": [
+            {
+              "name": "RK3588 mzk27_470",
+              "ip": "10.145.30.201"
+            },
+            {
+              "name": "RK3588 mzk31_966",
+              "ip": "10.145.38.100"
+            },
+            {
+              "name": "RK3588 mk31_808",
+              "ip": "10.145.40.76"
+            },
+            {
+              "name": "RK3588 mk34_075",
+              "ip": "10.145.44.21"
+            },
+            {
+              "name": "RK3588 mzk68_085",
+              "ip": "10.145.58.89"
+            },
+            {
+              "name": "RK3588 mk67_990",
+              "ip": "10.145.60.61"
+            },
+            {
+              "name": "RK3588 mzk74_425",
+              "ip": "10.145.62.18"
+            },
+            {
+              "name": "RK3588 mzk75_265",
+              "ip": "10.145.62.60"
+            }
+          ],
+          "container": {
+            "total": 128,
+            "healthy": 120,
+            "rate": 93.8
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": [
+            {
+              "name": "mzk68_325",
+              "ip": "10.145.58.111"
+            }
+          ]
+        },
+        "柯诸": {
+          "physical": {
+            "total": 66,
+            "healthy": 65,
+            "rate": 98.5
+          },
+          "physical_offline_devices": [
+            {
+              "name": "bm1684x myk16_020",
+              "ip": "33.74.33.201"
+            }
+          ],
+          "container": {
+            "total": 66,
+            "healthy": 65,
+            "rate": 98.5
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        },
+        "汉宜": {
+          "physical": {
+            "total": 3,
+            "healthy": 3,
+            "rate": 100.0
+          },
+          "physical_offline_devices": [],
+          "container": {
+            "total": 3,
+            "healthy": 3,
+            "rate": 100.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        },
+        "汕梅": {
+          "physical": {
+            "total": 14,
+            "healthy": 14,
+            "rate": 100.0
+          },
+          "physical_offline_devices": [],
+          "container": {
+            "total": 14,
+            "healthy": 14,
+            "rate": 100.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        },
+        "沈海": {
+          "physical": {
+            "total": 23,
+            "healthy": 22,
+            "rate": 95.7
+          },
+          "physical_offline_devices": [
+            {
+              "name": "bm1684x mec_1006",
+              "ip": "172.18.186.148"
+            }
+          ],
+          "container": {
+            "total": 23,
+            "healthy": 20,
+            "rate": 87.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [
+            {
+              "name": "mec_1007",
+              "ip": "172.18.33.118"
+            },
+            {
+              "name": "mec_1023",
+              "ip": "172.18.73.96"
+            }
+          ],
+          "zero_images_devices": []
+        },
+        "绵九": {
+          "physical": {
+            "total": 415,
+            "healthy": 341,
+            "rate": 82.2
+          },
+          "physical_offline_devices": [],
+          "container": {
+            "total": 415,
+            "healthy": 336,
+            "rate": 81.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [
+            {
+              "name": "mk626_486",
+              "ip": "10.145.181.49"
+            },
+            {
+              "name": "mk636_385",
+              "ip": "10.145.189.102"
+            },
+            {
+              "name": "mk666_639",
+              "ip": "10.142.72.173"
+            },
+            {
+              "name": "mk672_917",
+              "ip": "10.142.80.110"
+            },
+            {
+              "name": "mk680_616",
+              "ip": "10.142.92.154"
+            }
+          ],
+          "zero_images_devices": [
+            {
+              "name": "mk579_409",
+              "ip": "10.142.48.137"
+            },
+            {
+              "name": "mk579_649",
+              "ip": "10.142.52.1"
+            },
+            {
+              "name": "mk580_009",
+              "ip": "10.142.52.28"
+            },
+            {
+              "name": "mk580_849",
+              "ip": "10.142.52.91"
+            },
+            {
+              "name": "s002",
+              "ip": "10.142.206.32"
+            },
+            {
+              "name": "mk625_310",
+              "ip": "10.145.181.1"
+            },
+            {
+              "name": "mzk639_016",
+              "ip": "10.145.195.43"
+            },
+            {
+              "name": "mzk639_289",
+              "ip": "10.145.195.55"
+            },
+            {
+              "name": "mzk641_085",
+              "ip": "10.145.195.119"
+            },
+            {
+              "name": "mzk641_375",
+              "ip": "10.145.195.125"
+            },
+            {
+              "name": "mzk657_085",
+              "ip": "10.142.56.110"
+            },
+            {
+              "name": "mzk657_685",
+              "ip": "10.142.56.155"
+            },
+            {
+              "name": "mzk658_885",
+              "ip": "10.142.60.55"
+            },
+            {
+              "name": "mzk659_485",
+              "ip": "10.142.60.100"
+            },
+            {
+              "name": "mzk659_725",
+              "ip": "10.142.60.118"
+            },
+            {
+              "name": "mzk660_085",
+              "ip": "10.142.60.145"
+            },
+            {
+              "name": "mzk660_325",
+              "ip": "10.142.60.163"
+            },
+            {
+              "name": "mzk661_285",
+              "ip": "10.142.64.55"
+            },
+            {
+              "name": "mzk661_525",
+              "ip": "10.142.64.73"
+            },
+            {
+              "name": "mk664_632",
+              "ip": "10.142.72.20"
+            },
+            {
+              "name": "mk664_992",
+              "ip": "10.142.72.47"
+            },
+            {
+              "name": "mk665_592",
+              "ip": "10.142.72.92"
+            },
+            {
+              "name": "mk666_432",
+              "ip": "10.142.72.155"
+            },
+            {
+              "name": "mzk665_926",
+              "ip": "10.142.70.74"
+            },
+            {
+              "name": "mzk666_166",
+              "ip": "10.142.70.92"
+            },
+            {
+              "name": "mzk666_526",
+              "ip": "10.142.70.119"
+            },
+            {
+              "name": "mzk667_246",
+              "ip": "10.142.70.173"
+            },
+            {
+              "name": "mk669_491",
+              "ip": "10.142.76.47"
+            },
+            {
+              "name": "mk670_091",
+              "ip": "10.142.76.92"
+            },
+            {
+              "name": "mzk670_514",
+              "ip": "10.142.74.83"
+            },
+            {
+              "name": "mzk670_754",
+              "ip": "10.142.74.101"
+            },
+            {
+              "name": "mzk671_114",
+              "ip": "10.142.74.128"
+            },
+            {
+              "name": "mzk671_354",
+              "ip": "10.142.74.146"
+            },
+            {
+              "name": "mzk671_714",
+              "ip": "10.142.74.173"
+            },
+            {
+              "name": "mzk671_954",
+              "ip": "10.142.78.1"
+            },
+            {
+              "name": "mzk672_314",
+              "ip": "10.142.78.28"
+            },
+            {
+              "name": "mk672_677",
+              "ip": "10.142.80.92"
+            },
+            {
+              "name": "mk673_277",
+              "ip": "10.142.80.137"
+            },
+            {
+              "name": "mk673_517",
+              "ip": "10.142.80.155"
+            },
+            {
+              "name": "mk677_005",
+              "ip": "10.142.88.55"
+            },
+            {
+              "name": "mk677_365",
+              "ip": "10.142.88.82"
+            },
+            {
+              "name": "mk677_965",
+              "ip": "10.142.88.127"
+            },
+            {
+              "name": "mk678_565",
+              "ip": "10.142.88.172"
+            },
+            {
+              "name": "mk679_165",
+              "ip": "10.142.92.37"
+            },
+            {
+              "name": "mk679_765",
+              "ip": "10.142.92.82"
+            },
+            {
+              "name": "mk680_005",
+              "ip": "10.142.92.100"
+            },
+            {
+              "name": "mk680_365",
+              "ip": "10.142.92.127"
+            },
+            {
+              "name": "mk680_605",
+              "ip": "10.142.92.145"
+            },
+            {
+              "name": "mzk680_045",
+              "ip": "10.142.90.64"
+            },
+            {
+              "name": "mzk680_405",
+              "ip": "10.142.90.91"
+            },
+            {
+              "name": "mzk680_645",
+              "ip": "10.142.90.109"
+            },
+            {
+              "name": "mzk765_442",
+              "ip": "10.142.194.74"
+            },
+            {
+              "name": "mk763_834",
+              "ip": "10.142.196.1"
+            },
+            {
+              "name": "mzk717_440",
+              "ip": "10.142.136.82"
+            },
+            {
+              "name": "mzk717_800",
+              "ip": "10.142.136.109"
+            },
+            {
+              "name": "mk713_255",
+              "ip": "10.142.134.1"
+            },
+            {
+              "name": "mk713_375",
+              "ip": "10.142.134.10"
+            },
+            {
+              "name": "mk715_030",
+              "ip": "10.142.134.136"
+            },
+            {
+              "name": "mk717_790",
+              "ip": "10.142.138.154"
+            }
+          ]
+        },
+        "贵阳": {
+          "physical": {
+            "total": 10,
+            "healthy": 10,
+            "rate": 100.0
+          },
+          "physical_offline_devices": [],
+          "container": {
+            "total": 10,
+            "healthy": 10,
+            "rate": 100.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        },
+        "青海": {
+          "physical": {
+            "total": 34,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "physical_offline_devices": [],
+          "container": {
+            "total": 34,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        }
+      }
+    },
+    {
+      "timestamp": "2026-05-19 11:20:22",
+      "saved_at": "2026-05-19T11:30:18.733730",
+      "projects": {
+        "南京仙新路": {
+          "physical": {
+            "total": 16,
+            "healthy": 16,
+            "rate": 100.0
+          },
+          "physical_offline_devices": [],
+          "container": {
+            "total": 16,
+            "healthy": 16,
+            "rate": 100.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        },
+        "山西灵石": {
+          "physical": {
+            "total": 4,
+            "healthy": 4,
+            "rate": 100.0
+          },
+          "physical_offline_devices": [],
+          "container": {
+            "total": 4,
+            "healthy": 4,
+            "rate": 100.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        },
+        "德会": {
+          "physical": {
+            "total": 82,
+            "healthy": 74,
+            "rate": 90.2
+          },
+          "physical_offline_devices": [
+            {
+              "name": "NVIDIA mlk0_400",
+              "ip": "10.145.4.14"
+            },
+            {
+              "name": "NVIDIA mlk1_200",
+              "ip": "10.145.4.53"
+            },
+            {
+              "name": "RK3588 mzk5_438",
+              "ip": "10.145.22.56"
+            },
+            {
+              "name": "RK3588 mk39_840",
+              "ip": "10.145.12.1"
+            },
+            {
+              "name": "RK3588 mk58_290",
+              "ip": "10.145.16.1"
+            },
+            {
+              "name": "RK3588 mk59_090",
+              "ip": "10.145.16.14"
+            },
+            {
+              "name": "RK3588 mk59_890",
+              "ip": "10.145.16.27"
+            },
+            {
+              "name": "RK3588 mk60_690",
+              "ip": "10.145.16.28"
+            }
+          ],
+          "container": {
+            "total": 82,
+            "healthy": 74,
+            "rate": 90.2
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        },
+        "德会隧道": {
+          "physical": {
+            "total": 128,
+            "healthy": 120,
+            "rate": 93.8
+          },
+          "physical_offline_devices": [
+            {
+              "name": "RK3588 mzk27_470",
+              "ip": "10.145.30.201"
+            },
+            {
+              "name": "RK3588 mzk31_966",
+              "ip": "10.145.38.100"
+            },
+            {
+              "name": "RK3588 mk31_808",
+              "ip": "10.145.40.76"
+            },
+            {
+              "name": "RK3588 mk34_075",
+              "ip": "10.145.44.21"
+            },
+            {
+              "name": "RK3588 mzk68_085",
+              "ip": "10.145.58.89"
+            },
+            {
+              "name": "RK3588 mk67_990",
+              "ip": "10.145.60.61"
+            },
+            {
+              "name": "RK3588 mzk74_425",
+              "ip": "10.145.62.18"
+            },
+            {
+              "name": "RK3588 mzk75_265",
+              "ip": "10.145.62.60"
+            }
+          ],
+          "container": {
+            "total": 128,
+            "healthy": 120,
+            "rate": 93.8
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": [
+            {
+              "name": "mzk68_325",
+              "ip": "10.145.58.111"
+            }
+          ]
+        },
+        "柯诸": {
+          "physical": {
+            "total": 66,
+            "healthy": 13,
+            "rate": 19.7
+          },
+          "physical_offline_devices": [],
+          "container": {
+            "total": 66,
+            "healthy": 15,
+            "rate": 22.7
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [
+            {
+              "name": "myk18_810",
+              "ip": "33.74.33.208"
+            },
+            {
+              "name": "myk20_395",
+              "ip": "33.74.33.210"
+            },
+            {
+              "name": "mzk29_230",
+              "ip": "33.74.35.164"
+            },
+            {
+              "name": "mzk29_610",
+              "ip": "33.74.35.165"
+            },
+            {
+              "name": "mzk30_010",
+              "ip": "33.74.35.166"
+            },
+            {
+              "name": "mzk30_810",
+              "ip": "33.74.35.168"
+            },
+            {
+              "name": "mzk31_210",
+              "ip": "33.74.63.183"
+            }
+          ],
+          "zero_images_devices": [
+            {
+              "name": "myk19_210",
+              "ip": "33.74.33.209"
+            },
+            {
+              "name": "myk23_090",
+              "ip": "33.74.34.113"
+            },
+            {
+              "name": "myk23_290",
+              "ip": "33.74.34.114"
+            },
+            {
+              "name": "myk23_690",
+              "ip": "33.74.34.115"
+            },
+            {
+              "name": "mzk24_290",
+              "ip": "33.74.34.116"
+            },
+            {
+              "name": "mzk24_690",
+              "ip": "33.74.34.117"
+            },
+            {
+              "name": "mzk25_090",
+              "ip": "33.74.34.118"
+            },
+            {
+              "name": "mzk25_490",
+              "ip": "33.74.34.119"
+            },
+            {
+              "name": "myk29_030",
+              "ip": "33.74.35.163"
+            },
+            {
+              "name": "mzk30_410",
+              "ip": "33.74.35.167"
+            }
+          ]
+        },
+        "汉宜": {
+          "physical": {
+            "total": 3,
+            "healthy": 3,
+            "rate": 100.0
+          },
+          "physical_offline_devices": [],
+          "container": {
+            "total": 3,
+            "healthy": 3,
+            "rate": 100.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        },
+        "汕梅": {
+          "physical": {
+            "total": 14,
+            "healthy": 14,
+            "rate": 100.0
+          },
+          "physical_offline_devices": [],
+          "container": {
+            "total": 14,
+            "healthy": 14,
+            "rate": 100.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        },
+        "沈海": {
+          "physical": {
+            "total": 23,
+            "healthy": 22,
+            "rate": 95.7
+          },
+          "physical_offline_devices": [
+            {
+              "name": "bm1684x mec_1006",
+              "ip": "172.18.186.148"
+            }
+          ],
+          "container": {
+            "total": 23,
+            "healthy": 20,
+            "rate": 87.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [
+            {
+              "name": "mec_1007",
+              "ip": "172.18.33.118"
+            },
+            {
+              "name": "mec_1023",
+              "ip": "172.18.73.96"
+            }
+          ],
+          "zero_images_devices": []
+        },
+        "绵九": {
+          "physical": {
+            "total": 415,
+            "healthy": 342,
+            "rate": 82.4
+          },
+          "physical_offline_devices": [],
+          "container": {
+            "total": 415,
+            "healthy": 337,
+            "rate": 81.2
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [
+            {
+              "name": "mk626_486",
+              "ip": "10.145.181.49"
+            },
+            {
+              "name": "mk636_385",
+              "ip": "10.145.189.102"
+            },
+            {
+              "name": "mk666_639",
+              "ip": "10.142.72.173"
+            },
+            {
+              "name": "mk672_917",
+              "ip": "10.142.80.110"
+            },
+            {
+              "name": "mk680_616",
+              "ip": "10.142.92.154"
+            }
+          ],
+          "zero_images_devices": [
+            {
+              "name": "mk579_409",
+              "ip": "10.142.48.137"
+            },
+            {
+              "name": "mk579_649",
+              "ip": "10.142.52.1"
+            },
+            {
+              "name": "mk580_009",
+              "ip": "10.142.52.28"
+            },
+            {
+              "name": "s002",
+              "ip": "10.142.206.32"
+            },
+            {
+              "name": "mk625_310",
+              "ip": "10.145.181.1"
+            },
+            {
+              "name": "mzk639_016",
+              "ip": "10.145.195.43"
+            },
+            {
+              "name": "mzk639_289",
+              "ip": "10.145.195.55"
+            },
+            {
+              "name": "mzk657_085",
+              "ip": "10.142.56.110"
+            },
+            {
+              "name": "mzk658_885",
+              "ip": "10.142.60.55"
+            },
+            {
+              "name": "mzk659_485",
+              "ip": "10.142.60.100"
+            },
+            {
+              "name": "mzk660_085",
+              "ip": "10.142.60.145"
+            },
+            {
+              "name": "mzk661_285",
+              "ip": "10.142.64.55"
+            },
+            {
+              "name": "mzk661_525",
+              "ip": "10.142.64.73"
+            },
+            {
+              "name": "mk664_992",
+              "ip": "10.142.72.47"
+            },
+            {
+              "name": "mk665_592",
+              "ip": "10.142.72.92"
+            },
+            {
+              "name": "mk666_432",
+              "ip": "10.142.72.155"
+            },
+            {
+              "name": "mzk665_926",
+              "ip": "10.142.70.74"
+            },
+            {
+              "name": "mzk666_526",
+              "ip": "10.142.70.119"
+            },
+            {
+              "name": "mzk667_246",
+              "ip": "10.142.70.173"
+            },
+            {
+              "name": "mk669_491",
+              "ip": "10.142.76.47"
+            },
+            {
+              "name": "mk670_091",
+              "ip": "10.142.76.92"
+            },
+            {
+              "name": "mzk670_514",
+              "ip": "10.142.74.83"
+            },
+            {
+              "name": "mzk670_754",
+              "ip": "10.142.74.101"
+            },
+            {
+              "name": "mzk671_354",
+              "ip": "10.142.74.146"
+            },
+            {
+              "name": "mzk672_314",
+              "ip": "10.142.78.28"
+            },
+            {
+              "name": "mk672_677",
+              "ip": "10.142.80.92"
+            },
+            {
+              "name": "mk673_277",
+              "ip": "10.142.80.137"
+            },
+            {
+              "name": "mk673_517",
+              "ip": "10.142.80.155"
+            },
+            {
+              "name": "mk677_365",
+              "ip": "10.142.88.82"
+            },
+            {
+              "name": "mk677_965",
+              "ip": "10.142.88.127"
+            },
+            {
+              "name": "mk678_565",
+              "ip": "10.142.88.172"
+            },
+            {
+              "name": "mk679_165",
+              "ip": "10.142.92.37"
+            },
+            {
+              "name": "mk679_765",
+              "ip": "10.142.92.82"
+            },
+            {
+              "name": "mk680_005",
+              "ip": "10.142.92.100"
+            },
+            {
+              "name": "mk680_605",
+              "ip": "10.142.92.145"
+            },
+            {
+              "name": "mzk765_442",
+              "ip": "10.142.194.74"
+            },
+            {
+              "name": "mk763_834",
+              "ip": "10.142.196.1"
+            },
+            {
+              "name": "mzk717_440",
+              "ip": "10.142.136.82"
+            },
+            {
+              "name": "mzk717_800",
+              "ip": "10.142.136.109"
+            },
+            {
+              "name": "mk713_255",
+              "ip": "10.142.134.1"
+            },
+            {
+              "name": "mk713_375",
+              "ip": "10.142.134.10"
+            },
+            {
+              "name": "mk715_030",
+              "ip": "10.142.134.136"
+            },
+            {
+              "name": "mk717_790",
+              "ip": "10.142.138.154"
+            }
+          ]
+        },
+        "贵阳": {
+          "physical": {
+            "total": 10,
+            "healthy": 10,
+            "rate": 100.0
+          },
+          "physical_offline_devices": [],
+          "container": {
+            "total": 10,
+            "healthy": 10,
+            "rate": 100.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        },
+        "青海": {
+          "physical": {
+            "total": 34,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "physical_offline_devices": [],
+          "container": {
+            "total": 34,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        }
+      }
+    },
+    {
+      "timestamp": "2026-05-19 14:21:46",
+      "saved_at": "2026-05-19T14:26:15.443106",
+      "projects": {
+        "南京仙新路": {
+          "physical": {
+            "total": 16,
+            "healthy": 16,
+            "rate": 100.0
+          },
+          "physical_offline_devices": [],
+          "container": {
+            "total": 16,
+            "healthy": 16,
+            "rate": 100.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        },
+        "山西灵石": {
+          "physical": {
+            "total": 4,
+            "healthy": 4,
+            "rate": 100.0
+          },
+          "physical_offline_devices": [],
+          "container": {
+            "total": 4,
+            "healthy": 4,
+            "rate": 100.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        },
+        "德会": {
+          "physical": {
+            "total": 82,
+            "healthy": 74,
+            "rate": 90.2
+          },
+          "physical_offline_devices": [
+            {
+              "name": "NVIDIA mlk0_400",
+              "ip": "10.145.4.14"
+            },
+            {
+              "name": "NVIDIA mlk1_200",
+              "ip": "10.145.4.53"
+            },
+            {
+              "name": "RK3588 mzk5_438",
+              "ip": "10.145.22.56"
+            },
+            {
+              "name": "RK3588 mk39_840",
+              "ip": "10.145.12.1"
+            },
+            {
+              "name": "RK3588 mk58_290",
+              "ip": "10.145.16.1"
+            },
+            {
+              "name": "RK3588 mk59_090",
+              "ip": "10.145.16.14"
+            },
+            {
+              "name": "RK3588 mk59_890",
+              "ip": "10.145.16.27"
+            },
+            {
+              "name": "RK3588 mk60_690",
+              "ip": "10.145.16.28"
+            }
+          ],
+          "container": {
+            "total": 82,
+            "healthy": 74,
+            "rate": 90.2
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        },
+        "德会隧道": {
+          "physical": {
+            "total": 128,
+            "healthy": 120,
+            "rate": 93.8
+          },
+          "physical_offline_devices": [
+            {
+              "name": "RK3588 mzk27_470",
+              "ip": "10.145.30.201"
+            },
+            {
+              "name": "RK3588 mzk31_966",
+              "ip": "10.145.38.100"
+            },
+            {
+              "name": "RK3588 mk31_808",
+              "ip": "10.145.40.76"
+            },
+            {
+              "name": "RK3588 mk34_075",
+              "ip": "10.145.44.21"
+            },
+            {
+              "name": "RK3588 mzk68_085",
+              "ip": "10.145.58.89"
+            },
+            {
+              "name": "RK3588 mk67_990",
+              "ip": "10.145.60.61"
+            },
+            {
+              "name": "RK3588 mzk74_425",
+              "ip": "10.145.62.18"
+            },
+            {
+              "name": "RK3588 mzk75_265",
+              "ip": "10.145.62.60"
+            }
+          ],
+          "container": {
+            "total": 128,
+            "healthy": 120,
+            "rate": 93.8
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": [
+            {
+              "name": "mzk68_325",
+              "ip": "10.145.58.111"
+            }
+          ]
+        },
+        "柯诸": {
+          "physical": {
+            "total": 66,
+            "healthy": 54,
+            "rate": 81.8
+          },
+          "physical_offline_devices": [],
+          "container": {
+            "total": 66,
+            "healthy": 53,
+            "rate": 80.3
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [
+            {
+              "name": "myk23_090",
+              "ip": "33.74.34.113"
+            },
+            {
+              "name": "myk23_290",
+              "ip": "33.74.34.114"
+            },
+            {
+              "name": "myk23_690",
+              "ip": "33.74.34.115"
+            },
+            {
+              "name": "mzk24_290",
+              "ip": "33.74.34.116"
+            },
+            {
+              "name": "mzk24_690",
+              "ip": "33.74.34.117"
+            },
+            {
+              "name": "mzk34_840",
+              "ip": "33.74.63.192"
+            },
+            {
+              "name": "mzk35_165",
+              "ip": "33.74.63.193"
+            }
+          ],
+          "zero_images_devices": [
+            {
+              "name": "mzk20_595",
+              "ip": "33.74.33.211"
+            },
+            {
+              "name": "myk21_255",
+              "ip": "33.74.33.212"
+            },
+            {
+              "name": "myk22_290",
+              "ip": "33.74.34.111"
+            },
+            {
+              "name": "mzk22_490",
+              "ip": "33.74.34.112"
+            },
+            {
+              "name": "myk29_030",
+              "ip": "33.74.35.163"
+            }
+          ]
+        },
+        "汉宜": {
+          "physical": {
+            "total": 3,
+            "healthy": 3,
+            "rate": 100.0
+          },
+          "physical_offline_devices": [],
+          "container": {
+            "total": 3,
+            "healthy": 3,
+            "rate": 100.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        },
+        "汕梅": {
+          "physical": {
+            "total": 14,
+            "healthy": 14,
+            "rate": 100.0
+          },
+          "physical_offline_devices": [],
+          "container": {
+            "total": 14,
+            "healthy": 14,
+            "rate": 100.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [],
+          "zero_images_devices": []
+        },
+        "沈海": {
+          "physical": {
+            "total": 23,
+            "healthy": 22,
+            "rate": 95.7
+          },
+          "physical_offline_devices": [
+            {
+              "name": "bm1684x mec_1006",
+              "ip": "172.18.186.148"
+            }
+          ],
+          "container": {
+            "total": 23,
+            "healthy": 20,
+            "rate": 87.0
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [
+            {
+              "name": "mec_1007",
+              "ip": "172.18.33.118"
+            },
+            {
+              "name": "mec_1023",
+              "ip": "172.18.73.96"
+            }
+          ],
+          "zero_images_devices": []
+        },
+        "绵九": {
+          "physical": {
+            "total": 415,
+            "healthy": 341,
+            "rate": 82.2
+          },
+          "physical_offline_devices": [],
+          "container": {
+            "total": 415,
+            "healthy": 337,
+            "rate": 81.2
+          },
+          "sensor": {
+            "total": 0,
+            "healthy": 0,
+            "rate": 0.0
+          },
+          "container_offline_but_pm_online": [
+            {
+              "name": "mk626_486",
+              "ip": "10.145.181.49"
+            },
+            {
+              "name": "mk636_385",
+              "ip": "10.145.189.102"
+            },
+            {
+              "name": "mk666_639",
+              "ip": "10.142.72.173"
+            },
+            {
+              "name": "mk672_917",
+              "ip": "10.142.80.110"
+            },
+            {
+              "name": "mk680_616",
+              "ip": "10.142.92.154"
+            }
+          ],
+          "zero_images_devices": [
+            {
+              "name": "s002",
+              "ip": "10.142.206.32"
+            },
+            {
+              "name": "mk625_310",
+              "ip": "10.145.181.1"
+            },
+            {
+              "name": "mzk658_885",
+              "ip": "10.142.60.55"
+            },
+            {
+              "name": "mzk661_285",
+              "ip": "10.142.64.55"
+            },
+            {
+              "name": "mzk666_526",
+              "ip": "10.142.70.119"
+            },
+            {
+              "name": "mzk667_246",
+              "ip": "10.142.70.173"
+            },
+            {
+              "name": "mzk670_514",
+              "ip": "10.142.74.83"
+            },
+            {
+              "name": "mzk670_754",
+              "ip": "10.142.74.101"
             },
             {
               "name": "mk763_834",

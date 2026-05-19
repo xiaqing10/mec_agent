@@ -26,7 +26,7 @@ os.chdir(str(SELF_AGENT_DIR))
 
 STATIC_DIR = SELF_AGENT_DIR / 'static' / 'vendor'
 
-from config import API_HOST, API_PORT, API_KEY, USERS
+from config import API_HOST, API_PORT, API_KEY, USERS, FEEDBACK_DELAY_SECONDS
 
 from feedback_store import create_feedback_record, update_rating, get_feedback_stats, get_recent_feedback, update_feedback_by_id, delete_feedback_by_id
 
@@ -94,11 +94,9 @@ def _normalize_table(rows):
     if not rows:
         return []
 
-    # Parse each row into cells
     parsed = []
     for row in rows:
         cells = [c.strip() for c in row.split('|')]
-        # Remove first/last empty strings from leading/trailing |
         if cells and cells[0] == '':
             cells = cells[1:]
         if cells and cells[-1] == '':
@@ -108,18 +106,26 @@ def _normalize_table(rows):
     if not parsed:
         return rows
 
-    # Find max column count
     max_cols = max(len(c) for c in parsed)
 
-    # Pad each row to max_cols
+    # Find separator row index (row where all cells are dashes)
+    sep_idx = -1
+    for i, cells in enumerate(parsed):
+        if all(re.match(r'^-+\s*$', c) for c in cells):
+            sep_idx = i
+            break
+
+    # If no separator row, insert one after first row
+    if sep_idx == -1 and len(parsed) >= 1:
+        parsed.insert(1, [])
+        sep_idx = 1
+
     for i in range(len(parsed)):
         while len(parsed[i]) < max_cols:
             parsed[i].append('')
-        # Also ensure separator row has enough dashes
-        if i == 1 and all(c.strip().startswith('-') for c in parsed[i] if c.strip()):
+        if i == sep_idx:
             parsed[i] = ['---'] * max_cols
 
-    # Reconstruct with consistent column count
     result = []
     for cells in parsed:
         result.append('| ' + ' | '.join(cells) + ' |')
@@ -214,7 +220,7 @@ async def handle_chat_stream(request):
         try:
             await response.write(text.encode('utf-8'))
         except (ConnectionResetError, ConnectionAbortedError):
-            pass
+            _disconnected = True
 
     try:
         from langchain_core.messages import HumanMessage
@@ -235,12 +241,37 @@ async def handle_chat_stream(request):
 
         current_tool = None
         tool_output_lines = []
+        tool_called = False
+        tool_actions = []
+        last_user_msg = user_message
+        last_ai_msg = ""
+        drain_task = None
+        _disconnected = False
+
+        # 注册诊断进度回调：每完成一个维度就发 SSE
+        from tools import set_diag_progress_callback
+        progress_list = []
+        def _on_diag_progress(name, status, detail):
+            progress_list.append({"name": name, "status": status, "detail": detail})
+        set_diag_progress_callback(_on_diag_progress)
+
+        async def _drain_progress_loop():
+            last_len = 0
+            while True:
+                if len(progress_list) > last_len:
+                    for item in progress_list[last_len:]:
+                        await _send("diag_progress", item)
+                    last_len = len(progress_list)
+                await asyncio.sleep(0.2)
 
         async for event in agent.astream_events(
             {"messages": [HumanMessage(content=user_message)]},
             config,
             version="v2"
         ):
+            if _disconnected:
+                logger.info("客户端已断开，停止流式输出")
+                break
             kind = event.get("event", "")
             name = event.get("name", "")
             data = event.get("data", {})
@@ -254,39 +285,80 @@ async def handle_chat_stream(request):
                 else:
                     content = ""
                 if content:
+                    last_ai_msg += content
                     await _send("token", {"content": content})
 
             elif kind == "on_tool_start":
                 current_tool = name
                 tool_input = data.get("input", {})
                 await _send("tool_start", {"name": name, "input": tool_input})
+                # 启动后台 drain 任务，工具执行期间持续发送进度
+                if name == "diagnose_device":
+                    drain_task = asyncio.ensure_future(_drain_progress_loop())
 
             elif kind == "on_tool_end":
+                tool_called = True
+                # 停止进度 drain
+                if drain_task is not None:
+                    drain_task.cancel()
+                    drain_task = None
                 output = data.get("output", "")
                 await _send("tool_end", {"name": name})
-                # 直接把工具原始结果推给前端（LLM可能失败，先展示原始数据）
                 output_text = str(output)
                 if output_text and output_text != "None":
                     await _send("tool_result", {"name": name, "output": output_text[:8000]})
+                    tool_actions.append({"name": name, "content": output_text[:100]})
                 current_tool = None
 
         await _send("done", {"status": "complete"})
 
-        # Save feedback record and signal feedback request if needed
+        # Save feedback record and signal feedback request
+        logger.info("DEBUG feedback: tool_called=%s, last_user_msg=%s, tool_actions=%s",
+                     tool_called, last_user_msg[:50], [a["name"] for a in tool_actions])
         try:
-            final_state = await agent.ainvoke(
-                {"messages": []},
-                config
-            )
-            intent = final_state.get("conversation_intent", "")
-            pending = final_state.get("pending_feedback", False)
-            auto_correctness = final_state.get("auto_correctness")
-            if intent:
-                tool_msgs = [m for m in final_state.get("messages", []) if hasattr(m, 'type') and m.type == 'tool']
-                actions = [{"name": getattr(m, 'name', ''), "content": str(getattr(m, 'content', ''))[:100]} for m in tool_msgs[:10]]
-                create_feedback_record(session_id, user_id=_get_username(request) or session_id, intent=intent, actions=actions, auto_correctness=auto_correctness)
-            if pending:
-                await _send("feedback_request", {"session_id": session_id, "intent": intent})
+            if tool_called:
+                intent = last_user_msg[:50]
+                auto_score = None
+                try:
+                    from langchain_openai import ChatOpenAI
+                    from config import LLM_MODEL, LLM_API_KEY, LLM_BASE_URL
+                    llm = ChatOpenAI(
+                        model=LLM_MODEL, api_key=LLM_API_KEY,
+                        base_url=LLM_BASE_URL, temperature=0.1
+                    )
+                    intent_prompt = (
+                        "请用一句话概括用户本次对话中用户的意图（20字以内），仅输出概括内容：\n"
+                        f"用户消息: {last_user_msg[:200]}\n"
+                        f"AI回复: {last_ai_msg[:200] if last_ai_msg else ''}"
+                    )
+                    intent_resp = await llm.ainvoke([("human", intent_prompt)])
+                    intent = intent_resp.content.strip()[:100]
+
+                    auto_prompt = (
+                        "请评估本次诊断是否成功完成。仅输出0-10的整数分数（10=完美）:\n"
+                        f"用户意图: {intent}\n"
+                        f"AI回复: {last_ai_msg[:500] if last_ai_msg else ''}"
+                    )
+                    score_resp = await llm.ainvoke([("human", auto_prompt)])
+                    auto_score = max(0, min(10, int(score_resp.content.strip())))
+                except Exception:
+                    pass
+
+                create_feedback_record(
+                    session_id,
+                    user_id=_get_username(request) or session_id,
+                    intent=intent,
+                    actions=tool_actions,
+                    auto_correctness=auto_score,
+                )
+
+            trivial_patterns = ["好的", "谢谢", "ok", "嗯", "明白", "知道了", "再见", "bye"]
+            is_trivial = any(p in last_user_msg.lower() for p in trivial_patterns)
+            if tool_called and not is_trivial:
+                await _send("feedback_request", {
+                    "session_id": session_id,
+                    "intent": intent if tool_called else "",
+                })
         except Exception as e:
             logger.warning("Failed to save feedback after stream: %s", e)
 
@@ -709,7 +781,7 @@ body {
   border-left: 3px solid var(--primary); padding: 4px 12px; margin: 8px 0;
   color: #555; background: #f8faff; border-radius: 0 4px 4px 0;
 }
-.msg.bot table { border-collapse: collapse; margin: 8px 0; font-size: 13px; width: 100%; display: block; overflow-x: auto; }
+.msg.bot table { border-collapse: collapse; margin: 8px 0; font-size: 13px; width: auto; min-width: 100%; }
 .msg.bot table th, .msg.bot table td { border: 1px solid #e5e7eb; padding: 6px 10px; text-align: left; white-space: nowrap; }
 .msg.bot table th { background: #f6f8fa; font-weight: 600; }
 .msg.bot table td { white-space: nowrap; }
@@ -955,6 +1027,7 @@ body {
 
 <script>
 var API_KEY = __API_KEY__;
+var FEEDBACK_DELAY = __FEEDBACK_DELAY__;
 var STORAGE_KEY = 'mec_chat_sessions_v3';
 var currentSessionId = null;
 var sessions = [];
@@ -991,7 +1064,7 @@ function fixTables(text) {
 
   for (var i = 0; i < lines.length; i++) {
     var s = lines[i].trim();
-    if (s.startsWith('|') && s.endsWith('|')) {
+    if (/^\|.+\|$/.test(s)) {
       tableRows.push(s);
       inTable = true;
       continue;
@@ -1014,27 +1087,30 @@ function normalizeTable(rows, out) {
   var parsed = [];
   var maxCols = 0;
   for (var i = 0; i < rows.length; i++) {
-    var parts = rows[i].split('|');
-    var cells = [];
-    for (var j = 0; j < parts.length; j++) {
-      var c = parts[j].trim();
-      if (j === 0 && c === '') continue;
-      if (j === parts.length - 1 && c === '') continue;
-      cells.push(c);
-    }
+    var cells = rows[i].split('|').map(function(c) { return c.trim(); });
+    if (cells[0] === '') cells.shift();
+    if (cells[cells.length - 1] === '') cells.pop();
     if (cells.length > maxCols) maxCols = cells.length;
     parsed.push(cells);
   }
+
+  // If there's no separator row, insert one
+  var sepIdx = -1;
+  for (var i = 0; i < parsed.length; i++) {
+    if (parsed[i].every(function(c) { return /^-+\s*$/.test(c); })) {
+      sepIdx = i;
+      break;
+    }
+  }
+  if (sepIdx === -1 && parsed.length >= 1) {
+    parsed.splice(1, 0, []);
+    sepIdx = 1;
+  }
+
   for (var i = 0; i < parsed.length; i++) {
     while (parsed[i].length < maxCols) parsed[i].push('');
-    if (i === 1) {
-      var isSep = true;
-      for (var j = 0; j < parsed[i].length; j++) {
-        if (parsed[i][j].replace(/-/g, '').trim() !== '') { isSep = false; break; }
-      }
-      if (isSep) {
-        for (var j = 0; j < maxCols; j++) parsed[i][j] = '---';
-      }
+    if (i === sepIdx) {
+      for (var j = 0; j < maxCols; j++) parsed[i][j] = '---';
     }
     out.push('| ' + parsed[i].join(' | ') + ' |');
   }
@@ -1205,7 +1281,23 @@ function saveSessions() { localStorage.setItem(STORAGE_KEY, JSON.stringify(sessi
 function genId() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
 function createSession(title) { return { id: genId(), title: title || '新对话', messages: [], created: Date.now() }; }
 function getCurrentSession() { return sessions.find(function(s) { return s.id === currentSessionId; }); }
-function switchSession(id) { currentSessionId = id; renderHistory(); renderMessages(); }
+function switchSession(id) {
+  var streamMsg = document.getElementById('streaming-msg');
+  if (streamMsg) {
+    var session = getCurrentSession();
+    var txt = window._streamingFullText || '';
+    if (session && txt) {
+      session.messages.push({ type: 'bot', content: txt + '\n\n*(对话中断，结果不完整)*', extra: {} });
+      saveSessions();
+    }
+    if (window._streamController) {
+      window._streamController.abort();
+      window._streamController = null;
+    }
+  }
+  window._streamingFullText = '';
+  currentSessionId = id; renderHistory(); renderMessages();
+}
 function newConversation() {
   var s = createSession();
   sessions.unshift(s);
@@ -1370,6 +1462,8 @@ async function send() {
   var fullText = '';
   var toolDiv = null;
   var toolCount = 0;
+  window._streamingFullText = '';
+  window._streamController = controller;
 
   // 120s timeout to prevent hanging
   var controller = new AbortController();
@@ -1411,10 +1505,15 @@ try {
     } catch (e) {
       clearTimeout(timeoutId);
       removeTyping();
-      addMsgToDOM('error', '网络错误: ' + e.message, {}, true);
+      // 如果streaming-msg已被切换销毁，不添加错误信息
+      var streamMsgCheck = document.getElementById('streaming-msg');
+      if (streamMsgCheck) {
+        addMsgToDOM('error', '网络错误: ' + e.message, {}, true);
+      }
       btn.disabled = false;
       var streamMsg = document.getElementById('streaming-msg');
       if (streamMsg) streamMsg.classList.remove('streaming');
+      window._streamingFullText = '';
     }
 
   function handleEvent(type, data) {
@@ -1429,6 +1528,7 @@ try {
       removeTyping();
       if (type === 'token') {
         fullText += data.content || '';
+        window._streamingFullText = fullText;
         contentDiv.innerHTML = renderMD(fullText) + '<span class="cursor">▌</span>';
         scrollToBottom();
       } else if (type === 'tool_start') {
@@ -1438,6 +1538,17 @@ try {
         tag.id = 'tool-' + toolCount;
         tag.textContent = '⚙️ ' + (data.name || '工具') + ' 运行中...';
         contentDiv.parentNode.insertBefore(tag, contentDiv);
+      } else if (type === 'diag_progress') {
+        var ico = {'ok':'✅','error':'❌','warning':'⚠️','skip':'⏭️','progress':'⏳'}[data.status] || '❓';
+        var pTag = document.getElementById('diag-progress');
+        if (!pTag) {
+          pTag = document.createElement('div');
+          pTag.id = 'diag-progress';
+          pTag.style.cssText = 'font-size:13px;color:#555;margin:4px 0;padding:6px 10px;background:#f0f7ff;border-radius:4px;border-left:3px solid #3b82f6;';
+          contentDiv.parentNode.insertBefore(pTag, contentDiv);
+        }
+        pTag.innerHTML = pTag.innerHTML + '<div>' + ico + ' <b>' + data.name + '</b>: ' + data.detail + '</div>';
+        scrollToBottom();
       } else if (type === 'tool_end') {
         var tag = document.getElementById('tool-' + toolCount);
         if (tag) {
@@ -1447,8 +1558,18 @@ try {
       } else if (type === 'tool_result') {
         var resultText = data.output || '';
         if (resultText.length > 6000) resultText = resultText.slice(0, 6000) + '\n\n...(截断)';
-        fullText += '\n\n--- ' + (data.name || '工具') + ' 返回结果 ---\n\n' + resultText + '\n\n---';
-        contentDiv.innerHTML = renderMD(fullText) + '<span class="cursor">▌</span>';
+        // Show tool result as a collapsible separate element, NOT mixed into fullText
+        var details = document.createElement('details');
+        details.style.margin = '4px 0';
+        var summary = document.createElement('summary');
+        summary.style.cssText = 'font-size:12px;color:#666;cursor:pointer;';
+        summary.textContent = '📋 ' + (data.name || '工具') + ' 返回结果';
+        details.appendChild(summary);
+        var pre = document.createElement('div');
+        pre.style.cssText = 'font-size:12px;background:#f8f9fa;border:1px solid #e5e7eb;border-radius:4px;padding:8px;margin-top:4px;overflow-x:auto;';
+        pre.innerHTML = renderMD(resultText);
+        details.appendChild(pre);
+        contentDiv.parentNode.insertBefore(details, contentDiv.nextSibling);
         scrollToBottom();
       } else if (type === 'error') {
         var errMsg = (data.message || '');
@@ -1477,22 +1598,30 @@ try {
           });
         };
         contentDiv.appendChild(copyBtn);
-        var session = getCurrentSession();
-        if (session) {
-          session.messages.push({ type: 'bot', content: fullText, extra: {} });
-          saveSessions();
+        // 只在streaming-msg还在DOM中时才保存（未被切换走）
+        var streamMsgNode = document.getElementById('streaming-msg');
+        if (streamMsgNode && streamMsgNode.isConnected) {
+          var session = getCurrentSession();
+          if (session) {
+            session.messages.push({ type: 'bot', content: fullText, extra: {} });
+            saveSessions();
+          }
         }
-        var streamMsg = document.getElementById('streaming-msg');
-        if (streamMsg) streamMsg.classList.remove('streaming');
+        if (streamMsgNode) streamMsgNode.classList.remove('streaming');
         scrollToBottom();
         btn.disabled = false;
+window._streamingFullText = '';
+      window._streamController = null;
+        window._streamController = null;
       } else if (type === 'feedback_request') {
-        var fbBar = document.getElementById('feedbackBar');
-        var fbIntent = document.getElementById('fbIntent');
-        if (fbBar && fbIntent) {
-          fbIntent.textContent = '本轮意图: ' + (data.intent || '诊断分析');
-          fbBar.style.display = 'block';
-        }
+        setTimeout(function() {
+          var fbBar = document.getElementById('feedbackBar');
+          var fbIntent = document.getElementById('fbIntent');
+          if (fbBar && fbIntent) {
+            fbIntent.textContent = '本轮意图: ' + (data.intent || '诊断分析');
+            fbBar.style.display = 'block';
+          }
+        }, FEEDBACK_DELAY);
       }
     } catch(e) {
       // 避免handleEvent内任何错误影响流式处理
@@ -1610,7 +1739,7 @@ async def handle_static(request):
     return web.Response(body=filepath.read_bytes(), content_type=ct)
 
 async def handle_webui(request):
-    html = WEBUI_HTML.replace('__API_KEY__', json.dumps(API_KEY))
+    html = WEBUI_HTML.replace('__API_KEY__', json.dumps(API_KEY)).replace('__FEEDBACK_DELAY__', str(FEEDBACK_DELAY_SECONDS * 1000))
     return web.Response(text=html, content_type='text/html')
 
 

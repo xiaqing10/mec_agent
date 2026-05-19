@@ -47269,3 +47269,2025 @@ bash: ^Pass)
 2026-05-19 10:41:10 [INFO] 🐳 一次SSH采集物理机所有信息...
 2026-05-19 10:41:10 [INFO]   ✅ 公钥登录成功: root
 2026-05-19 10:41:10 [INFO] 🐳 一次SSH采集物理机所有信息...
+2026-05-19 10:41:12 [INFO] ✅ Docker服务运行中
+2026-05-19 10:41:12 [INFO] ✅ dev容器存在且运行中: dev Up 3 weeks
+2026-05-19 10:41:12 [INFO] ✅ docker exec正常
+2026-05-19 10:41:12 [INFO] 📡 尝试连接容器SSH...
+2026-05-19 10:41:12 [INFO] ✅ Docker服务运行中
+2026-05-19 10:41:12 [INFO] ✅ dev容器存在且运行中: dev Up 3 weeks
+2026-05-19 10:41:12 [INFO] ✅ docker exec正常
+2026-05-19 10:41:12 [INFO] 📡 尝试连接容器SSH...
+2026-05-19 10:41:14 [INFO] ✅ 容器SSH可连接（监控显示离线）
+2026-05-19 10:41:14 [INFO] 📡 传感器状态: 摄像头 4/4 | 雷达 2/2
+2026-05-19 10:41:14 [INFO] ======================================================================
+2026-05-19 10:41:14 [INFO] 🔍 诊断：容器在线但今日图片为0 - 33.74.28.228
+2026-05-19 10:41:14 [INFO] ======================================================================
+2026-05-19 10:41:14 [INFO] 📡 步骤0: 检查容器连通性...
+2026-05-19 10:41:15 [INFO] ✅ 容器SSH可连接（监控显示离线）
+2026-05-19 10:41:15 [INFO] 📡 传感器状态: 摄像头 4/4 | 雷达 2/2
+2026-05-19 10:41:15 [INFO] ======================================================================
+2026-05-19 10:41:15 [INFO] 🔍 诊断：容器在线但今日图片为0 - 33.74.28.230
+2026-05-19 10:41:15 [INFO] ======================================================================
+2026-05-19 10:41:15 [INFO] 📡 步骤0: 检查容器连通性...
+2026-05-19 10:41:16 [INFO] ✅ 容器连接正常
+2026-05-19 10:41:16 [INFO] 📦 一次SSH采集容器初始数据...
+2026-05-19 10:41:16 [INFO] ✅ 容器连接正常
+2026-05-19 10:41:16 [INFO] 📦 一次SSH采集容器初始数据...
+2026-05-19 10:41:18 [INFO] ✅ 今日图片数: 536，已恢复正常，继续采集完整信息
+2026-05-19 10:41:18 [INFO] ✅ 所有进程运行正常 (12/12)
+2026-05-19 10:41:18 [INFO] ✅ roscore运行中
+2026-05-19 10:41:18 [INFO] 📋 步骤3: 检查各进程日志...
+2026-05-19 10:41:18 [INFO] ✅ 今日图片数: 2470，已恢复正常，继续采集完整信息
+2026-05-19 10:41:18 [INFO] ✅ 所有进程运行正常 (12/12)
+2026-05-19 10:41:18 [INFO] ✅ roscore运行中
+2026-05-19 10:41:18 [INFO] 📋 步骤3: 检查各进程日志...
+2026-05-19 10:41:19 [DEBUG] 为 kafka_event 补充额外日志: /home/files/common_logs/event.log
+2026-05-19 10:41:19 [DEBUG] 为 kafka_flow 补充额外日志: /home/files/common_logs/flow.log
+2026-05-19 10:41:19 [DEBUG] 加载诊断模式 4 条: ['cambricon_driver', 'ros_master', 'rtsp_nodelet_fail', 'oom_kill']
+2026-05-19 10:41:19 [DEBUG] 为 kafka_event 补充额外日志: /home/files/common_logs/event.log
+2026-05-19 10:41:19 [DEBUG] 为 kafka_flow 补充额外日志: /home/files/common_logs/flow.log
+2026-05-19 10:41:19 [DEBUG] 加载诊断模式 4 条: ['cambricon_driver', 'ros_master', 'rtsp_nodelet_fail', 'oom_kill']
+2026-05-19 10:41:20 [INFO] ✅ calibration_event: 无明显错误
+2026-05-19 10:41:20 [INFO] ✅ calibration_project: 无明显错误
+2026-05-19 10:41:20 [INFO] ❌ fusion: 1种不同错误 (来自['/home/files/common_logs/fusion/fusion.log', '/tmp/rvf/logs/fusion/fusion.log'])
+2026-05-19 10:41:20 [DEBUG]   • [WARN] [1776924596.443805175]: Failed to get ANPR configuration parameters!
+2026-05-19 10:41:20 [INFO] ❌ infer: 4种不同错误 (来自['/home/files/common_logs/infer/infer.log', '/tmp/rvf/logs/infer/infer.log'])
+2026-05-19 10:41:20 [DEBUG]   • [ERROR] [1779153806.742456521]: RES:  xmin 606 ymin  662 xmax 672 ymax 720
+2026-05-19 10:41:20 [DEBUG]   • [ERROR] [1779153981.059126687]: RES:  xmin 1248 ymin  272 xmax 1280 ymax 308
+2026-05-19 10:41:20 [DEBUG]   • [ERROR] [1779155646.665612387]: RES:  xmin 1248 ymin  316 xmax 1280 ymax 346
+2026-05-19 10:41:20 [DEBUG]   • [ERROR] [1779158207.859966223]: RES:  xmin 1245 ymin  650 xmax 1280 ymax 692
+2026-05-19 10:41:20 [INFO] ❌ kafka_event: 5种不同错误 (来自['/home/files/common_logs/kafka_event/kafka_event.log', '/tmp/rvf/logs/kafka_event/kafka_event.log'])
+2026-05-19 10:41:20 [DEBUG]   • [ERROR]2026-05-19 10:28:59,649 kafka_event_new.py:275: event has no file path:
+2026-05-19 10:41:20 [DEBUG]   • [ERROR]2026-05-19 10:29:24,723 kafka_event_new.py:275: event has no file path:
+2026-05-19 10:41:20 [DEBUG]   • [ERROR]2026-05-19 10:29:28,804 kafka_event_new.py:275: event has no file path:
+2026-05-19 10:41:20 [DEBUG]   • [ERROR]2026-05-19 10:29:28,805 kafka_event_new.py:275: event has no file path:
+2026-05-19 10:41:20 [DEBUG]   • [ERROR]2026-05-19 10:35:06,003 kafka_event_new.py:275: event has no file path:
+2026-05-19 10:41:20 [INFO] ✅ kafka_flow: 无明显错误
+2026-05-19 10:41:20 [INFO] ✅ kafka_monitor: 无明显错误
+2026-05-19 10:41:20 [INFO] ❌ radar_bridge: 1种不同错误 (来自['/home/files/common_logs/radar_bridge/radar_bridge.log', '/tmp/rvf/logs/radar_bridge/radar_bridge.log'])
+2026-05-19 10:41:20 [DEBUG]   • [ERROR] [1777096780.296636158]: Connection Failed: Connection timed out
+2026-05-19 10:41:20 [INFO] ✅ rosbridge_websocket: 无明显错误
+2026-05-19 10:41:20 [INFO] ✅ rtsp: 无明显错误
+2026-05-19 10:41:20 [INFO] ✅ traffic: 无明显错误
+2026-05-19 10:41:20 [INFO] ✅ zmq_bridge: 无明显错误
+2026-05-19 10:41:20 [INFO] 📡 步骤4: rostopic hz 检查...
+2026-05-19 10:41:21 [INFO] ✅ calibration_event: 无明显错误
+2026-05-19 10:41:21 [INFO] ✅ calibration_project: 无明显错误
+2026-05-19 10:41:21 [INFO] ❌ fusion: 1种不同错误 (来自['/home/files/common_logs/fusion/fusion.log', '/tmp/rvf/logs/fusion/fusion.log'])
+2026-05-19 10:41:21 [DEBUG]   • [WARN] [1776924597.216392266]: Failed to get ANPR configuration parameters!
+2026-05-19 10:41:21 [INFO] ❌ infer: 7种不同错误 (来自['/home/files/common_logs/infer/infer.log', '/tmp/rvf/logs/infer/infer.log'])
+2026-05-19 10:41:21 [DEBUG]   • [ERROR] [1779153244.800698862]: RES:  xmin 1133 ymin  699 xmax 1165 ymax 720
+2026-05-19 10:41:21 [DEBUG]   • [ERROR] [1779153734.327602968]: RES:  xmin 1244 ymin  333 xmax 1280 ymax 373
+2026-05-19 10:41:21 [DEBUG]   • [ERROR] [1779154068.490942101]: RES:  xmin 1265 ymin  467 xmax 1280 ymax 491
+2026-05-19 10:41:21 [DEBUG]   • [ERROR] [1779154365.330397582]: RES:  xmin 559 ymin  664 xmax 583 ymax 720
+2026-05-19 10:41:21 [DEBUG]   • [ERROR] [1779155122.527667710]: RES:  xmin 1204 ymin  454 xmax 1280 ymax 546
+2026-05-19 10:41:21 [INFO] ❌ kafka_event: 13种不同错误 (来自['/home/files/common_logs/kafka_event/kafka_event.log', '/tmp/rvf/logs/kafka_event/kafka_event.log'])
+2026-05-19 10:41:21 [DEBUG]   • [ERROR]2026-05-19 10:32:59,788 kafka_event_new.py:275: event has no file path:
+2026-05-19 10:41:21 [DEBUG]   • [ERROR]2026-05-19 10:32:59,789 kafka_event_new.py:275: event has no file path:
+2026-05-19 10:41:21 [DEBUG]   • [ERROR]2026-05-19 10:34:20,226 kafka_event_new.py:275: event has no file path:
+2026-05-19 10:41:21 [DEBUG]   • [ERROR]2026-05-19 10:34:59,943 kafka_event_new.py:275: event has no file path:
+2026-05-19 10:41:21 [DEBUG]   • [ERROR]2026-05-19 10:34:59,944 kafka_event_new.py:275: event has no file path:
+2026-05-19 10:41:21 [INFO] ✅ kafka_flow: 无明显错误
+2026-05-19 10:41:21 [INFO] ✅ kafka_monitor: 无明显错误
+2026-05-19 10:41:21 [INFO] ❌ radar_bridge: 2种不同错误 (来自['/home/files/common_logs/radar_bridge/radar_bridge.log', '/tmp/rvf/logs/radar_bridge/radar_bridge.log'])
+2026-05-19 10:41:21 [DEBUG]   • [ERROR] [1779151810.594779344]: Error receiving data: Connection timed out
+2026-05-19 10:41:21 [DEBUG]   • [ERROR] [1779151823.650199464]: Connection Failed: Connection timed out
+2026-05-19 10:41:21 [INFO] ✅ rosbridge_websocket: 无明显错误
+2026-05-19 10:41:21 [INFO] ✅ rtsp: 无明显错误
+2026-05-19 10:41:21 [INFO] ✅ traffic: 无明显错误
+2026-05-19 10:41:21 [INFO] ✅ zmq_bridge: 无明显错误
+2026-05-19 10:41:21 [INFO] 📡 步骤4: rostopic hz 检查...
+2026-05-19 10:41:24 [INFO] 关键topic: /myk13_240/fusion_track_object, /myk13_240/traffic_event_object/fps_hz, /yk12_840/downstream/long_camera/image_detect/compressed, /yk12_840/downstream/long_camera/image_raw, /yk12_840/downstream/radar/track_object, /yk12_840/downstream/radar/track_object_project, /yk12_840/downstream/short_camera/image_detect/compressed, /yk12_840/downstream/short_camera/image_raw, /zk13_040/upstream/long_camera/image_detect/compressed, /zk13_040/upstream/long_camera/image_raw, /zk13_040/upstream/radar/track_object, /zk13_040/upstream/radar/track_object_project, /zk13_040/upstream/short_camera/image_detect/compressed, /zk13_040/upstream/short_camera/image_raw
+2026-05-19 10:41:25 [INFO] 关键topic: /myk13_640/fusion_track_object, /myk13_640/traffic_event_object/fps_hz, /yk13_640/downstream/long_camera/image_detect/compressed, /yk13_640/downstream/long_camera/image_raw, /yk13_640/downstream/radar/track_object, /yk13_640/downstream/radar/track_object_project, /yk13_640/downstream/short_camera/image_detect/compressed, /yk13_640/downstream/short_camera/image_raw, /zk13_840/upstream/long_camera/image_detect/compressed, /zk13_840/upstream/long_camera/image_raw, /zk13_840/upstream/radar/track_object, /zk13_840/upstream/radar/track_object_project, /zk13_840/upstream/short_camera/image_detect/compressed, /zk13_840/upstream/short_camera/image_raw
+2026-05-19 10:41:32 [WARNING] ⚠️  /myk13_240/fusion_track_object: 无数据 - , 负责人 @lj
+2026-05-19 10:41:32 [WARNING] ⚠️  /myk13_240/traffic_event_object/fps_hz: 无数据 - , 负责人 @zrh
+2026-05-19 10:41:32 [WARNING] ⚠️  /yk12_840/downstream/long_camera/image_detect/compressed: 无数据 - , 负责人 @xq
+2026-05-19 10:41:32 [WARNING] ⚠️  /yk12_840/downstream/long_camera/image_raw: 无数据 - , 负责人 @zzm
+2026-05-19 10:41:32 [WARNING] ⚠️  /yk12_840/downstream/radar/track_object: 无数据 - , 负责人 @lj
+2026-05-19 10:41:32 [WARNING] ⚠️  /yk12_840/downstream/radar/track_object_project: 无数据 - , 负责人 @cy
+2026-05-19 10:41:32 [WARNING] ⚠️  /yk12_840/downstream/short_camera/image_detect/compressed: 无数据 - , 负责人 @xq
+2026-05-19 10:41:32 [WARNING] ⚠️  /yk12_840/downstream/short_camera/image_raw: 无数据 - , 负责人 @zzm
+2026-05-19 10:41:32 [WARNING] ⚠️  /zk13_040/upstream/long_camera/image_detect/compressed: 无数据 - , 负责人 @xq
+2026-05-19 10:41:32 [WARNING] ⚠️  /zk13_040/upstream/long_camera/image_raw: 无数据 - , 负责人 @zzm
+2026-05-19 10:41:32 [WARNING] ⚠️  /zk13_040/upstream/radar/track_object: 无数据 - , 负责人 @lj
+2026-05-19 10:41:32 [WARNING] ⚠️  /zk13_040/upstream/radar/track_object_project: 无数据 - , 负责人 @cy
+2026-05-19 10:41:32 [WARNING] ⚠️  /zk13_040/upstream/short_camera/image_detect/compressed: 无数据 - , 负责人 @xq
+2026-05-19 10:41:32 [WARNING] ⚠️  /zk13_040/upstream/short_camera/image_raw: 无数据 - , 负责人 @zzm
+2026-05-19 10:41:32 [INFO] 📡 传感器状态: 摄像头 4/4 | 雷达 2/2
+2026-05-19 10:41:32 [WARNING] ⚠️  /myk13_640/fusion_track_object: 无数据 - , 负责人 @lj
+2026-05-19 10:41:32 [WARNING] ⚠️  /myk13_640/traffic_event_object/fps_hz: 无数据 - , 负责人 @zrh
+2026-05-19 10:41:32 [WARNING] ⚠️  /yk13_640/downstream/long_camera/image_detect/compressed: 无数据 - , 负责人 @xq
+2026-05-19 10:41:32 [WARNING] ⚠️  /yk13_640/downstream/long_camera/image_raw: 无数据 - , 负责人 @zzm
+2026-05-19 10:41:32 [WARNING] ⚠️  /yk13_640/downstream/radar/track_object: 无数据 - , 负责人 @lj
+2026-05-19 10:41:32 [WARNING] ⚠️  /yk13_640/downstream/radar/track_object_project: 无数据 - , 负责人 @cy
+2026-05-19 10:41:32 [WARNING] ⚠️  /yk13_640/downstream/short_camera/image_detect/compressed: 无数据 - , 负责人 @xq
+2026-05-19 10:41:32 [WARNING] ⚠️  /yk13_640/downstream/short_camera/image_raw: 无数据 - , 负责人 @zzm
+2026-05-19 10:41:32 [WARNING] ⚠️  /zk13_840/upstream/long_camera/image_detect/compressed: 无数据 - , 负责人 @xq
+2026-05-19 10:41:32 [WARNING] ⚠️  /zk13_840/upstream/long_camera/image_raw: 无数据 - , 负责人 @zzm
+2026-05-19 10:41:32 [WARNING] ⚠️  /zk13_840/upstream/radar/track_object: 无数据 - , 负责人 @lj
+2026-05-19 10:41:32 [WARNING] ⚠️  /zk13_840/upstream/radar/track_object_project: 无数据 - , 负责人 @cy
+2026-05-19 10:41:32 [WARNING] ⚠️  /zk13_840/upstream/short_camera/image_detect/compressed: 无数据 - , 负责人 @xq
+2026-05-19 10:41:32 [WARNING] ⚠️  /zk13_840/upstream/short_camera/image_raw: 无数据 - , 负责人 @zzm
+2026-05-19 10:41:32 [INFO] 📡 传感器状态: 摄像头 4/4 | 雷达 2/2
+2026-05-19 10:54:07 [WARNING] ❌ 数据库中未找到设备: h1020 (项目=德会)
+2026-05-19 10:54:09 [WARNING] ❌ 数据库中未找到设备: h1020 (项目=未指定)
+2026-05-19 13:59:05 [INFO] ======================================================================
+2026-05-19 13:59:05 [INFO] 🔍 诊断：物理机在线但容器不可连 - 33.74.33.201
+2026-05-19 13:59:05 [INFO] ======================================================================
+2026-05-19 13:59:05 [INFO] 🔐 登录物理机 33.74.33.201...
+2026-05-19 13:59:05 [INFO]   📋 数据库记录用户: root，优先尝试
+2026-05-19 13:59:10 [DEBUG]   ❌ 公钥登录失败: ssh: connect to host 33.74.33.201 port 22: Connection timed out
+2026-05-19 13:59:10 [DEBUG]   🔄 尝试密码登录: root
+2026-05-19 13:59:17 [WARNING] Paramiko密码登录失败 root@33.74.33.201:22 - timed out
+2026-05-19 13:59:17 [DEBUG]   ❌ 密码登录也失败: timed out
+2026-05-19 13:59:17 [WARNING]   ❌ 物理机 33.74.33.201 数据库用户登录失败: 公钥和密码登录均失败（密码登录: timed out）
+2026-05-19 13:59:17 [WARNING] ❌ 物理机无法连接: 公钥和密码登录均失败（密码登录: timed out）
+2026-05-19 13:59:17 [INFO] 📡 传感器状态: 摄像头 4/4 | 雷达 2/2
+2026-05-19 14:03:44 [INFO] ======================================================================
+2026-05-19 14:03:44 [INFO] 🔍 诊断：物理机在线但容器不可连 - 44.42.122.140
+2026-05-19 14:03:44 [INFO] ======================================================================
+2026-05-19 14:03:44 [INFO] 🔐 登录物理机 44.42.122.140...
+2026-05-19 14:03:44 [INFO]   📋 数据库记录用户: lcfc，优先尝试
+2026-05-19 14:03:46 [INFO]   ✅ 公钥登录成功: lcfc
+2026-05-19 14:03:46 [INFO] 🐳 一次SSH采集物理机所有信息...
+2026-05-19 14:03:48 [INFO] ✅ Docker服务运行中
+2026-05-19 14:03:48 [INFO] ✅ dev容器存在且运行中: dev Up 7 weeks
+2026-05-19 14:03:48 [INFO] ✅ docker exec正常
+2026-05-19 14:03:48 [INFO] 📡 尝试连接容器SSH...
+2026-05-19 14:03:49 [INFO] ✅ 容器SSH可连接（监控显示离线）
+2026-05-19 14:03:49 [INFO] 📡 传感器状态: 摄像头 5/5 | 雷达 4/4
+2026-05-19 14:03:49 [INFO] ======================================================================
+2026-05-19 14:03:49 [INFO] 🔍 诊断：容器在线但今日图片为0 - 44.42.122.140
+2026-05-19 14:03:49 [INFO] ======================================================================
+2026-05-19 14:03:49 [INFO] 📡 步骤0: 检查容器连通性...
+2026-05-19 14:03:51 [INFO] ✅ 容器连接正常
+2026-05-19 14:03:51 [INFO] 📦 一次SSH采集容器初始数据...
+2026-05-19 14:03:52 [INFO] ✅ 今日图片数: 4，已恢复正常，继续采集完整信息
+2026-05-19 14:03:52 [INFO] ✅ 所有进程运行正常 (12/12)
+2026-05-19 14:03:52 [INFO] ✅ roscore运行中
+2026-05-19 14:03:52 [INFO] 📋 步骤3: 检查各进程日志...
+2026-05-19 14:03:54 [DEBUG] 加载诊断模式 4 条: ['cambricon_driver', 'ros_master', 'rtsp_nodelet_fail', 'oom_kill']
+2026-05-19 14:03:55 [INFO] ✅ error_calibration: 无明显错误
+2026-05-19 14:03:55 [INFO] ✅ error_calibration_project: 无明显错误
+2026-05-19 14:03:55 [INFO] ✅ error_fusion: 无明显错误
+2026-05-19 14:03:55 [INFO] ✅ error_infer: 无明显错误
+2026-05-19 14:03:55 [INFO] ✅ error_kafka_event: 无明显错误
+2026-05-19 14:03:55 [INFO] ✅ error_kafka_flow: 无明显错误
+2026-05-19 14:03:55 [INFO] ✅ error_kafka_monitor: 无明显错误
+2026-05-19 14:03:55 [INFO] ❌ error_radar_bridge: 1种不同错误 (来自['/home/files/common_logs/error_radar_bridge.log'])
+2026-05-19 14:03:55 [DEBUG]   • [ERROR] [1772241286.049745887]: Connection Failed: Connection refused
+2026-05-19 14:03:55 [INFO] ❌ error_rosbridge_websocket: 4种不同错误 (来自['/home/files/common_logs/error_rosbridge_websocket.log'])
+2026-05-19 14:03:55 [DEBUG]   • RLException: run_id on parameter server does not match declared run_id: a806ed02-fbfa-11f0-b284-48b0
+2026-05-19 14:03:55 [DEBUG]   • The traceback for the exception was written to the log file
+2026-05-19 14:03:55 [DEBUG]   • from . message import Message, SerializationError, DeserializationError, MessageException, struct_I
+2026-05-19 14:03:55 [DEBUG]   • Traceback (most recent call last):
+2026-05-19 14:03:55 [INFO] ❌ error_rtsp: 7种不同错误 (来自['/home/files/common_logs/error_rtsp.log'])
+2026-05-19 14:03:55 [DEBUG]   • RLException: run_id on parameter server does not match declared run_id: a806ed02-fbfa-11f0-b284-48b0
+2026-05-19 14:03:55 [DEBUG]   • The traceback for the exception was written to the log file
+2026-05-19 14:03:55 [DEBUG]   • [FATAL] [1769571456.292177216]: Failed to load nodelet '/mz4k88_800/server` of type `camera/dispatch
+2026-05-19 14:03:55 [DEBUG]   • from . message import Message, SerializationError, DeserializationError, MessageException, struct_I
+2026-05-19 14:03:55 [DEBUG]   • Traceback (most recent call last):
+2026-05-19 14:03:55 [INFO] ❌ error_traffic: 7种不同错误 (来自['/home/files/common_logs/error_traffic.log'])
+2026-05-19 14:03:55 [DEBUG]   • RLException: Invalid <param> tag: Cannot load command parameter [__param_loader_helper]: command [['
+2026-05-19 14:03:55 [DEBUG]   • RLException: run_id on parameter server does not match declared run_id: a8253898-fbfa-11f0-8f89-48b0
+2026-05-19 14:03:55 [DEBUG]   • The traceback for the exception was written to the log file
+2026-05-19 14:03:55 [DEBUG]   • [ERROR] [1750756221.884874912]: Cannot read param: traffic/out_mode
+2026-05-19 14:03:55 [DEBUG]   • [ERROR] [1769571449.874801344]: Failed to get 'device_params' from param server. Check YAML!
+2026-05-19 14:03:55 [INFO] ❌ error_zmq_bridge: 7种不同错误 (来自['/home/files/common_logs/error_zmq_bridge.log'])
+2026-05-19 14:03:55 [DEBUG]   • RLException: run_id on parameter server does not match declared run_id: a806ed02-fbfa-11f0-b284-48b0
+2026-05-19 14:03:55 [DEBUG]   • The traceback for the exception was written to the log file
+2026-05-19 14:03:55 [DEBUG]   • [FATAL] [1765530216.238307947]: Invalid ROS msg_type "zmq_bridge/OneTrackObject" in configuration!
+2026-05-19 14:03:55 [DEBUG]   • from . message import Message, SerializationError, DeserializationError, MessageException, struct_I
+2026-05-19 14:03:55 [DEBUG]   • Traceback (most recent call last):
+2026-05-19 14:03:55 [INFO] ✅ out_calibration: 无明显错误
+2026-05-19 14:03:55 [INFO] ❌ out_calibration_project: 1种不同错误 (来自['//home/files/common_logs/out_calibration_project.log'])
+2026-05-19 14:03:55 [DEBUG]   • Error in XmlRpcClient::writeRequest: write error (Connection refused).
+2026-05-19 14:03:55 [INFO] ✅ out_fusion: 无明显错误
+2026-05-19 14:03:55 [INFO] ✅ out_kafka_event: 无明显错误
+2026-05-19 14:03:55 [INFO] ✅ out_kafka_flow: 无明显错误
+2026-05-19 14:03:55 [INFO] ❌ out_kafka_monitor: 1种不同错误 (来自['//home/files/common_logs/out_kafka_monitor.log'])
+2026-05-19 14:03:55 [DEBUG]   • Error in XmlRpcClient::writeRequest: write error (Connection refused).
+2026-05-19 14:03:55 [INFO] ✅ out_rosbridge_websocket: 无明显错误
+2026-05-19 14:03:55 [INFO] ✅ out_traffic: 无明显错误
+2026-05-19 14:03:55 [INFO] ✅ out_zmq_bridge: 无明显错误
+2026-05-19 14:03:55 [INFO] ✅ out_infer: 无明显错误
+2026-05-19 14:03:55 [INFO] ✅ out_radar_bridge: 无明显错误
+2026-05-19 14:03:55 [INFO] ✅ out_rtsp: 无明显错误
+2026-05-19 14:03:55 [INFO] 📡 步骤4: rostopic hz 检查...
+2026-05-19 14:03:58 [INFO] 关键topic: /mz4k88_800/fusion_track_object, /mz4k88_800/traffic_event_object/fps_hz, /one_track_object, /z4k88_800/downstream/long_camera/image_detect/compressed, /z4k88_800/downstream/long_camera/image_raw, /z4k88_800/downstream/radar/track_object, /z4k88_800/downstream/radar/track_object_project, /z4k88_800/downstream/short_camera/image_detect/compressed, /z4k88_800/downstream/short_camera/image_raw, /z4k88_800/upstream/radar/track_object, /z4k88_800/upstream/radar/track_object_project, /z4k89_170/downstream/long_camera/image_detect/compressed, /z4k89_170/downstream/long_camera/image_raw, /z4k89_170/downstream/radar/track_object, /z4k89_170/downstream/radar/track_object_project, /z4k89_170/downstream/short_camera/image_detect/compressed, /z4k89_170/downstream/short_camera/image_raw, /z4k89_170/upstream/radar/track_object, /z4k89_170/upstream/radar/track_object_project, /z4k89_170/upstream/short_camera/image_detect/compressed, /z4k89_170/upstream/short_camera/image_raw
+2026-05-19 14:04:04 [WARNING] ⚠️  /mz4k88_800/fusion_track_object: 无数据 - , 负责人 @lj
+2026-05-19 14:04:04 [WARNING] ⚠️  /mz4k88_800/traffic_event_object/fps_hz: 无数据 - , 负责人 @zrh
+2026-05-19 14:04:04 [WARNING] ⚠️  /one_track_object: 无数据 - , 负责人 @lj
+2026-05-19 14:04:04 [WARNING] ⚠️  /z4k88_800/downstream/long_camera/image_detect/compressed: 无数据 - , 负责人 @xq
+2026-05-19 14:04:04 [WARNING] ⚠️  /z4k88_800/downstream/long_camera/image_raw: 无数据 - , 负责人 @zzm
+2026-05-19 14:04:04 [WARNING] ⚠️  /z4k88_800/downstream/radar/track_object: 无数据 - , 负责人 @lj
+2026-05-19 14:04:04 [WARNING] ⚠️  /z4k88_800/downstream/radar/track_object_project: 无数据 - , 负责人 @cy
+2026-05-19 14:04:04 [WARNING] ⚠️  /z4k88_800/downstream/short_camera/image_detect/compressed: 无数据 - , 负责人 @xq
+2026-05-19 14:04:04 [WARNING] ⚠️  /z4k88_800/downstream/short_camera/image_raw: 无数据 - , 负责人 @zzm
+2026-05-19 14:04:04 [WARNING] ⚠️  /z4k88_800/upstream/radar/track_object: 无数据 - , 负责人 @lj
+2026-05-19 14:04:04 [WARNING] ⚠️  /z4k88_800/upstream/radar/track_object_project: 无数据 - , 负责人 @cy
+2026-05-19 14:04:04 [WARNING] ⚠️  /z4k89_170/downstream/long_camera/image_detect/compressed: 无数据 - , 负责人 @xq
+2026-05-19 14:04:04 [WARNING] ⚠️  /z4k89_170/downstream/long_camera/image_raw: 无数据 - , 负责人 @zzm
+2026-05-19 14:04:04 [WARNING] ⚠️  /z4k89_170/downstream/radar/track_object: 无数据 - , 负责人 @lj
+2026-05-19 14:04:04 [WARNING] ⚠️  /z4k89_170/downstream/radar/track_object_project: 无数据 - , 负责人 @cy
+2026-05-19 14:04:04 [WARNING] ⚠️  /z4k89_170/downstream/short_camera/image_detect/compressed: 无数据 - , 负责人 @xq
+2026-05-19 14:04:04 [WARNING] ⚠️  /z4k89_170/downstream/short_camera/image_raw: 无数据 - , 负责人 @zzm
+2026-05-19 14:04:04 [WARNING] ⚠️  /z4k89_170/upstream/radar/track_object: 无数据 - , 负责人 @lj
+2026-05-19 14:04:04 [WARNING] ⚠️  /z4k89_170/upstream/radar/track_object_project: 无数据 - , 负责人 @cy
+2026-05-19 14:04:04 [WARNING] ⚠️  /z4k89_170/upstream/short_camera/image_detect/compressed: 无数据 - , 负责人 @xq
+2026-05-19 14:04:04 [WARNING] ⚠️  /z4k89_170/upstream/short_camera/image_raw: 无数据 - , 负责人 @zzm
+2026-05-19 14:04:04 [INFO] 📡 传感器状态: 摄像头 5/5 | 雷达 4/4
+2026-05-19 14:04:25 [INFO] 🔐 登录物理机 44.42.122.140...
+2026-05-19 14:04:25 [INFO]   📋 数据库记录用户: lcfc，优先尝试
+2026-05-19 14:04:27 [INFO]   ✅ 公钥登录成功: lcfc
+2026-05-19 14:04:32 [INFO] 🔐 登录物理机 44.42.122.140...
+2026-05-19 14:04:32 [INFO]   📋 数据库记录用户: lcfc，优先尝试
+2026-05-19 14:04:34 [INFO]   ✅ 公钥登录成功: lcfc
+2026-05-19 14:04:39 [INFO] 🔐 登录物理机 44.42.122.140...
+2026-05-19 14:04:39 [INFO]   📋 数据库记录用户: lcfc，优先尝试
+2026-05-19 14:04:41 [INFO]   ✅ 公钥登录成功: lcfc
+2026-05-19 14:05:09 [WARNING] SSH执行超时: root@44.42.122.140:10022 (15s)
+2026-05-19 14:05:09 [WARNING] SSH执行超时: root@44.42.122.140:10022 (15s)
+2026-05-19 14:05:16 [WARNING] Paramiko密码登录失败 root@44.42.122.140:10022 - timed out
+2026-05-19 14:05:16 [WARNING] Paramiko密码登录失败 root@44.42.122.140:10022 - timed out
+2026-05-19 14:05:34 [WARNING] Paramiko密码登录失败 root@44.42.122.140:10022 - timed out
+2026-05-19 14:06:19 [WARNING] Paramiko密码登录失败 root@44.42.122.140:10022 - timed out
+2026-05-19 14:07:35 [WARNING] SSH执行超时: root@44.42.122.140:10022 (15s)
+2026-05-19 14:07:40 [WARNING] Paramiko密码登录失败 root@44.42.122.140:10022 - timed out
+2026-05-19 14:10:03 [INFO] ======================================================================
+2026-05-19 14:10:03 [INFO] 🔍 诊断：物理机在线但容器不可连 - 44.42.122.140
+2026-05-19 14:10:03 [INFO] ======================================================================
+2026-05-19 14:10:03 [INFO] 🔐 登录物理机 44.42.122.140...
+2026-05-19 14:10:03 [INFO]   📋 数据库记录用户: lcfc，优先尝试
+2026-05-19 14:10:05 [INFO]   ✅ 公钥登录成功: lcfc
+2026-05-19 14:10:05 [INFO] 🐳 一次SSH采集物理机所有信息...
+2026-05-19 14:10:07 [INFO] ✅ Docker服务运行中
+2026-05-19 14:10:07 [INFO] ✅ dev容器存在且运行中: dev Up 7 weeks
+2026-05-19 14:10:07 [INFO] ✅ docker exec正常
+2026-05-19 14:10:07 [INFO] 📡 尝试连接容器SSH...
+2026-05-19 14:10:08 [INFO] ✅ 容器SSH可连接（监控显示离线）
+2026-05-19 14:10:08 [INFO] 📡 传感器状态: 摄像头 5/5 | 雷达 4/4
+2026-05-19 14:10:08 [INFO] ======================================================================
+2026-05-19 14:10:08 [INFO] 🔍 诊断：容器在线但今日图片为0 - 44.42.122.140
+2026-05-19 14:10:08 [INFO] ======================================================================
+2026-05-19 14:10:08 [INFO] 📡 步骤0: 检查容器连通性...
+2026-05-19 14:10:09 [INFO] ✅ 容器连接正常
+2026-05-19 14:10:09 [INFO] 📦 一次SSH采集容器初始数据...
+2026-05-19 14:10:10 [INFO] ✅ 今日图片数: 4，已恢复正常，继续采集完整信息
+2026-05-19 14:10:10 [INFO] ✅ 所有进程运行正常 (12/12)
+2026-05-19 14:10:10 [INFO] ✅ roscore运行中
+2026-05-19 14:10:10 [INFO] 📋 步骤3: 检查各进程日志...
+2026-05-19 14:10:12 [DEBUG] 加载诊断模式 4 条: ['cambricon_driver', 'ros_master', 'rtsp_nodelet_fail', 'oom_kill']
+2026-05-19 14:10:13 [INFO] ✅ error_calibration: 无明显错误
+2026-05-19 14:10:13 [INFO] ✅ error_calibration_project: 无明显错误
+2026-05-19 14:10:13 [INFO] ✅ error_fusion: 无明显错误
+2026-05-19 14:10:13 [INFO] ✅ error_infer: 无明显错误
+2026-05-19 14:10:13 [INFO] ✅ error_kafka_event: 无明显错误
+2026-05-19 14:10:13 [INFO] ✅ error_kafka_flow: 无明显错误
+2026-05-19 14:10:13 [INFO] ✅ error_kafka_monitor: 无明显错误
+2026-05-19 14:10:13 [INFO] ❌ error_radar_bridge: 1种不同错误 (来自['/home/files/common_logs/error_radar_bridge.log'])
+2026-05-19 14:10:13 [DEBUG]   • [ERROR] [1772241286.049745887]: Connection Failed: Connection refused
+2026-05-19 14:10:13 [INFO] ❌ error_rosbridge_websocket: 4种不同错误 (来自['/home/files/common_logs/error_rosbridge_websocket.log'])
+2026-05-19 14:10:13 [DEBUG]   • RLException: run_id on parameter server does not match declared run_id: a806ed02-fbfa-11f0-b284-48b0
+2026-05-19 14:10:13 [DEBUG]   • The traceback for the exception was written to the log file
+2026-05-19 14:10:13 [DEBUG]   • from . message import Message, SerializationError, DeserializationError, MessageException, struct_I
+2026-05-19 14:10:13 [DEBUG]   • Traceback (most recent call last):
+2026-05-19 14:10:13 [INFO] ❌ error_rtsp: 7种不同错误 (来自['/home/files/common_logs/error_rtsp.log'])
+2026-05-19 14:10:13 [DEBUG]   • RLException: run_id on parameter server does not match declared run_id: a806ed02-fbfa-11f0-b284-48b0
+2026-05-19 14:10:13 [DEBUG]   • The traceback for the exception was written to the log file
+2026-05-19 14:10:13 [DEBUG]   • [FATAL] [1769571456.292177216]: Failed to load nodelet '/mz4k88_800/server` of type `camera/dispatch
+2026-05-19 14:10:13 [DEBUG]   • from . message import Message, SerializationError, DeserializationError, MessageException, struct_I
+2026-05-19 14:10:13 [DEBUG]   • Traceback (most recent call last):
+2026-05-19 14:10:13 [INFO] ❌ error_traffic: 7种不同错误 (来自['/home/files/common_logs/error_traffic.log'])
+2026-05-19 14:10:13 [DEBUG]   • RLException: Invalid <param> tag: Cannot load command parameter [__param_loader_helper]: command [['
+2026-05-19 14:10:13 [DEBUG]   • RLException: run_id on parameter server does not match declared run_id: a8253898-fbfa-11f0-8f89-48b0
+2026-05-19 14:10:13 [DEBUG]   • The traceback for the exception was written to the log file
+2026-05-19 14:10:13 [DEBUG]   • [ERROR] [1750756221.884874912]: Cannot read param: traffic/out_mode
+2026-05-19 14:10:13 [DEBUG]   • [ERROR] [1769571449.874801344]: Failed to get 'device_params' from param server. Check YAML!
+2026-05-19 14:10:13 [INFO] ❌ error_zmq_bridge: 7种不同错误 (来自['/home/files/common_logs/error_zmq_bridge.log'])
+2026-05-19 14:10:13 [DEBUG]   • RLException: run_id on parameter server does not match declared run_id: a806ed02-fbfa-11f0-b284-48b0
+2026-05-19 14:10:13 [DEBUG]   • The traceback for the exception was written to the log file
+2026-05-19 14:10:13 [DEBUG]   • [FATAL] [1765530216.238307947]: Invalid ROS msg_type "zmq_bridge/OneTrackObject" in configuration!
+2026-05-19 14:10:13 [DEBUG]   • from . message import Message, SerializationError, DeserializationError, MessageException, struct_I
+2026-05-19 14:10:13 [DEBUG]   • Traceback (most recent call last):
+2026-05-19 14:10:13 [INFO] ✅ out_calibration: 无明显错误
+2026-05-19 14:10:13 [INFO] ❌ out_calibration_project: 1种不同错误 (来自['//home/files/common_logs/out_calibration_project.log'])
+2026-05-19 14:10:13 [DEBUG]   • Error in XmlRpcClient::writeRequest: write error (Connection refused).
+2026-05-19 14:10:13 [INFO] ✅ out_fusion: 无明显错误
+2026-05-19 14:10:13 [INFO] ✅ out_kafka_event: 无明显错误
+2026-05-19 14:10:13 [INFO] ✅ out_kafka_flow: 无明显错误
+2026-05-19 14:10:13 [INFO] ❌ out_kafka_monitor: 1种不同错误 (来自['//home/files/common_logs/out_kafka_monitor.log'])
+2026-05-19 14:10:13 [DEBUG]   • Error in XmlRpcClient::writeRequest: write error (Connection refused).
+2026-05-19 14:10:13 [INFO] ✅ out_rosbridge_websocket: 无明显错误
+2026-05-19 14:10:13 [INFO] ✅ out_traffic: 无明显错误
+2026-05-19 14:10:13 [INFO] ✅ out_zmq_bridge: 无明显错误
+2026-05-19 14:10:13 [INFO] ✅ out_infer: 无明显错误
+2026-05-19 14:10:13 [INFO] ✅ out_radar_bridge: 无明显错误
+2026-05-19 14:10:13 [INFO] ✅ out_rtsp: 无明显错误
+2026-05-19 14:10:13 [INFO] 📡 步骤4: rostopic hz 检查...
+2026-05-19 14:10:15 [INFO] 关键topic: /mz4k88_800/fusion_track_object, /mz4k88_800/traffic_event_object/fps_hz, /one_track_object, /z4k88_800/downstream/long_camera/image_detect/compressed, /z4k88_800/downstream/long_camera/image_raw, /z4k88_800/downstream/radar/track_object, /z4k88_800/downstream/radar/track_object_project, /z4k88_800/downstream/short_camera/image_detect/compressed, /z4k88_800/downstream/short_camera/image_raw, /z4k88_800/upstream/radar/track_object, /z4k88_800/upstream/radar/track_object_project, /z4k89_170/downstream/long_camera/image_detect/compressed, /z4k89_170/downstream/long_camera/image_raw, /z4k89_170/downstream/radar/track_object, /z4k89_170/downstream/radar/track_object_project, /z4k89_170/downstream/short_camera/image_detect/compressed, /z4k89_170/downstream/short_camera/image_raw, /z4k89_170/upstream/radar/track_object, /z4k89_170/upstream/radar/track_object_project, /z4k89_170/upstream/short_camera/image_detect/compressed, /z4k89_170/upstream/short_camera/image_raw
+2026-05-19 14:10:22 [WARNING] ⚠️  /mz4k88_800/fusion_track_object: 无数据 - , 负责人 @lj
+2026-05-19 14:10:22 [WARNING] ⚠️  /mz4k88_800/traffic_event_object/fps_hz: 无数据 - subscribed to [/mz4k88_800/traffic_event_object/fps_hz], 负责人 @zrh
+2026-05-19 14:10:22 [WARNING] ⚠️  /one_track_object: 无数据 - , 负责人 @lj
+2026-05-19 14:10:22 [WARNING] ⚠️  /z4k88_800/downstream/long_camera/image_detect/compressed: 无数据 - File "/opt/ros/noetic/lib/python3/dist-packages/rospy/client, 负责人 @xq
+2026-05-19 14:10:22 [WARNING] ⚠️  /z4k88_800/downstream/long_camera/image_raw: 无数据 - , 负责人 @zzm
+2026-05-19 14:10:22 [WARNING] ⚠️  /z4k88_800/downstream/radar/track_object: 无数据 - , 负责人 @lj
+2026-05-19 14:10:22 [WARNING] ⚠️  /z4k88_800/downstream/radar/track_object_project: 无数据 - , 负责人 @cy
+2026-05-19 14:10:22 [WARNING] ⚠️  /z4k88_800/downstream/short_camera/image_detect/compressed: 无数据 - , 负责人 @xq
+2026-05-19 14:10:22 [WARNING] ⚠️  /z4k88_800/downstream/short_camera/image_raw: 无数据 - , 负责人 @zzm
+2026-05-19 14:10:22 [WARNING] ⚠️  /z4k88_800/upstream/radar/track_object: 无数据 - , 负责人 @lj
+2026-05-19 14:10:22 [WARNING] ⚠️  /z4k88_800/upstream/radar/track_object_project: 无数据 - , 负责人 @cy
+2026-05-19 14:10:22 [WARNING] ❌ /z4k89_170/downstream/long_camera/image_detect/compressed: 无数据, 负责人 @xq
+2026-05-19 14:10:22 [WARNING] ⚠️  /z4k89_170/downstream/long_camera/image_raw: 无数据 - , 负责人 @zzm
+2026-05-19 14:10:22 [WARNING] ⚠️  /z4k89_170/downstream/radar/track_object: 无数据 - , 负责人 @lj
+2026-05-19 14:10:22 [WARNING] ⚠️  /z4k89_170/downstream/radar/track_object_project: 无数据 - , 负责人 @cy
+2026-05-19 14:10:22 [WARNING] ⚠️  /z4k89_170/downstream/short_camera/image_detect/compressed: 无数据 - , 负责人 @xq
+2026-05-19 14:10:22 [WARNING] ⚠️  /z4k89_170/downstream/short_camera/image_raw: 无数据 - , 负责人 @zzm
+2026-05-19 14:10:22 [INFO] ✅ /z4k89_170/upstream/radar/track_object: 20.054 Hz
+2026-05-19 14:10:22 [WARNING] ⚠️  /z4k89_170/upstream/radar/track_object_project: 无数据 - File "/opt/ros/noetic/lib/python3/dist-packages/rospy/client, 负责人 @cy
+2026-05-19 14:10:22 [WARNING] ⚠️  /z4k89_170/upstream/short_camera/image_detect/compressed: 无数据 - , 负责人 @xq
+2026-05-19 14:10:22 [WARNING] ⚠️  /z4k89_170/upstream/short_camera/image_raw: 无数据 - , 负责人 @zzm
+2026-05-19 14:10:22 [INFO] 📡 传感器状态: 摄像头 5/5 | 雷达 4/4
+2026-05-19 14:11:41 [INFO] ======================================================================
+2026-05-19 14:11:41 [INFO] 🔍 诊断：物理机在线但容器不可连 - 10.145.22.56
+2026-05-19 14:11:41 [INFO] ======================================================================
+2026-05-19 14:11:41 [INFO] 🔐 登录物理机 10.145.22.56...
+2026-05-19 14:11:41 [INFO]   📋 数据库记录用户: root，优先尝试
+2026-05-19 14:11:46 [DEBUG]   ❌ 公钥登录失败: Connection timed out during banner exchange
+Connection to 10.145.22.56 port 22 timed out
+2026-05-19 14:11:46 [DEBUG]   🔄 尝试密码登录: root
+2026-05-19 14:11:51 [WARNING] Paramiko密码登录失败 root@10.145.22.56:22 - timed out
+2026-05-19 14:11:51 [DEBUG]   ❌ 密码登录也失败: timed out
+2026-05-19 14:11:51 [WARNING]   ❌ 物理机 10.145.22.56 数据库用户登录失败: 公钥和密码登录均失败（密码登录: timed out）
+2026-05-19 14:11:51 [WARNING] ❌ 物理机无法连接: 公钥和密码登录均失败（密码登录: timed out）
+2026-05-19 14:11:51 [INFO] 📡 传感器状态: 摄像头 4/4 | 雷达 2/2
+2026-05-19 14:33:33 [WARNING] → 使用第一个: mec_1001 (52.81.209.6)
+2026-05-19 14:33:33 [INFO] → 设备名 'mec_1001' → IP: 52.81.209.6 (项目: 贵阳)
+2026-05-19 14:33:33 [INFO] ======================================================================
+2026-05-19 14:33:33 [INFO] 🔍 诊断：物理机在线但容器不可连 - 52.81.209.6
+2026-05-19 14:33:33 [INFO] ======================================================================
+2026-05-19 14:33:33 [INFO] 🔐 登录物理机 52.81.209.6...
+2026-05-19 14:33:34 [INFO]   📋 数据库记录用户: root，优先尝试
+2026-05-19 14:33:34 [INFO]   ✅ 公钥登录成功: root
+2026-05-19 14:33:34 [INFO] 🐳 一次SSH采集物理机所有信息...
+2026-05-19 14:33:38 [INFO] ✅ Docker服务运行中
+2026-05-19 14:33:38 [INFO] ✅ dev容器存在且运行中: dev Up 3 months
+2026-05-19 14:33:38 [INFO] ✅ docker exec正常
+2026-05-19 14:33:38 [INFO] 📡 尝试连接容器SSH...
+2026-05-19 14:33:39 [INFO] ✅ 容器SSH可连接（监控显示离线）
+2026-05-19 14:33:39 [INFO] 📡 传感器状态: 摄像头 1/1 | 雷达 2/2
+2026-05-19 14:33:39 [INFO] ======================================================================
+2026-05-19 14:33:39 [INFO] 🔍 诊断：容器在线但今日图片为0 - 52.81.209.6
+2026-05-19 14:33:39 [INFO] ======================================================================
+2026-05-19 14:33:39 [INFO] 📡 步骤0: 检查容器连通性...
+2026-05-19 14:33:39 [INFO] ✅ 容器连接正常
+2026-05-19 14:33:39 [INFO] 📦 一次SSH采集容器初始数据...
+2026-05-19 14:33:41 [INFO] ✅ 今日图片数: 725，已恢复正常，继续采集完整信息
+2026-05-19 14:33:41 [INFO] ✅ 所有进程运行正常 (16/16)
+2026-05-19 14:33:41 [INFO] ✅ roscore运行中
+2026-05-19 14:33:41 [INFO] 📋 步骤3: 检查各进程日志...
+2026-05-19 14:33:42 [DEBUG] 为 kafka_event 补充额外日志: /home/files/common_logs/event.log
+2026-05-19 14:33:42 [DEBUG] 为 kafka_flow 补充额外日志: /home/files/common_logs/flow.log
+2026-05-19 14:33:42 [DEBUG] 加载诊断模式 4 条: ['cambricon_driver', 'ros_master', 'rtsp_nodelet_fail', 'oom_kill']
+2026-05-19 14:33:43 [INFO] ❌ anpr_node: 5种不同错误 (来自['/home/files/common_logs/anpr_node.err', '/home/files/common_logs/anpr_node.log'])
+2026-05-19 14:33:43 [DEBUG]   • [ERROR] [1767691611.669648278]: Failed to get 'device_params' from param server. Check YAML!
+2026-05-19 14:33:43 [DEBUG]   • [ERROR] [1767691613.198464798]: 192.168.1.100:37777 Login failed!
+2026-05-19 14:33:43 [DEBUG]   • [ERROR] [1767691613.198616318]: 192.168.1.100:37777 Regist failed!
+2026-05-19 14:33:43 [DEBUG]   • [ERROR] [1767997195.477076765]: 52.81.209.194:37777 Disconenct.
+2026-05-19 14:33:43 [DEBUG]   • [ERROR] [1767997198.765548165]: 52.81.209.196:37777 Disconenct.
+2026-05-19 14:33:43 [INFO] ✅ calibration_event: 无明显错误
+2026-05-19 14:33:43 [INFO] ✅ calibration_project: 无明显错误
+2026-05-19 14:33:43 [INFO] ✅ event_corrector: 无明显错误
+2026-05-19 14:33:43 [INFO] ❌ eventunrepeate: 1种不同错误 (来自['/home/files/common_logs/eventunrepeate.err', '/home/files/common_logs/eventunrepeate.log'])
+2026-05-19 14:33:43 [DEBUG]   • ERROR: cannot launch node of type [eventunrepeate/eventunrepeate]: Cannot locate node of type [event
+2026-05-19 14:33:43 [INFO] ❌ fusion: 1种不同错误 (来自['/home/files/common_logs/fusion.err', '/home/files/common_logs/fusion.log'])
+2026-05-19 14:33:43 [DEBUG]   • terminate called after throwing an instance of 'std::system_error'
+2026-05-19 14:33:43 [INFO] ❌ infer: 20种不同错误 (来自['/home/files/common_logs/infer.err', '/home/files/common_logs/infer.log'])
+2026-05-19 14:33:43 [DEBUG]   • [ERROR] [1779123446.479740714]: RES:  xmin 1264 ymin  458 xmax 1280 ymax 505
+2026-05-19 14:33:43 [DEBUG]   • [ERROR] [1779123556.093135378]: RES:  xmin 1260 ymin  492 xmax 1280 ymax 528
+2026-05-19 14:33:43 [DEBUG]   • [ERROR] [1779124024.618684345]: RES:  xmin 1261 ymin  356 xmax 1280 ymax 416
+2026-05-19 14:33:43 [DEBUG]   • [ERROR] [1779124749.522285434]: RES:  xmin 1253 ymin  377 xmax 1280 ymax 447
+2026-05-19 14:33:43 [DEBUG]   • [ERROR] [1779125515.533324205]: RES:  xmin 1252 ymin  485 xmax 1280 ymax 553
+2026-05-19 14:33:43 [INFO] ✅ kafka_event: 无明显错误
+2026-05-19 14:33:43 [INFO] ✅ kafka_flow: 无明显错误
+2026-05-19 14:33:43 [INFO] ✅ kafka_flow_1s: 无明显错误
+2026-05-19 14:33:43 [INFO] ✅ kafka_onetrack: 无明显错误
+2026-05-19 14:33:43 [INFO] ❌ one_track: 1种不同错误 (来自['/home/files/common_logs/one_track.err', '/home/files/common_logs/one_track.log'])
+2026-05-19 14:33:43 [DEBUG]   • terminate called after throwing an instance of 'ros::serialization::StreamOverrunException'
+2026-05-19 14:33:43 [INFO] ❌ radar_bridge: 2种不同错误 (来自['/home/files/common_logs/radar_bridge.err', '/home/files/common_logs/radar_bridge.log'])
+2026-05-19 14:33:43 [DEBUG]   • [ERROR] [1778835839.040708985]: Connection Failed: Connection timed out
+2026-05-19 14:33:43 [DEBUG]   • [ERROR] [1778836031.808751268]: Error receiving data: Connection timed out
+2026-05-19 14:33:43 [INFO] ❌ rosbridge_websocket: 1种不同错误 (来自['/home/files/common_logs/rosbridge_websocket.err', '/home/files/common_logs/rosbridge_websocket.log'])
+2026-05-19 14:33:43 [DEBUG]   • /usr/bin/du: cannot access '/home/files/common_logs/log/latest': No such file or directory
+2026-05-19 14:33:43 [INFO] ✅ rtsp: 无明显错误
+2026-05-19 14:33:43 [INFO] ❌ traffic: 1种不同错误 (来自['/home/files/common_logs/traffic.err', '/home/files/common_logs/traffic.log'])
+2026-05-19 14:33:43 [DEBUG]   • ERROR: cannot launch node of type [traffic/traffic_node]: Cannot locate node of type [traffic_node] 
+2026-05-19 14:33:43 [INFO] 📡 步骤4: rostopic hz 检查...
+2026-05-19 14:33:46 [INFO] 关键topic: /k80_037/upstream/radar/track_object, /k80_037/upstream/radar/track_object_project, /k80_037/upstream/short_camera/image_detect/compressed, /k80_037/upstream/short_camera/image_raw, /k80_093/downstream/radar/track_object, /k80_093/downstream/radar/track_object_project, /k80_093/downstream/short_camera/image_detect/compressed, /k80_093/downstream/short_camera/image_raw, /mec_1001/fusion_track_object, /mec_1001/traffic_event_object/fps_hz, /one_track_object
+2026-05-19 14:33:52 [WARNING] ⚠️  /k80_037/upstream/radar/track_object: 无数据 - , 负责人 @lj
+2026-05-19 14:33:52 [WARNING] ⚠️  /k80_037/upstream/radar/track_object_project: 无数据 - , 负责人 @cy
+2026-05-19 14:33:52 [WARNING] ⚠️  /k80_037/upstream/short_camera/image_detect/compressed: 无数据 - , 负责人 @xq
+2026-05-19 14:33:52 [WARNING] ⚠️  /k80_037/upstream/short_camera/image_raw: 无数据 - , 负责人 @zzm
+2026-05-19 14:33:52 [WARNING] ⚠️  /k80_093/downstream/radar/track_object: 无数据 - , 负责人 @lj
+2026-05-19 14:33:52 [WARNING] ⚠️  /k80_093/downstream/radar/track_object_project: 无数据 - , 负责人 @cy
+2026-05-19 14:33:52 [WARNING] ⚠️  /k80_093/downstream/short_camera/image_detect/compressed: 无数据 - , 负责人 @xq
+2026-05-19 14:33:52 [WARNING] ⚠️  /k80_093/downstream/short_camera/image_raw: 无数据 - , 负责人 @zzm
+2026-05-19 14:33:52 [WARNING] ⚠️  /mec_1001/fusion_track_object: 无数据 - , 负责人 @lj
+2026-05-19 14:33:52 [WARNING] ⚠️  /mec_1001/traffic_event_object/fps_hz: 无数据 - , 负责人 @zrh
+2026-05-19 14:33:52 [WARNING] ⚠️  /one_track_object: 无数据 - , 负责人 @lj
+2026-05-19 14:33:52 [INFO] 📡 传感器状态: 摄像头 1/1 | 雷达 2/2
+2026-05-19 14:35:35 [WARNING] → 使用第一个: mec_1001 (52.81.209.6)
+2026-05-19 14:35:35 [INFO] → 设备名 'mec_1001' → IP: 52.81.209.6 (项目: 贵阳)
+2026-05-19 14:35:35 [INFO] ======================================================================
+2026-05-19 14:35:35 [INFO] 🔍 诊断：物理机在线但容器不可连 - 52.81.209.6
+2026-05-19 14:35:35 [INFO] ======================================================================
+2026-05-19 14:35:35 [INFO] 🔐 登录物理机 52.81.209.6...
+2026-05-19 14:35:35 [INFO]   📋 数据库记录用户: root，优先尝试
+2026-05-19 14:35:36 [INFO]   ✅ 公钥登录成功: root
+2026-05-19 14:35:36 [INFO] 🐳 一次SSH采集物理机所有信息...
+2026-05-19 14:35:38 [INFO] ✅ Docker服务运行中
+2026-05-19 14:35:38 [INFO] ✅ dev容器存在且运行中: dev Up 3 months
+2026-05-19 14:35:38 [INFO] ✅ docker exec正常
+2026-05-19 14:35:38 [INFO] 📡 尝试连接容器SSH...
+2026-05-19 14:35:39 [INFO] ✅ 容器SSH可连接（监控显示离线）
+2026-05-19 14:35:39 [INFO] 📡 传感器状态: 摄像头 1/1 | 雷达 2/2
+2026-05-19 14:35:39 [INFO] ======================================================================
+2026-05-19 14:35:39 [INFO] 🔍 诊断：容器在线但今日图片为0 - 52.81.209.6
+2026-05-19 14:35:39 [INFO] ======================================================================
+2026-05-19 14:35:39 [INFO] 📡 步骤0: 检查容器连通性...
+2026-05-19 14:35:39 [INFO] ✅ 容器连接正常
+2026-05-19 14:35:39 [INFO] 📦 一次SSH采集容器初始数据...
+2026-05-19 14:35:41 [INFO] ✅ 今日图片数: 725，已恢复正常，继续采集完整信息
+2026-05-19 14:35:41 [INFO] ✅ 所有进程运行正常 (16/16)
+2026-05-19 14:35:41 [INFO] ✅ roscore运行中
+2026-05-19 14:35:41 [INFO] 📋 步骤3: 检查各进程日志...
+2026-05-19 14:35:42 [DEBUG] 为 kafka_event 补充额外日志: /home/files/common_logs/event.log
+2026-05-19 14:35:42 [DEBUG] 为 kafka_flow 补充额外日志: /home/files/common_logs/flow.log
+2026-05-19 14:35:42 [DEBUG] 加载诊断模式 4 条: ['cambricon_driver', 'ros_master', 'rtsp_nodelet_fail', 'oom_kill']
+2026-05-19 14:35:43 [INFO] ❌ anpr_node: 5种不同错误 (来自['/home/files/common_logs/anpr_node.err', '/home/files/common_logs/anpr_node.log'])
+2026-05-19 14:35:43 [DEBUG]   • [ERROR] [1767691611.669648278]: Failed to get 'device_params' from param server. Check YAML!
+2026-05-19 14:35:43 [DEBUG]   • [ERROR] [1767691613.198464798]: 192.168.1.100:37777 Login failed!
+2026-05-19 14:35:43 [DEBUG]   • [ERROR] [1767691613.198616318]: 192.168.1.100:37777 Regist failed!
+2026-05-19 14:35:43 [DEBUG]   • [ERROR] [1767997195.477076765]: 52.81.209.194:37777 Disconenct.
+2026-05-19 14:35:43 [DEBUG]   • [ERROR] [1767997198.765548165]: 52.81.209.196:37777 Disconenct.
+2026-05-19 14:35:43 [INFO] ✅ calibration_event: 无明显错误
+2026-05-19 14:35:43 [INFO] ✅ calibration_project: 无明显错误
+2026-05-19 14:35:43 [INFO] ✅ event_corrector: 无明显错误
+2026-05-19 14:35:43 [INFO] ❌ eventunrepeate: 1种不同错误 (来自['/home/files/common_logs/eventunrepeate.err', '/home/files/common_logs/eventunrepeate.log'])
+2026-05-19 14:35:43 [DEBUG]   • ERROR: cannot launch node of type [eventunrepeate/eventunrepeate]: Cannot locate node of type [event
+2026-05-19 14:35:43 [INFO] ❌ fusion: 1种不同错误 (来自['/home/files/common_logs/fusion.err', '/home/files/common_logs/fusion.log'])
+2026-05-19 14:35:43 [DEBUG]   • terminate called after throwing an instance of 'std::system_error'
+2026-05-19 14:35:43 [INFO] ❌ infer: 20种不同错误 (来自['/home/files/common_logs/infer.err', '/home/files/common_logs/infer.log'])
+2026-05-19 14:35:43 [DEBUG]   • [ERROR] [1779123446.479740714]: RES:  xmin 1264 ymin  458 xmax 1280 ymax 505
+2026-05-19 14:35:43 [DEBUG]   • [ERROR] [1779123556.093135378]: RES:  xmin 1260 ymin  492 xmax 1280 ymax 528
+2026-05-19 14:35:43 [DEBUG]   • [ERROR] [1779124024.618684345]: RES:  xmin 1261 ymin  356 xmax 1280 ymax 416
+2026-05-19 14:35:43 [DEBUG]   • [ERROR] [1779124749.522285434]: RES:  xmin 1253 ymin  377 xmax 1280 ymax 447
+2026-05-19 14:35:43 [DEBUG]   • [ERROR] [1779125515.533324205]: RES:  xmin 1252 ymin  485 xmax 1280 ymax 553
+2026-05-19 14:35:43 [INFO] ✅ kafka_event: 无明显错误
+2026-05-19 14:35:43 [INFO] ✅ kafka_flow: 无明显错误
+2026-05-19 14:35:43 [INFO] ✅ kafka_flow_1s: 无明显错误
+2026-05-19 14:35:43 [INFO] ✅ kafka_onetrack: 无明显错误
+2026-05-19 14:35:43 [INFO] ❌ one_track: 1种不同错误 (来自['/home/files/common_logs/one_track.err', '/home/files/common_logs/one_track.log'])
+2026-05-19 14:35:43 [DEBUG]   • terminate called after throwing an instance of 'ros::serialization::StreamOverrunException'
+2026-05-19 14:35:43 [INFO] ❌ radar_bridge: 2种不同错误 (来自['/home/files/common_logs/radar_bridge.err', '/home/files/common_logs/radar_bridge.log'])
+2026-05-19 14:35:43 [DEBUG]   • [ERROR] [1778835839.040708985]: Connection Failed: Connection timed out
+2026-05-19 14:35:43 [DEBUG]   • [ERROR] [1778836031.808751268]: Error receiving data: Connection timed out
+2026-05-19 14:35:43 [INFO] ❌ rosbridge_websocket: 1种不同错误 (来自['/home/files/common_logs/rosbridge_websocket.err', '/home/files/common_logs/rosbridge_websocket.log'])
+2026-05-19 14:35:43 [DEBUG]   • /usr/bin/du: cannot access '/home/files/common_logs/log/latest': No such file or directory
+2026-05-19 14:35:43 [INFO] ✅ rtsp: 无明显错误
+2026-05-19 14:35:43 [INFO] ❌ traffic: 1种不同错误 (来自['/home/files/common_logs/traffic.err', '/home/files/common_logs/traffic.log'])
+2026-05-19 14:35:43 [DEBUG]   • ERROR: cannot launch node of type [traffic/traffic_node]: Cannot locate node of type [traffic_node] 
+2026-05-19 14:35:43 [INFO] 📡 步骤4: rostopic hz 检查...
+2026-05-19 14:35:46 [INFO] 关键topic: /k80_037/upstream/radar/track_object, /k80_037/upstream/radar/track_object_project, /k80_037/upstream/short_camera/image_detect/compressed, /k80_037/upstream/short_camera/image_raw, /k80_093/downstream/radar/track_object, /k80_093/downstream/radar/track_object_project, /k80_093/downstream/short_camera/image_detect/compressed, /k80_093/downstream/short_camera/image_raw, /mec_1001/fusion_track_object, /mec_1001/traffic_event_object/fps_hz, /one_track_object
+2026-05-19 14:35:53 [WARNING] ⚠️  /k80_037/upstream/radar/track_object: 无数据 - , 负责人 @lj
+2026-05-19 14:35:53 [WARNING] ⚠️  /k80_037/upstream/radar/track_object_project: 无数据 - , 负责人 @cy
+2026-05-19 14:35:53 [WARNING] ⚠️  /k80_037/upstream/short_camera/image_detect/compressed: 无数据 - , 负责人 @xq
+2026-05-19 14:35:53 [WARNING] ⚠️  /k80_037/upstream/short_camera/image_raw: 无数据 - , 负责人 @zzm
+2026-05-19 14:35:53 [WARNING] ⚠️  /k80_093/downstream/radar/track_object: 无数据 - , 负责人 @lj
+2026-05-19 14:35:53 [WARNING] ⚠️  /k80_093/downstream/radar/track_object_project: 无数据 - , 负责人 @cy
+2026-05-19 14:35:53 [WARNING] ⚠️  /k80_093/downstream/short_camera/image_detect/compressed: 无数据 - , 负责人 @xq
+2026-05-19 14:35:53 [WARNING] ⚠️  /k80_093/downstream/short_camera/image_raw: 无数据 - , 负责人 @zzm
+2026-05-19 14:35:53 [WARNING] ⚠️  /mec_1001/fusion_track_object: 无数据 - , 负责人 @lj
+2026-05-19 14:35:53 [WARNING] ⚠️  /mec_1001/traffic_event_object/fps_hz: 无数据 - , 负责人 @zrh
+2026-05-19 14:35:53 [WARNING] ⚠️  /one_track_object: 无数据 - , 负责人 @lj
+2026-05-19 14:35:53 [INFO] 📡 传感器状态: 摄像头 1/1 | 雷达 2/2
+2026-05-19 14:39:26 [INFO] ======================================================================
+2026-05-19 14:39:26 [INFO] 🔍 诊断：物理机在线但容器不可连 - 10.145.24.68
+2026-05-19 14:39:26 [INFO] ======================================================================
+2026-05-19 14:39:26 [INFO] 🔐 登录物理机 10.145.24.68...
+2026-05-19 14:39:26 [INFO]   📋 数据库记录用户: root，优先尝试
+2026-05-19 14:39:27 [INFO]   ✅ 公钥登录成功: root
+2026-05-19 14:39:27 [INFO] 🐳 一次SSH采集物理机所有信息...
+2026-05-19 14:39:28 [INFO] ✅ Docker服务运行中
+2026-05-19 14:39:28 [INFO] ✅ dev容器存在且运行中: dev Up 5 weeks
+2026-05-19 14:39:28 [INFO] ✅ docker exec正常
+2026-05-19 14:39:28 [INFO] 📡 尝试连接容器SSH...
+2026-05-19 14:39:29 [INFO] ✅ 容器SSH可连接（监控显示离线）
+2026-05-19 14:39:29 [INFO] 📡 传感器状态: 摄像头 4/4 | 雷达 2/2
+2026-05-19 14:39:29 [INFO] ======================================================================
+2026-05-19 14:39:29 [INFO] 🔍 诊断：容器在线但今日图片为0 - 10.145.24.68
+2026-05-19 14:39:29 [INFO] ======================================================================
+2026-05-19 14:39:29 [INFO] 📡 步骤0: 检查容器连通性...
+2026-05-19 14:39:30 [INFO] ✅ 容器连接正常
+2026-05-19 14:39:30 [INFO] 📦 一次SSH采集容器初始数据...
+2026-05-19 14:39:31 [INFO] ✅ 今日图片数: 450，已恢复正常，继续采集完整信息
+2026-05-19 14:39:31 [INFO] ✅ 所有进程运行正常 (11/11)
+2026-05-19 14:39:31 [INFO] ✅ roscore运行中
+2026-05-19 14:39:31 [INFO] 📋 步骤3: 检查各进程日志...
+2026-05-19 14:39:31 [DEBUG] 为 kafka_event 补充额外日志: /home/files/common_logs/event.log
+2026-05-19 14:39:31 [DEBUG] 为 kafka_flow 补充额外日志: /home/files/common_logs/flow.log
+2026-05-19 14:39:31 [DEBUG] 加载诊断模式 4 条: ['cambricon_driver', 'ros_master', 'rtsp_nodelet_fail', 'oom_kill']
+2026-05-19 14:39:32 [INFO] ✅ calibration_event: 无明显错误
+2026-05-19 14:39:32 [INFO] ✅ calibration_project: 无明显错误
+2026-05-19 14:39:32 [INFO] ⏭️  fusion: 日志文件不存在
+2026-05-19 14:39:32 [INFO] ✅ infer: 无明显错误
+2026-05-19 14:39:32 [INFO] ❌ kafka_event: 6种不同错误 (来自['/home/files/common_logs/kafka_event.err'])
+2026-05-19 14:39:32 [DEBUG]   • [ERROR]2026-05-19 14:29:30,719 kafka_event_new.py:275: event has no file path:
+2026-05-19 14:39:32 [DEBUG]   • [ERROR]2026-05-19 14:36:44,514 kafka_event_new.py:275: event has no file path:
+2026-05-19 14:39:32 [DEBUG]   • [ERROR]2026-05-19 14:36:47,071 kafka_event_new.py:275: event has no file path:
+2026-05-19 14:39:32 [DEBUG]   • [ERROR]2026-05-19 14:36:47,072 kafka_event_new.py:275: event has no file path:
+2026-05-19 14:39:32 [DEBUG]   • [ERROR]2026-05-19 14:37:03,204 kafka_event_new.py:275: event has no file path:
+2026-05-19 14:39:32 [INFO] ✅ kafka_flow: 无明显错误
+2026-05-19 14:39:32 [INFO] ✅ kafka_monitor: 无明显错误
+2026-05-19 14:39:32 [INFO] ⏭️  radar_bridge: 日志文件不存在
+2026-05-19 14:39:32 [INFO] ⏭️  rosbridge_websocket: 日志文件不存在
+2026-05-19 14:39:32 [INFO] ❌ rtsp: 4种不同错误 (来自['/home/files/common_logs/rtsp.err', '/home/files/common_logs/rtsp.log'])
+2026-05-19 14:39:32 [DEBUG]   • mpp[110502]: kmpp_meta: kmpp_meta_init kmpp meta get objdef failed
+2026-05-19 14:39:32 [DEBUG]   • mpp[110503]: kmpp_meta: kmpp_meta_init kmpp meta get objdef failed
+2026-05-19 14:39:32 [DEBUG]   • mpp[110505]: kmpp_meta: kmpp_meta_init kmpp meta get objdef failed
+2026-05-19 14:39:32 [DEBUG]   • mpp[110507]: kmpp_meta: kmpp_meta_init kmpp meta get objdef failed
+2026-05-19 14:39:32 [INFO] ✅ traffic: 无明显错误
+2026-05-19 14:39:32 [INFO] 📡 步骤4: rostopic hz 检查...
+2026-05-19 14:39:34 [INFO] 关键topic: /k6_238/downstream/long_camera/image_detect/compressed, /k6_238/downstream/long_camera/image_raw, /k6_238/downstream/radar/track_object, /k6_238/downstream/radar/track_object_project, /k6_238/downstream/short_camera/image_detect/compressed, /k6_238/downstream/short_camera/image_raw, /k6_238/upstream/long_camera/image_detect/compressed, /k6_238/upstream/long_camera/image_raw, /k6_238/upstream/radar/track_object, /k6_238/upstream/radar/track_object_project, /k6_238/upstream/short_camera/image_detect/compressed, /k6_238/upstream/short_camera/image_raw, /mk6_238/fusion_track_object, /mk6_238/traffic_event_object/fps_hz
+2026-05-19 14:39:40 [INFO] ✅ /k6_238/downstream/long_camera/image_detect/compressed: 9.187 Hz
+2026-05-19 14:39:40 [INFO] ✅ /k6_238/downstream/long_camera/image_raw: 19.484 Hz
+2026-05-19 14:39:40 [INFO] ✅ /k6_238/downstream/radar/track_object: 20.044 Hz
+2026-05-19 14:39:40 [INFO] ✅ /k6_238/downstream/radar/track_object_project: 20.022 Hz
+2026-05-19 14:39:40 [INFO] ✅ /k6_238/downstream/short_camera/image_detect/compressed: 8.337 Hz
+2026-05-19 14:39:40 [INFO] ✅ /k6_238/downstream/short_camera/image_raw: 16.659 Hz
+2026-05-19 14:39:40 [INFO] ✅ /k6_238/upstream/long_camera/image_detect/compressed: 11.314 Hz
+2026-05-19 14:39:40 [INFO] ✅ /k6_238/upstream/long_camera/image_raw: 14.535 Hz
+2026-05-19 14:39:40 [INFO] ✅ /k6_238/upstream/radar/track_object: 20.140 Hz
+2026-05-19 14:39:40 [INFO] ✅ /k6_238/upstream/radar/track_object_project: 19.816 Hz
+2026-05-19 14:39:40 [INFO] ✅ /k6_238/upstream/short_camera/image_detect/compressed: 5.915 Hz
+2026-05-19 14:39:40 [INFO] ✅ /k6_238/upstream/short_camera/image_raw: 21.484 Hz
+2026-05-19 14:39:40 [INFO] ✅ /mk6_238/fusion_track_object: 20.286 Hz
+2026-05-19 14:39:40 [INFO] ✅ /mk6_238/traffic_event_object/fps_hz: 20.093 Hz
+2026-05-19 14:39:40 [INFO] 📡 传感器状态: 摄像头 4/4 | 雷达 2/2
+2026-05-19 14:41:26 [INFO] ======================================================================
+2026-05-19 14:41:26 [INFO] 🔍 诊断：物理机在线但容器不可连 - 52.81.209.6
+2026-05-19 14:41:26 [INFO] ======================================================================
+2026-05-19 14:41:26 [INFO] 🔐 登录物理机 52.81.209.6...
+2026-05-19 14:41:26 [INFO]   📋 数据库记录用户: root，优先尝试
+2026-05-19 14:41:27 [INFO]   ✅ 公钥登录成功: root
+2026-05-19 14:41:27 [INFO] 🐳 一次SSH采集物理机所有信息...
+2026-05-19 14:41:29 [INFO] ✅ Docker服务运行中
+2026-05-19 14:41:29 [INFO] ✅ dev容器存在且运行中: dev Up 3 months
+2026-05-19 14:41:29 [INFO] ✅ docker exec正常
+2026-05-19 14:41:29 [INFO] 📡 尝试连接容器SSH...
+2026-05-19 14:41:29 [INFO] ✅ 容器SSH可连接（监控显示离线）
+2026-05-19 14:41:29 [INFO] 📡 传感器状态: 摄像头 1/1 | 雷达 2/2
+2026-05-19 14:41:29 [INFO] ======================================================================
+2026-05-19 14:41:29 [INFO] 🔍 诊断：容器在线但今日图片为0 - 52.81.209.6
+2026-05-19 14:41:29 [INFO] ======================================================================
+2026-05-19 14:41:29 [INFO] 📡 步骤0: 检查容器连通性...
+2026-05-19 14:41:30 [INFO] ✅ 容器连接正常
+2026-05-19 14:41:30 [INFO] 📦 一次SSH采集容器初始数据...
+2026-05-19 14:41:32 [INFO] ✅ 今日图片数: 743，已恢复正常，继续采集完整信息
+2026-05-19 14:41:32 [INFO] ✅ 所有进程运行正常 (16/16)
+2026-05-19 14:41:32 [INFO] ✅ roscore运行中
+2026-05-19 14:41:32 [INFO] 📋 步骤3: 检查各进程日志...
+2026-05-19 14:41:33 [DEBUG] 为 kafka_event 补充额外日志: /home/files/common_logs/event.log
+2026-05-19 14:41:33 [DEBUG] 为 kafka_flow 补充额外日志: /home/files/common_logs/flow.log
+2026-05-19 14:41:33 [DEBUG] 加载诊断模式 4 条: ['cambricon_driver', 'ros_master', 'rtsp_nodelet_fail', 'oom_kill']
+2026-05-19 14:41:34 [INFO] ❌ anpr_node: 5种不同错误 (来自['/home/files/common_logs/anpr_node.err', '/home/files/common_logs/anpr_node.log'])
+2026-05-19 14:41:34 [DEBUG]   • [ERROR] [1767691611.669648278]: Failed to get 'device_params' from param server. Check YAML!
+2026-05-19 14:41:34 [DEBUG]   • [ERROR] [1767691613.198464798]: 192.168.1.100:37777 Login failed!
+2026-05-19 14:41:34 [DEBUG]   • [ERROR] [1767691613.198616318]: 192.168.1.100:37777 Regist failed!
+2026-05-19 14:41:34 [DEBUG]   • [ERROR] [1767997195.477076765]: 52.81.209.194:37777 Disconenct.
+2026-05-19 14:41:34 [DEBUG]   • [ERROR] [1767997198.765548165]: 52.81.209.196:37777 Disconenct.
+2026-05-19 14:41:34 [INFO] ✅ calibration_event: 无明显错误
+2026-05-19 14:41:34 [INFO] ✅ calibration_project: 无明显错误
+2026-05-19 14:41:34 [INFO] ✅ event_corrector: 无明显错误
+2026-05-19 14:41:34 [INFO] ❌ eventunrepeate: 1种不同错误 (来自['/home/files/common_logs/eventunrepeate.err', '/home/files/common_logs/eventunrepeate.log'])
+2026-05-19 14:41:34 [DEBUG]   • ERROR: cannot launch node of type [eventunrepeate/eventunrepeate]: Cannot locate node of type [event
+2026-05-19 14:41:34 [INFO] ❌ fusion: 1种不同错误 (来自['/home/files/common_logs/fusion.err', '/home/files/common_logs/fusion.log'])
+2026-05-19 14:41:34 [DEBUG]   • terminate called after throwing an instance of 'std::system_error'
+2026-05-19 14:41:34 [INFO] ❌ infer: 20种不同错误 (来自['/home/files/common_logs/infer.err', '/home/files/common_logs/infer.log'])
+2026-05-19 14:41:34 [DEBUG]   • [ERROR] [1779123446.479740714]: RES:  xmin 1264 ymin  458 xmax 1280 ymax 505
+2026-05-19 14:41:34 [DEBUG]   • [ERROR] [1779123556.093135378]: RES:  xmin 1260 ymin  492 xmax 1280 ymax 528
+2026-05-19 14:41:34 [DEBUG]   • [ERROR] [1779124024.618684345]: RES:  xmin 1261 ymin  356 xmax 1280 ymax 416
+2026-05-19 14:41:34 [DEBUG]   • [ERROR] [1779124749.522285434]: RES:  xmin 1253 ymin  377 xmax 1280 ymax 447
+2026-05-19 14:41:34 [DEBUG]   • [ERROR] [1779125515.533324205]: RES:  xmin 1252 ymin  485 xmax 1280 ymax 553
+2026-05-19 14:41:34 [INFO] ✅ kafka_event: 无明显错误
+2026-05-19 14:41:34 [INFO] ✅ kafka_flow: 无明显错误
+2026-05-19 14:41:34 [INFO] ✅ kafka_flow_1s: 无明显错误
+2026-05-19 14:41:34 [INFO] ✅ kafka_onetrack: 无明显错误
+2026-05-19 14:41:34 [INFO] ❌ one_track: 1种不同错误 (来自['/home/files/common_logs/one_track.err', '/home/files/common_logs/one_track.log'])
+2026-05-19 14:41:34 [DEBUG]   • terminate called after throwing an instance of 'ros::serialization::StreamOverrunException'
+2026-05-19 14:41:34 [INFO] ❌ radar_bridge: 2种不同错误 (来自['/home/files/common_logs/radar_bridge.err', '/home/files/common_logs/radar_bridge.log'])
+2026-05-19 14:41:34 [DEBUG]   • [ERROR] [1778835839.040708985]: Connection Failed: Connection timed out
+2026-05-19 14:41:34 [DEBUG]   • [ERROR] [1778836031.808751268]: Error receiving data: Connection timed out
+2026-05-19 14:41:34 [INFO] ❌ rosbridge_websocket: 1种不同错误 (来自['/home/files/common_logs/rosbridge_websocket.err', '/home/files/common_logs/rosbridge_websocket.log'])
+2026-05-19 14:41:34 [DEBUG]   • /usr/bin/du: cannot access '/home/files/common_logs/log/latest': No such file or directory
+2026-05-19 14:41:34 [INFO] ✅ rtsp: 无明显错误
+2026-05-19 14:41:34 [INFO] ❌ traffic: 1种不同错误 (来自['/home/files/common_logs/traffic.err', '/home/files/common_logs/traffic.log'])
+2026-05-19 14:41:34 [DEBUG]   • ERROR: cannot launch node of type [traffic/traffic_node]: Cannot locate node of type [traffic_node] 
+2026-05-19 14:41:34 [INFO] 📡 步骤4: rostopic hz 检查...
+2026-05-19 14:41:37 [INFO] 关键topic: /k80_037/upstream/radar/track_object, /k80_037/upstream/radar/track_object_project, /k80_037/upstream/short_camera/image_detect/compressed, /k80_037/upstream/short_camera/image_raw, /k80_093/downstream/radar/track_object, /k80_093/downstream/radar/track_object_project, /k80_093/downstream/short_camera/image_detect/compressed, /k80_093/downstream/short_camera/image_raw, /mec_1001/fusion_track_object, /mec_1001/traffic_event_object/fps_hz, /one_track_object
+2026-05-19 14:41:43 [WARNING] ⚠️  /k80_037/upstream/radar/track_object: 无数据 - , 负责人 @lj
+2026-05-19 14:41:43 [WARNING] ⚠️  /k80_037/upstream/radar/track_object_project: 无数据 - , 负责人 @cy
+2026-05-19 14:41:43 [WARNING] ⚠️  /k80_037/upstream/short_camera/image_detect/compressed: 无数据 - , 负责人 @xq
+2026-05-19 14:41:43 [WARNING] ⚠️  /k80_037/upstream/short_camera/image_raw: 无数据 - , 负责人 @zzm
+2026-05-19 14:41:43 [WARNING] ⚠️  /k80_093/downstream/radar/track_object: 无数据 - , 负责人 @lj
+2026-05-19 14:41:43 [WARNING] ⚠️  /k80_093/downstream/radar/track_object_project: 无数据 - , 负责人 @cy
+2026-05-19 14:41:43 [WARNING] ⚠️  /k80_093/downstream/short_camera/image_detect/compressed: 无数据 - , 负责人 @xq
+2026-05-19 14:41:43 [WARNING] ⚠️  /k80_093/downstream/short_camera/image_raw: 无数据 - , 负责人 @zzm
+2026-05-19 14:41:43 [WARNING] ⚠️  /mec_1001/fusion_track_object: 无数据 - , 负责人 @lj
+2026-05-19 14:41:43 [WARNING] ⚠️  /mec_1001/traffic_event_object/fps_hz: 无数据 - , 负责人 @zrh
+2026-05-19 14:41:43 [WARNING] ⚠️  /one_track_object: 无数据 - , 负责人 @lj
+2026-05-19 14:41:43 [INFO] 📡 传感器状态: 摄像头 1/1 | 雷达 2/2
+2026-05-19 14:48:31 [INFO] ======================================================================
+2026-05-19 14:48:31 [INFO] 🔍 诊断：物理机在线但容器不可连 - 52.81.209.6
+2026-05-19 14:48:31 [INFO] ======================================================================
+2026-05-19 14:48:31 [INFO] 🔐 登录物理机 52.81.209.6...
+2026-05-19 14:48:31 [INFO]   📋 数据库记录用户: root，优先尝试
+2026-05-19 14:48:32 [INFO]   ✅ 公钥登录成功: root
+2026-05-19 14:48:32 [INFO] 🐳 一次SSH采集物理机所有信息...
+2026-05-19 14:48:34 [INFO] ✅ Docker服务运行中
+2026-05-19 14:48:34 [INFO] ✅ dev容器存在且运行中: dev Up 3 months
+2026-05-19 14:48:34 [INFO] ✅ docker exec正常
+2026-05-19 14:48:34 [INFO] 📡 尝试连接容器SSH...
+2026-05-19 14:48:34 [INFO] ✅ 容器SSH可连接（监控显示离线）
+2026-05-19 14:48:34 [INFO] 📡 传感器状态: 摄像头 1/1 | 雷达 2/2
+2026-05-19 14:48:34 [INFO] ======================================================================
+2026-05-19 14:48:34 [INFO] 🔍 诊断：容器在线但今日图片为0 - 52.81.209.6
+2026-05-19 14:48:34 [INFO] ======================================================================
+2026-05-19 14:48:34 [INFO] 📡 步骤0: 检查容器连通性...
+2026-05-19 14:48:35 [INFO] ✅ 容器连接正常
+2026-05-19 14:48:35 [INFO] 📦 一次SSH采集容器初始数据...
+2026-05-19 14:48:37 [INFO] ✅ 今日图片数: 753，已恢复正常，继续采集完整信息
+2026-05-19 14:48:37 [INFO] ✅ 所有进程运行正常 (16/16)
+2026-05-19 14:48:37 [INFO] ✅ roscore运行中
+2026-05-19 14:48:37 [INFO] 📋 步骤3: 检查各进程日志...
+2026-05-19 14:48:37 [DEBUG] 为 kafka_event 补充额外日志: /home/files/common_logs/event.log
+2026-05-19 14:48:37 [DEBUG] 为 kafka_flow 补充额外日志: /home/files/common_logs/flow.log
+2026-05-19 14:48:37 [DEBUG] 加载诊断模式 4 条: ['cambricon_driver', 'ros_master', 'rtsp_nodelet_fail', 'oom_kill']
+2026-05-19 14:48:38 [INFO] ❌ anpr_node: 5种不同错误 (来自['/home/files/common_logs/anpr_node.err', '/home/files/common_logs/anpr_node.log'])
+2026-05-19 14:48:38 [DEBUG]   • [ERROR] [1767691611.669648278]: Failed to get 'device_params' from param server. Check YAML!
+2026-05-19 14:48:38 [DEBUG]   • [ERROR] [1767691613.198464798]: 192.168.1.100:37777 Login failed!
+2026-05-19 14:48:38 [DEBUG]   • [ERROR] [1767691613.198616318]: 192.168.1.100:37777 Regist failed!
+2026-05-19 14:48:38 [DEBUG]   • [ERROR] [1767997195.477076765]: 52.81.209.194:37777 Disconenct.
+2026-05-19 14:48:38 [DEBUG]   • [ERROR] [1767997198.765548165]: 52.81.209.196:37777 Disconenct.
+2026-05-19 14:48:38 [INFO] ✅ calibration_event: 无明显错误
+2026-05-19 14:48:38 [INFO] ✅ calibration_project: 无明显错误
+2026-05-19 14:48:38 [INFO] ✅ event_corrector: 无明显错误
+2026-05-19 14:48:38 [INFO] ❌ eventunrepeate: 1种不同错误 (来自['/home/files/common_logs/eventunrepeate.err', '/home/files/common_logs/eventunrepeate.log'])
+2026-05-19 14:48:38 [DEBUG]   • ERROR: cannot launch node of type [eventunrepeate/eventunrepeate]: Cannot locate node of type [event
+2026-05-19 14:48:38 [INFO] ❌ fusion: 1种不同错误 (来自['/home/files/common_logs/fusion.err', '/home/files/common_logs/fusion.log'])
+2026-05-19 14:48:38 [DEBUG]   • terminate called after throwing an instance of 'std::system_error'
+2026-05-19 14:48:38 [INFO] ❌ infer: 20种不同错误 (来自['/home/files/common_logs/infer.err', '/home/files/common_logs/infer.log'])
+2026-05-19 14:48:38 [DEBUG]   • [ERROR] [1779123446.479740714]: RES:  xmin 1264 ymin  458 xmax 1280 ymax 505
+2026-05-19 14:48:38 [DEBUG]   • [ERROR] [1779123556.093135378]: RES:  xmin 1260 ymin  492 xmax 1280 ymax 528
+2026-05-19 14:48:38 [DEBUG]   • [ERROR] [1779124024.618684345]: RES:  xmin 1261 ymin  356 xmax 1280 ymax 416
+2026-05-19 14:48:38 [DEBUG]   • [ERROR] [1779124749.522285434]: RES:  xmin 1253 ymin  377 xmax 1280 ymax 447
+2026-05-19 14:48:38 [DEBUG]   • [ERROR] [1779125515.533324205]: RES:  xmin 1252 ymin  485 xmax 1280 ymax 553
+2026-05-19 14:48:38 [INFO] ✅ kafka_event: 无明显错误
+2026-05-19 14:48:38 [INFO] ✅ kafka_flow: 无明显错误
+2026-05-19 14:48:38 [INFO] ✅ kafka_flow_1s: 无明显错误
+2026-05-19 14:48:38 [INFO] ✅ kafka_onetrack: 无明显错误
+2026-05-19 14:48:38 [INFO] ❌ one_track: 1种不同错误 (来自['/home/files/common_logs/one_track.err', '/home/files/common_logs/one_track.log'])
+2026-05-19 14:48:38 [DEBUG]   • terminate called after throwing an instance of 'ros::serialization::StreamOverrunException'
+2026-05-19 14:48:38 [INFO] ❌ radar_bridge: 2种不同错误 (来自['/home/files/common_logs/radar_bridge.err', '/home/files/common_logs/radar_bridge.log'])
+2026-05-19 14:48:38 [DEBUG]   • [ERROR] [1778835839.040708985]: Connection Failed: Connection timed out
+2026-05-19 14:48:38 [DEBUG]   • [ERROR] [1778836031.808751268]: Error receiving data: Connection timed out
+2026-05-19 14:48:38 [INFO] ❌ rosbridge_websocket: 1种不同错误 (来自['/home/files/common_logs/rosbridge_websocket.err', '/home/files/common_logs/rosbridge_websocket.log'])
+2026-05-19 14:48:38 [DEBUG]   • /usr/bin/du: cannot access '/home/files/common_logs/log/latest': No such file or directory
+2026-05-19 14:48:38 [INFO] ✅ rtsp: 无明显错误
+2026-05-19 14:48:38 [INFO] ❌ traffic: 1种不同错误 (来自['/home/files/common_logs/traffic.err', '/home/files/common_logs/traffic.log'])
+2026-05-19 14:48:38 [DEBUG]   • ERROR: cannot launch node of type [traffic/traffic_node]: Cannot locate node of type [traffic_node] 
+2026-05-19 14:48:38 [INFO] 📡 步骤4: rostopic hz 检查...
+2026-05-19 14:48:42 [INFO] 关键topic: /k80_037/upstream/radar/track_object, /k80_037/upstream/radar/track_object_project, /k80_037/upstream/short_camera/image_detect/compressed, /k80_037/upstream/short_camera/image_raw, /k80_093/downstream/radar/track_object, /k80_093/downstream/radar/track_object_project, /k80_093/downstream/short_camera/image_detect/compressed, /k80_093/downstream/short_camera/image_raw, /mec_1001/fusion_track_object, /mec_1001/traffic_event_object/fps_hz, /one_track_object
+2026-05-19 14:48:57 [INFO] ✅ /k80_037/upstream/radar/track_object: 20.000 Hz
+2026-05-19 14:48:57 [INFO] ✅ /k80_037/upstream/radar/track_object_project: 20.000 Hz
+2026-05-19 14:48:57 [INFO] ✅ /k80_037/upstream/short_camera/image_detect/compressed: 14.663 Hz
+2026-05-19 14:48:57 [INFO] ✅ /k80_037/upstream/short_camera/image_raw: 14.503 Hz
+2026-05-19 14:48:57 [INFO] ✅ /k80_093/downstream/radar/track_object: 19.999 Hz
+2026-05-19 14:48:57 [INFO] ✅ /k80_093/downstream/radar/track_object_project: 20.053 Hz
+2026-05-19 14:48:57 [INFO] ✅ /k80_093/downstream/short_camera/image_detect/compressed: 14.088 Hz
+2026-05-19 14:48:57 [INFO] ✅ /k80_093/downstream/short_camera/image_raw: 14.573 Hz
+2026-05-19 14:48:57 [INFO] ✅ /mec_1001/fusion_track_object: 20.005 Hz
+2026-05-19 14:48:57 [INFO] ✅ /mec_1001/traffic_event_object/fps_hz: 20.034 Hz
+2026-05-19 14:48:57 [INFO] ✅ /one_track_object: 20.101 Hz
+2026-05-19 14:48:57 [INFO] 📡 传感器状态: 摄像头 1/1 | 雷达 2/2
+2026-05-19 14:50:35 [INFO] ======================================================================
+2026-05-19 14:50:35 [INFO] 🔍 诊断：物理机在线但容器不可连 - 52.81.209.130
+2026-05-19 14:50:35 [INFO] ======================================================================
+2026-05-19 14:50:35 [INFO] 🔐 登录物理机 52.81.209.130...
+2026-05-19 14:50:35 [INFO]   📋 数据库记录用户: root，优先尝试
+2026-05-19 14:50:37 [INFO]   ✅ 公钥登录成功: root
+2026-05-19 14:50:37 [INFO] 🐳 一次SSH采集物理机所有信息...
+2026-05-19 14:50:41 [INFO] ✅ Docker服务运行中
+2026-05-19 14:50:41 [INFO] ✅ dev容器存在且运行中: dev Up 2 months
+2026-05-19 14:50:41 [INFO] ✅ docker exec正常
+2026-05-19 14:50:41 [INFO] 📡 尝试连接容器SSH...
+2026-05-19 14:50:42 [INFO] ✅ 容器SSH可连接（监控显示离线）
+2026-05-19 14:50:42 [INFO] 📡 传感器状态: 摄像头 3/3 | 雷达 3/3
+2026-05-19 14:50:42 [INFO] ======================================================================
+2026-05-19 14:50:42 [INFO] 🔍 诊断：容器在线但今日图片为0 - 52.81.209.130
+2026-05-19 14:50:42 [INFO] ======================================================================
+2026-05-19 14:50:42 [INFO] 📡 步骤0: 检查容器连通性...
+2026-05-19 14:50:42 [INFO] ✅ 容器连接正常
+2026-05-19 14:50:42 [INFO] 📦 一次SSH采集容器初始数据...
+2026-05-19 14:50:44 [INFO] ✅ 今日图片数: 939，已恢复正常，继续采集完整信息
+2026-05-19 14:50:44 [INFO] ✅ 所有进程运行正常 (16/16)
+2026-05-19 14:50:44 [INFO] ✅ roscore运行中
+2026-05-19 14:50:44 [INFO] 📋 步骤3: 检查各进程日志...
+2026-05-19 14:50:45 [DEBUG] 为 kafka_event 补充额外日志: /home/files/common_logs/event.log
+2026-05-19 14:50:45 [DEBUG] 为 kafka_flow 补充额外日志: /home/files/common_logs/flow.log
+2026-05-19 14:50:45 [DEBUG] 加载诊断模式 4 条: ['cambricon_driver', 'ros_master', 'rtsp_nodelet_fail', 'oom_kill']
+2026-05-19 14:50:46 [INFO] ❌ anpr_node: 4种不同错误 (来自['/home/files/common_logs/anpr_node.err', '/home/files/common_logs/anpr_node.log'])
+2026-05-19 14:50:46 [DEBUG]   • [ERROR] [1767693345.681039862]: Failed to get 'device_params' from param server. Check YAML!
+2026-05-19 14:50:46 [DEBUG]   • [ERROR] [1767832938.457503520]: 52.81.209.139:37777 Disconenct.
+2026-05-19 14:50:46 [DEBUG]   • [ERROR] [1767832939.466123840]: 52.81.209.145:37777 Disconenct.
+2026-05-19 14:50:46 [DEBUG]   • [ERROR] [1767899151.739395693]: 52.81.209.82:37777 Disconenct.
+2026-05-19 14:50:46 [INFO] ✅ calibration_event: 无明显错误
+2026-05-19 14:50:46 [INFO] ✅ calibration_project: 无明显错误
+2026-05-19 14:50:46 [INFO] ✅ event_corrector: 无明显错误
+2026-05-19 14:50:46 [INFO] ❌ eventunrepeate: 1种不同错误 (来自['/home/files/common_logs/eventunrepeate.err', '/home/files/common_logs/eventunrepeate.log'])
+2026-05-19 14:50:46 [DEBUG]   • ERROR: cannot launch node of type [eventunrepeate/eventunrepeate]: Cannot locate node of type [event
+2026-05-19 14:50:46 [INFO] ❌ fusion: 1种不同错误 (来自['/home/files/common_logs/fusion.err', '/home/files/common_logs/fusion.log'])
+2026-05-19 14:50:46 [DEBUG]   • terminate called after throwing an instance of 'std::system_error'
+2026-05-19 14:50:46 [INFO] ❌ infer: 20种不同错误 (来自['/home/files/common_logs/infer.err', '/home/files/common_logs/infer.log'])
+2026-05-19 14:50:46 [DEBUG]   • [ERROR] [1778545340.645789886]: RES:  xmin 940 ymin  648 xmax 1036 ymax 720
+2026-05-19 14:50:46 [DEBUG]   • [ERROR] [1778546582.010582026]: RES:  xmin 296 ymin  695 xmax 332 ymax 720
+2026-05-19 14:50:46 [DEBUG]   • [ERROR] [1778552279.173110470]: RES:  xmin 913 ymin  682 xmax 937 ymax 720
+2026-05-19 14:50:46 [DEBUG]   • [ERROR] [1778558788.024768801]: RES:  xmin 333 ymin  685 xmax 356 ymax 720
+2026-05-19 14:50:46 [DEBUG]   • [ERROR] [1778559197.125174096]: RES:  xmin 1209 ymin  615 xmax 1280 ymax 715
+2026-05-19 14:50:46 [INFO] ✅ kafka_event: 无明显错误
+2026-05-19 14:50:46 [INFO] ✅ kafka_flow: 无明显错误
+2026-05-19 14:50:46 [INFO] ✅ kafka_flow_1s: 无明显错误
+2026-05-19 14:50:46 [INFO] ✅ kafka_onetrack: 无明显错误
+2026-05-19 14:50:46 [INFO] ❌ one_track: 1种不同错误 (来自['/home/files/common_logs/one_track.err', '/home/files/common_logs/one_track.log'])
+2026-05-19 14:50:46 [DEBUG]   • terminate called after throwing an instance of 'ros::serialization::StreamOverrunException'
+2026-05-19 14:50:46 [INFO] ❌ radar_bridge: 2种不同错误 (来自['/home/files/common_logs/radar_bridge.err', '/home/files/common_logs/radar_bridge.log'])
+2026-05-19 14:50:46 [DEBUG]   • [ERROR] [1777451206.675916896]: Connection Failed: No route to host
+2026-05-19 14:50:46 [DEBUG]   • [ERROR] [1777451238.952926545]: Connection Failed: Connection timed out
+2026-05-19 14:50:46 [INFO] ✅ rosbridge_websocket: 无明显错误
+2026-05-19 14:50:46 [INFO] ✅ rtsp: 无明显错误
+2026-05-19 14:50:46 [INFO] ❌ traffic: 3种不同错误 (来自['/home/files/common_logs/traffic.err', '/home/files/common_logs/traffic.log'])
+2026-05-19 14:50:46 [DEBUG]   • ERROR: cannot launch node of type [traffic/traffic_node]: Cannot locate node of type [traffic_node] 
+2026-05-19 14:50:46 [DEBUG]   • what():  boost: mutex lock failed in pthread_mutex_lock: Invalid argument
+2026-05-19 14:50:46 [DEBUG]   • terminate called after throwing an instance of 'boost::wrapexcept<boost::lock_error>'
+2026-05-19 14:50:46 [INFO] 📡 步骤4: rostopic hz 检查...
+2026-05-19 14:50:50 [INFO] 关键topic: /k88_230/downstream/radar/track_object, /k88_230/downstream/radar/track_object_project, /k88_230/downstream/short_camera/image_detect/compressed, /k88_230/downstream/short_camera/image_raw, /k90_150/downstream/radar/track_object, /k90_150/downstream/radar/track_object_project, /k90_150/downstream/short_camera/image_detect/compressed, /k90_150/downstream/short_camera/image_raw, /k90_200/upstream/radar/track_object, /k90_200/upstream/radar/track_object_project, /k90_200/upstream/short_camera/image_detect/compressed, /k90_200/upstream/short_camera/image_raw, /mec_1007/fusion_track_object, /mec_1007/traffic_event_object/fps_hz, /one_track_object
+2026-05-19 14:51:06 [WARNING] ⚠️  /k88_230/downstream/radar/track_object: 无数据 - , 负责人 @lj
+2026-05-19 14:51:06 [WARNING] ⚠️  /k88_230/downstream/radar/track_object_project: 无数据 - subscribed to [/k88_230/downstream/radar/track_object_projec, 负责人 @cy
+2026-05-19 14:51:06 [WARNING] ⚠️  /k88_230/downstream/short_camera/image_detect/compressed: 无数据 - File "/opt/ros/noetic/lib/python3/dist-packages/rospy/client, 负责人 @xq
+2026-05-19 14:51:06 [WARNING] ⚠️  /k88_230/downstream/short_camera/image_raw: 无数据 - subscribed to [/k88_230/downstream/short_camera/image_raw], 负责人 @zzm
+2026-05-19 14:51:06 [INFO] ✅ /k90_150/downstream/radar/track_object: 19.860 Hz
+2026-05-19 14:51:06 [INFO] ✅ /k90_150/downstream/radar/track_object_project: 19.830 Hz
+2026-05-19 14:51:06 [WARNING] ⚠️  /k90_150/downstream/short_camera/image_detect/compressed: 无数据 - , 负责人 @xq
+2026-05-19 14:51:06 [WARNING] ⚠️  /k90_150/downstream/short_camera/image_raw: 无数据 - , 负责人 @zzm
+2026-05-19 14:51:06 [WARNING] ⚠️  /k90_200/upstream/radar/track_object: 无数据 - File "/opt/ros/noetic/lib/python3/dist-packages/rospy/client, 负责人 @lj
+2026-05-19 14:51:06 [INFO] ✅ /k90_200/upstream/radar/track_object_project: 20.087 Hz
+2026-05-19 14:51:06 [WARNING] ⚠️  /k90_200/upstream/short_camera/image_detect/compressed: 无数据 - , 负责人 @xq
+2026-05-19 14:51:06 [WARNING] ⚠️  /k90_200/upstream/short_camera/image_raw: 无数据 - , 负责人 @zzm
+2026-05-19 14:51:06 [INFO] ✅ /mec_1007/fusion_track_object: 13.420 Hz
+2026-05-19 14:51:06 [INFO] ✅ /mec_1007/traffic_event_object/fps_hz: 18.100 Hz
+2026-05-19 14:51:06 [INFO] ✅ /one_track_object: 17.420 Hz
+2026-05-19 14:51:06 [INFO] 📡 传感器状态: 摄像头 3/3 | 雷达 3/3
+2026-05-19 14:55:18 [INFO] ======================================================================
+2026-05-19 14:55:18 [INFO] 🔍 诊断：物理机在线但容器不可连 - 52.81.209.130
+2026-05-19 14:55:18 [INFO] ======================================================================
+2026-05-19 14:55:18 [INFO] 🔐 登录物理机 52.81.209.130...
+2026-05-19 14:55:18 [INFO]   📋 数据库记录用户: root，优先尝试
+2026-05-19 14:55:20 [INFO]   ✅ 公钥登录成功: root
+2026-05-19 14:55:20 [INFO] 🐳 一次SSH采集物理机所有信息...
+2026-05-19 14:55:23 [INFO] ✅ Docker服务运行中
+2026-05-19 14:55:23 [INFO] ✅ dev容器存在且运行中: dev Up 2 months
+2026-05-19 14:55:23 [INFO] ✅ docker exec正常
+2026-05-19 14:55:23 [INFO] 📡 尝试连接容器SSH...
+2026-05-19 14:55:24 [INFO] ✅ 容器SSH可连接（监控显示离线）
+2026-05-19 14:55:24 [INFO] 📡 传感器状态: 摄像头 3/3 | 雷达 3/3
+2026-05-19 14:55:24 [INFO] ======================================================================
+2026-05-19 14:55:24 [INFO] 🔍 诊断：容器在线但今日图片为0 - 52.81.209.130
+2026-05-19 14:55:24 [INFO] ======================================================================
+2026-05-19 14:55:24 [INFO] 📡 步骤0: 检查容器连通性...
+2026-05-19 14:55:24 [INFO] ✅ 容器连接正常
+2026-05-19 14:55:24 [INFO] 📦 一次SSH采集容器初始数据...
+2026-05-19 14:55:26 [INFO] ✅ 今日图片数: 949，已恢复正常，继续采集完整信息
+2026-05-19 14:55:26 [INFO] ✅ 所有进程运行正常 (16/16)
+2026-05-19 14:55:26 [INFO] ✅ roscore运行中
+2026-05-19 14:55:26 [INFO] 📋 步骤3: 检查各进程日志...
+2026-05-19 14:55:27 [DEBUG] 为 kafka_event 补充额外日志: /home/files/common_logs/event.log
+2026-05-19 14:55:27 [DEBUG] 为 kafka_flow 补充额外日志: /home/files/common_logs/flow.log
+2026-05-19 14:55:27 [DEBUG] 加载诊断模式 4 条: ['cambricon_driver', 'ros_master', 'rtsp_nodelet_fail', 'oom_kill']
+2026-05-19 14:55:28 [INFO] ❌ anpr_node: 4种不同错误 (来自['/home/files/common_logs/anpr_node.err', '/home/files/common_logs/anpr_node.log'])
+2026-05-19 14:55:28 [DEBUG]   • [ERROR] [1767693345.681039862]: Failed to get 'device_params' from param server. Check YAML!
+2026-05-19 14:55:28 [DEBUG]   • [ERROR] [1767832938.457503520]: 52.81.209.139:37777 Disconenct.
+2026-05-19 14:55:28 [DEBUG]   • [ERROR] [1767832939.466123840]: 52.81.209.145:37777 Disconenct.
+2026-05-19 14:55:28 [DEBUG]   • [ERROR] [1767899151.739395693]: 52.81.209.82:37777 Disconenct.
+2026-05-19 14:55:28 [INFO] ✅ calibration_event: 无明显错误
+2026-05-19 14:55:28 [INFO] ✅ calibration_project: 无明显错误
+2026-05-19 14:55:28 [INFO] ✅ event_corrector: 无明显错误
+2026-05-19 14:55:28 [INFO] ❌ eventunrepeate: 1种不同错误 (来自['/home/files/common_logs/eventunrepeate.err', '/home/files/common_logs/eventunrepeate.log'])
+2026-05-19 14:55:28 [DEBUG]   • ERROR: cannot launch node of type [eventunrepeate/eventunrepeate]: Cannot locate node of type [event
+2026-05-19 14:55:28 [INFO] ❌ fusion: 1种不同错误 (来自['/home/files/common_logs/fusion.err', '/home/files/common_logs/fusion.log'])
+2026-05-19 14:55:28 [DEBUG]   • terminate called after throwing an instance of 'std::system_error'
+2026-05-19 14:55:28 [INFO] ❌ infer: 20种不同错误 (来自['/home/files/common_logs/infer.err', '/home/files/common_logs/infer.log'])
+2026-05-19 14:55:28 [DEBUG]   • [ERROR] [1778545340.645789886]: RES:  xmin 940 ymin  648 xmax 1036 ymax 720
+2026-05-19 14:55:28 [DEBUG]   • [ERROR] [1778546582.010582026]: RES:  xmin 296 ymin  695 xmax 332 ymax 720
+2026-05-19 14:55:28 [DEBUG]   • [ERROR] [1778552279.173110470]: RES:  xmin 913 ymin  682 xmax 937 ymax 720
+2026-05-19 14:55:28 [DEBUG]   • [ERROR] [1778558788.024768801]: RES:  xmin 333 ymin  685 xmax 356 ymax 720
+2026-05-19 14:55:28 [DEBUG]   • [ERROR] [1778559197.125174096]: RES:  xmin 1209 ymin  615 xmax 1280 ymax 715
+2026-05-19 14:55:28 [INFO] ✅ kafka_event: 无明显错误
+2026-05-19 14:55:28 [INFO] ✅ kafka_flow: 无明显错误
+2026-05-19 14:55:28 [INFO] ✅ kafka_flow_1s: 无明显错误
+2026-05-19 14:55:28 [INFO] ✅ kafka_onetrack: 无明显错误
+2026-05-19 14:55:28 [INFO] ❌ one_track: 1种不同错误 (来自['/home/files/common_logs/one_track.err', '/home/files/common_logs/one_track.log'])
+2026-05-19 14:55:28 [DEBUG]   • terminate called after throwing an instance of 'ros::serialization::StreamOverrunException'
+2026-05-19 14:55:28 [INFO] ❌ radar_bridge: 2种不同错误 (来自['/home/files/common_logs/radar_bridge.err', '/home/files/common_logs/radar_bridge.log'])
+2026-05-19 14:55:28 [DEBUG]   • [ERROR] [1777451206.675916896]: Connection Failed: No route to host
+2026-05-19 14:55:28 [DEBUG]   • [ERROR] [1777451238.952926545]: Connection Failed: Connection timed out
+2026-05-19 14:55:28 [INFO] ✅ rosbridge_websocket: 无明显错误
+2026-05-19 14:55:28 [INFO] ✅ rtsp: 无明显错误
+2026-05-19 14:55:28 [INFO] ❌ traffic: 3种不同错误 (来自['/home/files/common_logs/traffic.err', '/home/files/common_logs/traffic.log'])
+2026-05-19 14:55:28 [DEBUG]   • ERROR: cannot launch node of type [traffic/traffic_node]: Cannot locate node of type [traffic_node] 
+2026-05-19 14:55:28 [DEBUG]   • what():  boost: mutex lock failed in pthread_mutex_lock: Invalid argument
+2026-05-19 14:55:28 [DEBUG]   • terminate called after throwing an instance of 'boost::wrapexcept<boost::lock_error>'
+2026-05-19 14:55:28 [INFO] 📡 步骤4: rostopic hz 检查...
+2026-05-19 14:55:32 [INFO] 关键topic: /k88_230/downstream/radar/track_object, /k88_230/downstream/radar/track_object_project, /k88_230/downstream/short_camera/image_detect/compressed, /k88_230/downstream/short_camera/image_raw, /k90_150/downstream/radar/track_object, /k90_150/downstream/radar/track_object_project, /k90_150/downstream/short_camera/image_detect/compressed, /k90_150/downstream/short_camera/image_raw, /k90_200/upstream/radar/track_object, /k90_200/upstream/radar/track_object_project, /k90_200/upstream/short_camera/image_detect/compressed, /k90_200/upstream/short_camera/image_raw, /mec_1007/fusion_track_object, /mec_1007/traffic_event_object/fps_hz, /one_track_object
+2026-05-19 14:56:13 [INFO] ✅ /k88_230/downstream/radar/track_object: 19.989 Hz
+2026-05-19 14:56:13 [INFO] ✅ /k88_230/downstream/radar/track_object_project: 20.005 Hz
+2026-05-19 14:56:13 [INFO] ✅ /k88_230/downstream/short_camera/image_detect/compressed: 14.580 Hz
+2026-05-19 14:56:13 [INFO] ✅ /k88_230/downstream/short_camera/image_raw: 14.497 Hz
+2026-05-19 14:56:13 [INFO] ✅ /k90_150/downstream/radar/track_object: 20.000 Hz
+2026-05-19 14:56:13 [INFO] ✅ /k90_150/downstream/radar/track_object_project: 19.991 Hz
+2026-05-19 14:56:13 [INFO] ✅ /k90_150/downstream/short_camera/image_detect/compressed: 14.316 Hz
+2026-05-19 14:56:13 [INFO] ✅ /k90_150/downstream/short_camera/image_raw: 14.455 Hz
+2026-05-19 14:56:13 [INFO] ✅ /k90_200/upstream/radar/track_object: 20.000 Hz
+2026-05-19 14:56:13 [INFO] ✅ /k90_200/upstream/radar/track_object_project: 19.994 Hz
+2026-05-19 14:56:13 [INFO] ✅ /k90_200/upstream/short_camera/image_detect/compressed: 14.449 Hz
+2026-05-19 14:56:13 [INFO] ✅ /k90_200/upstream/short_camera/image_raw: 14.532 Hz
+2026-05-19 14:56:13 [INFO] ✅ /mec_1007/fusion_track_object: 19.946 Hz
+2026-05-19 14:56:13 [INFO] ✅ /mec_1007/traffic_event_object/fps_hz: 19.908 Hz
+2026-05-19 14:56:13 [INFO] ✅ /one_track_object: 20.027 Hz
+2026-05-19 14:56:13 [INFO] 📡 传感器状态: 摄像头 3/3 | 雷达 3/3
+2026-05-19 14:57:04 [INFO] ======================================================================
+2026-05-19 14:57:04 [INFO] 🔍 诊断：物理机在线但容器不可连 - 10.145.24.68
+2026-05-19 14:57:04 [INFO] ======================================================================
+2026-05-19 14:57:04 [INFO] 🔐 登录物理机 10.145.24.68...
+2026-05-19 14:57:04 [INFO]   📋 数据库记录用户: root，优先尝试
+2026-05-19 14:57:06 [INFO]   ✅ 公钥登录成功: root
+2026-05-19 14:57:06 [INFO] 🐳 一次SSH采集物理机所有信息...
+2026-05-19 14:57:07 [INFO] ✅ Docker服务运行中
+2026-05-19 14:57:07 [INFO] ✅ dev容器存在且运行中: dev Up 5 weeks
+2026-05-19 14:57:07 [INFO] ✅ docker exec正常
+2026-05-19 14:57:07 [INFO] 📡 尝试连接容器SSH...
+2026-05-19 14:57:08 [INFO] ✅ 容器SSH可连接（监控显示离线）
+2026-05-19 14:57:08 [INFO] 📡 传感器状态: 摄像头 4/4 | 雷达 2/2
+2026-05-19 14:57:08 [INFO] ======================================================================
+2026-05-19 14:57:08 [INFO] 🔍 诊断：容器在线但今日图片为0 - 10.145.24.68
+2026-05-19 14:57:08 [INFO] ======================================================================
+2026-05-19 14:57:08 [INFO] 📡 步骤0: 检查容器连通性...
+2026-05-19 14:57:09 [INFO] ✅ 容器连接正常
+2026-05-19 14:57:09 [INFO] 📦 一次SSH采集容器初始数据...
+2026-05-19 14:57:10 [INFO] ✅ 今日图片数: 468，已恢复正常，继续采集完整信息
+2026-05-19 14:57:10 [INFO] ✅ 所有进程运行正常 (11/11)
+2026-05-19 14:57:10 [INFO] ✅ roscore运行中
+2026-05-19 14:57:10 [INFO] 📋 步骤3: 检查各进程日志...
+2026-05-19 14:57:11 [DEBUG] 为 kafka_event 补充额外日志: /home/files/common_logs/event.log
+2026-05-19 14:57:11 [DEBUG] 为 kafka_flow 补充额外日志: /home/files/common_logs/flow.log
+2026-05-19 14:57:11 [DEBUG] 加载诊断模式 4 条: ['cambricon_driver', 'ros_master', 'rtsp_nodelet_fail', 'oom_kill']
+2026-05-19 14:57:12 [INFO] ✅ calibration_event: 无明显错误
+2026-05-19 14:57:12 [INFO] ✅ calibration_project: 无明显错误
+2026-05-19 14:57:12 [INFO] ⏭️  fusion: 日志文件不存在
+2026-05-19 14:57:12 [INFO] ✅ infer: 无明显错误
+2026-05-19 14:57:12 [INFO] ❌ kafka_event: 10种不同错误 (来自['/home/files/common_logs/kafka_event.err'])
+2026-05-19 14:57:12 [DEBUG]   • [ERROR]2026-05-19 14:44:57,369 kafka_event_new.py:275: event has no file path:
+2026-05-19 14:57:12 [DEBUG]   • [ERROR]2026-05-19 14:47:59,258 kafka_event_new.py:275: event has no file path:
+2026-05-19 14:57:12 [DEBUG]   • [ERROR]2026-05-19 14:48:13,084 kafka_event_new.py:275: event has no file path:
+2026-05-19 14:57:12 [DEBUG]   • [ERROR]2026-05-19 14:48:13,085 kafka_event_new.py:275: event has no file path:
+2026-05-19 14:57:12 [DEBUG]   • [ERROR]2026-05-19 14:48:13,910 kafka_event_new.py:275: event has no file path:
+2026-05-19 14:57:12 [INFO] ✅ kafka_flow: 无明显错误
+2026-05-19 14:57:12 [INFO] ✅ kafka_monitor: 无明显错误
+2026-05-19 14:57:12 [INFO] ⏭️  radar_bridge: 日志文件不存在
+2026-05-19 14:57:12 [INFO] ⏭️  rosbridge_websocket: 日志文件不存在
+2026-05-19 14:57:12 [INFO] ❌ rtsp: 4种不同错误 (来自['/home/files/common_logs/rtsp.err', '/home/files/common_logs/rtsp.log'])
+2026-05-19 14:57:12 [DEBUG]   • mpp[110502]: kmpp_meta: kmpp_meta_init kmpp meta get objdef failed
+2026-05-19 14:57:12 [DEBUG]   • mpp[110503]: kmpp_meta: kmpp_meta_init kmpp meta get objdef failed
+2026-05-19 14:57:12 [DEBUG]   • mpp[110505]: kmpp_meta: kmpp_meta_init kmpp meta get objdef failed
+2026-05-19 14:57:12 [DEBUG]   • mpp[110507]: kmpp_meta: kmpp_meta_init kmpp meta get objdef failed
+2026-05-19 14:57:12 [INFO] ✅ traffic: 无明显错误
+2026-05-19 14:57:12 [INFO] 📡 步骤4: rostopic hz 检查...
+2026-05-19 14:57:13 [INFO] 关键topic: /k6_238/downstream/long_camera/image_detect/compressed, /k6_238/downstream/long_camera/image_raw, /k6_238/downstream/radar/track_object, /k6_238/downstream/radar/track_object_project, /k6_238/downstream/short_camera/image_detect/compressed, /k6_238/downstream/short_camera/image_raw, /k6_238/upstream/long_camera/image_detect/compressed, /k6_238/upstream/long_camera/image_raw, /k6_238/upstream/radar/track_object, /k6_238/upstream/radar/track_object_project, /k6_238/upstream/short_camera/image_detect/compressed, /k6_238/upstream/short_camera/image_raw, /mk6_238/fusion_track_object, /mk6_238/traffic_event_object/fps_hz
+2026-05-19 14:57:51 [INFO] ✅ /k6_238/downstream/long_camera/image_detect/compressed: 12.664 Hz
+2026-05-19 14:57:51 [INFO] ✅ /k6_238/downstream/long_camera/image_raw: 14.072 Hz
+2026-05-19 14:57:51 [INFO] ✅ /k6_238/downstream/radar/track_object: 19.998 Hz
+2026-05-19 14:57:51 [INFO] ✅ /k6_238/downstream/radar/track_object_project: 20.002 Hz
+2026-05-19 14:57:51 [INFO] ✅ /k6_238/downstream/short_camera/image_detect/compressed: 12.762 Hz
+2026-05-19 14:57:51 [INFO] ✅ /k6_238/downstream/short_camera/image_raw: 14.876 Hz
+2026-05-19 14:57:51 [INFO] ✅ /k6_238/upstream/long_camera/image_detect/compressed: 12.555 Hz
+2026-05-19 14:57:51 [INFO] ✅ /k6_238/upstream/long_camera/image_raw: 14.873 Hz
+2026-05-19 14:57:51 [INFO] ✅ /k6_238/upstream/radar/track_object: 20.010 Hz
+2026-05-19 14:57:51 [INFO] ✅ /k6_238/upstream/radar/track_object_project: 20.002 Hz
+2026-05-19 14:57:51 [INFO] ✅ /k6_238/upstream/short_camera/image_detect/compressed: 12.578 Hz
+2026-05-19 14:57:51 [INFO] ✅ /k6_238/upstream/short_camera/image_raw: 14.945 Hz
+2026-05-19 14:57:51 [INFO] ✅ /mk6_238/fusion_track_object: 20.003 Hz
+2026-05-19 14:57:51 [INFO] ✅ /mk6_238/traffic_event_object/fps_hz: 20.001 Hz
+2026-05-19 14:57:51 [INFO] 📡 传感器状态: 摄像头 4/4 | 雷达 2/2
+2026-05-19 14:58:50 [INFO] ======================================================================
+2026-05-19 14:58:50 [INFO] 🔍 诊断：物理机在线但容器不可连 - 172.18.32.94
+2026-05-19 14:58:50 [INFO] ======================================================================
+2026-05-19 14:58:50 [INFO] 🔐 登录物理机 172.18.32.94...
+2026-05-19 14:58:50 [INFO]   📋 数据库记录用户: root，优先尝试
+2026-05-19 14:58:52 [INFO]   ✅ 公钥登录成功: root
+2026-05-19 14:58:52 [INFO] 🐳 一次SSH采集物理机所有信息...
+2026-05-19 14:58:55 [INFO] ✅ Docker服务运行中
+2026-05-19 14:58:55 [INFO] ✅ dev容器存在且运行中: dev Up 23 hours
+2026-05-19 14:58:55 [INFO] ✅ docker exec正常
+2026-05-19 14:58:55 [INFO] 📡 尝试连接容器SSH...
+2026-05-19 14:59:05 [WARNING] SSH执行超时: root@172.18.32.94:10022 (10s)
+2026-05-19 14:59:05 [INFO]   🔄 容器公钥失败，尝试密码登录...
+2026-05-19 14:59:11 [WARNING] Paramiko密码登录失败 root@172.18.32.94:10022 - timed out
+2026-05-19 14:59:11 [INFO] 🔍 容器SSH不可达但docker exec可用，通过docker exec探查原因并继续诊断...
+2026-05-19 14:59:13 [WARNING] ❌ 容器SSH不可达(docker exec可用)，原因: 探查命令无输出(bash: ^PubkeyAuthentication: command not found
+bash: ^PasswordAuthentication: command not found
+bash)
+2026-05-19 14:59:13 [INFO] 🐳 通过docker exec采集容器诊断数据...
+2026-05-19 14:59:15 [INFO] 📡 传感器状态: 摄像头 4/4 | 雷达 2/2
+2026-05-19 14:59:15 [INFO] ======================================================================
+2026-05-19 14:59:15 [INFO] 🔍 诊断：容器在线但今日图片为0 - 172.18.32.94
+2026-05-19 14:59:15 [INFO] ======================================================================
+2026-05-19 14:59:15 [INFO] 📡 步骤0: 检查容器连通性...
+2026-05-19 14:59:25 [WARNING] SSH执行超时: root@172.18.32.94:10022 (10s)
+2026-05-19 14:59:25 [INFO]    首次连接失败，重试中...
+2026-05-19 14:59:36 [WARNING] SSH执行超时: root@172.18.32.94:10022 (10s)
+2026-05-19 14:59:36 [INFO]   容器SSH直连失败，尝试通过物理机docker exec...
+2026-05-19 14:59:36 [INFO] 🔐 登录物理机 172.18.32.94...
+2026-05-19 14:59:36 [INFO]   📋 数据库记录用户: root，优先尝试
+2026-05-19 14:59:37 [INFO]   ✅ 公钥登录成功: root
+2026-05-19 14:59:39 [INFO]   ✅ 物理机docker exec可用，通过docker exec诊断
+2026-05-19 14:59:40 [WARNING]   容器SSH不可达原因: 探查命令无输出(bash: ^PermitRootLogin: command not found
+bash: ^PubkeyAuthentication: command not found
+bash: ^Pass)
+2026-05-19 14:59:40 [INFO] 📦 一次SSH采集容器初始数据...
+2026-05-19 14:59:41 [INFO] ⚠️ 无法获取图片数，继续诊断
+2026-05-19 14:59:41 [WARNING] ❌ supervisorctl无输出
+2026-05-19 14:59:41 [WARNING] ❌ roscore未运行
+2026-05-19 14:59:41 [INFO] 📋 步骤3: 检查各进程日志...
+2026-05-19 14:59:43 [DEBUG] 为 kafka_event 补充额外日志: /home/files/common_logs/event.log
+2026-05-19 14:59:43 [DEBUG] 为 kafka_flow 补充额外日志: /home/files/common_logs/flow.log
+2026-05-19 14:59:43 [DEBUG] 加载诊断模式 4 条: ['cambricon_driver', 'ros_master', 'rtsp_nodelet_fail', 'oom_kill']
+2026-05-19 14:59:44 [INFO] ⏭️  rtsp: 日志文件不存在
+2026-05-19 14:59:44 [INFO] ⏭️  infer: 日志文件不存在
+2026-05-19 14:59:44 [INFO] ⏭️  traffic: 日志文件不存在
+2026-05-19 14:59:44 [INFO] ⏭️  kafka_event: 日志文件不存在
+2026-05-19 14:59:44 [INFO] ⏭️  kafka_flow: 日志文件不存在
+2026-05-19 14:59:45 [INFO] 📡 步骤4: rostopic hz 检查...
+2026-05-19 14:59:49 [INFO] 关键topic: /k608_900/upstream/radar/track_object, /k608_900/upstream/radar/track_object_project, /k608_900/upstream/short_camera/image_detect/compressed, /k608_900/upstream/short_camera/image_raw, /k610_330/upstream/long_camera/image_detect/compressed, /k610_330/upstream/long_camera/image_raw, /k610_330/upstream/radar/track_object, /k610_330/upstream/radar/track_object_project, /k610_330/upstream/short_camera/image_detect/compressed, /k610_330/upstream/short_camera/image_raw, /mec_1008/fusion_track_object, /mec_1008/traffic_event_object/fps_hz
+2026-05-19 15:00:32 [INFO] ✅ /k608_900/upstream/radar/track_object: 20.003 Hz
+2026-05-19 15:00:32 [INFO] ✅ /k608_900/upstream/radar/track_object_project: 20.014 Hz
+2026-05-19 15:00:32 [INFO] ✅ /k608_900/upstream/short_camera/image_detect/compressed: 14.456 Hz
+2026-05-19 15:00:32 [INFO] ✅ /k608_900/upstream/short_camera/image_raw: 14.485 Hz
+2026-05-19 15:00:32 [INFO] ✅ /k610_330/upstream/long_camera/image_detect/compressed: 14.498 Hz
+2026-05-19 15:00:32 [INFO] ✅ /k610_330/upstream/long_camera/image_raw: 14.521 Hz
+2026-05-19 15:00:32 [INFO] ✅ /k610_330/upstream/radar/track_object: 20.009 Hz
+2026-05-19 15:00:32 [INFO] ✅ /k610_330/upstream/radar/track_object_project: 20.003 Hz
+2026-05-19 15:00:32 [INFO] ✅ /k610_330/upstream/short_camera/image_detect/compressed: 14.400 Hz
+2026-05-19 15:00:32 [INFO] ✅ /k610_330/upstream/short_camera/image_raw: 14.455 Hz
+2026-05-19 15:00:32 [INFO] ✅ /mec_1008/fusion_track_object: 19.993 Hz
+2026-05-19 15:00:32 [INFO] ✅ /mec_1008/traffic_event_object/fps_hz: 19.986 Hz
+2026-05-19 15:00:32 [INFO] 📡 传感器状态: 摄像头 4/4 | 雷达 2/2
+2026-05-19 15:05:13 [INFO] ======================================================================
+2026-05-19 15:05:13 [INFO] 🔍 诊断：物理机在线但容器不可连 - 44.42.122.210
+2026-05-19 15:05:13 [INFO] ======================================================================
+2026-05-19 15:05:13 [INFO] 🔐 登录物理机 44.42.122.210...
+2026-05-19 15:05:13 [INFO]   📋 数据库记录用户: lcfc，优先尝试
+2026-05-19 15:05:15 [INFO]   ✅ 公钥登录成功: lcfc
+2026-05-19 15:05:15 [INFO] 🐳 一次SSH采集物理机所有信息...
+2026-05-19 15:05:17 [INFO] ✅ Docker服务运行中
+2026-05-19 15:05:17 [INFO] ✅ dev容器存在且运行中: dev Up 3 months
+2026-05-19 15:05:17 [INFO] ✅ docker exec正常
+2026-05-19 15:05:17 [INFO] 📡 尝试连接容器SSH...
+2026-05-19 15:05:18 [INFO] ✅ 容器SSH可连接（监控显示离线）
+2026-05-19 15:05:18 [INFO] 📡 传感器状态: 摄像头 4/4 | 雷达 2/2
+2026-05-19 15:05:18 [INFO] ======================================================================
+2026-05-19 15:05:18 [INFO] 🔍 诊断：容器在线但今日图片为0 - 44.42.122.210
+2026-05-19 15:05:18 [INFO] ======================================================================
+2026-05-19 15:05:18 [INFO] 📡 步骤0: 检查容器连通性...
+2026-05-19 15:05:19 [INFO] ✅ 容器连接正常
+2026-05-19 15:05:19 [INFO] 📦 一次SSH采集容器初始数据...
+2026-05-19 15:05:22 [INFO] ✅ 今日图片数: 12293，已恢复正常，继续采集完整信息
+2026-05-19 15:05:22 [INFO] ✅ 所有进程运行正常 (12/12)
+2026-05-19 15:05:22 [INFO] ✅ roscore运行中
+2026-05-19 15:05:22 [INFO] 📋 步骤3: 检查各进程日志...
+2026-05-19 15:05:23 [DEBUG] 加载诊断模式 4 条: ['cambricon_driver', 'ros_master', 'rtsp_nodelet_fail', 'oom_kill']
+2026-05-19 15:05:24 [INFO] ✅ error_calibration: 无明显错误
+2026-05-19 15:05:24 [INFO] ✅ error_calibration_project: 无明显错误
+2026-05-19 15:05:24 [INFO] ✅ error_fusion: 无明显错误
+2026-05-19 15:05:24 [INFO] ✅ error_infer: 无明显错误
+2026-05-19 15:05:24 [INFO] ❌ error_kafka_event: 13种不同错误 (来自['/home/files/common_logs/error_kafka_event.log'])
+2026-05-19 15:05:24 [DEBUG]   • [ERROR]2026-05-19 15:04:15,034 kafka_event_new.py:275: event has no file path:
+2026-05-19 15:05:24 [DEBUG]   • [ERROR]2026-05-19 15:04:19,698 kafka_event_new.py:275: event has no file path:
+2026-05-19 15:05:24 [DEBUG]   • [ERROR]2026-05-19 15:04:21,062 kafka_event_new.py:275: event has no file path:
+2026-05-19 15:05:24 [DEBUG]   • [ERROR]2026-05-19 15:04:23,640 kafka_event_new.py:275: event has no file path:
+2026-05-19 15:05:24 [DEBUG]   • [ERROR]2026-05-19 15:04:24,827 kafka_event_new.py:275: event has no file path:
+2026-05-19 15:05:24 [INFO] ✅ error_kafka_flow: 无明显错误
+2026-05-19 15:05:24 [INFO] ✅ error_kafka_monitor: 无明显错误
+2026-05-19 15:05:24 [INFO] ❌ error_radar_bridge: 1种不同错误 (来自['/home/files/common_logs/error_radar_bridge.log'])
+2026-05-19 15:05:24 [DEBUG]   • [ERROR] [1772238731.100128730]: Connection Failed: Connection refused
+2026-05-19 15:05:24 [INFO] ✅ error_rosbridge_websocket: 无明显错误
+2026-05-19 15:05:24 [INFO] ❌ error_rtsp: 3种不同错误 (来自['/home/files/common_logs/error_rtsp.log'])
+2026-05-19 15:05:24 [DEBUG]   • [ERROR] [1770856024.300982256]: received a tcpros connection for a nonexistent service [8dcf98e92081
+2026-05-19 15:05:24 [DEBUG]   • [FATAL] [1765530071.171110817]: Failed to load nodelet '/mk91_201/dispatcher` of type `camera/dispat
+2026-05-19 15:05:24 [DEBUG]   • terminate called without an active exception
+2026-05-19 15:05:24 [INFO] ❌ error_traffic: 5种不同错误 (来自['/home/files/common_logs/error_traffic.log'])
+2026-05-19 15:05:24 [DEBUG]   • RLException: [traffic.launch] is neither a launch file in package [traffic] nor is [traffic] a launc
+2026-05-19 15:05:24 [DEBUG]   • The traceback for the exception was written to the log file
+2026-05-19 15:05:24 [DEBUG]   • [ERROR] [1750661511.293471808]: Cannot read param: traffic/out_mode
+2026-05-19 15:05:24 [DEBUG]   • Error opening directory: No such file or directory
+2026-05-19 15:05:24 [DEBUG]   • terminate called after throwing an instance of 'ros::InvalidNameException'
+2026-05-19 15:05:24 [INFO] ❌ error_zmq_bridge: 2种不同错误 (来自['/home/files/common_logs/error_zmq_bridge.log'])
+2026-05-19 15:05:24 [DEBUG]   • [FATAL] [1765530217.814321736]: Invalid ROS msg_type "zmq_bridge/OneTrackObject" in configuration!
+2026-05-19 15:05:24 [DEBUG]   • terminate called after throwing an instance of 'zmqpp::zmq_internal_exception'
+2026-05-19 15:05:24 [INFO] ✅ out_calibration: 无明显错误
+2026-05-19 15:05:24 [INFO] ❌ out_calibration_project: 1种不同错误 (来自['//home/files/common_logs/out_calibration_project.log'])
+2026-05-19 15:05:24 [DEBUG]   • Error in XmlRpcClient::writeRequest: write error (Connection refused).
+2026-05-19 15:05:24 [INFO] ✅ out_fusion: 无明显错误
+2026-05-19 15:05:24 [INFO] ✅ out_kafka_event: 无明显错误
+2026-05-19 15:05:24 [INFO] ✅ out_kafka_flow: 无明显错误
+2026-05-19 15:05:24 [INFO] ❌ out_kafka_monitor: 3种不同错误 (来自['//home/files/common_logs/out_kafka_monitor.log'])
+2026-05-19 15:05:24 [DEBUG]   • Error in XmlRpcClient::readHeader: error while reading header (Connection reset by peer) on fd 12.
+2026-05-19 15:05:24 [DEBUG]   • Error in XmlRpcClient::writeRequest: write error (Connection refused).
+2026-05-19 15:05:24 [DEBUG]   • Error in XmlRpcClient::writeRequest: write error (Connection reset by peer).
+2026-05-19 15:05:24 [INFO] ✅ out_rosbridge_websocket: 无明显错误
+2026-05-19 15:05:24 [INFO] ✅ out_traffic: 无明显错误
+2026-05-19 15:05:24 [INFO] ✅ out_zmq_bridge: 无明显错误
+2026-05-19 15:05:24 [INFO] ✅ out_infer: 无明显错误
+2026-05-19 15:05:24 [INFO] ✅ out_radar_bridge: 无明显错误
+2026-05-19 15:05:24 [INFO] ✅ out_rtsp: 无明显错误
+2026-05-19 15:05:24 [INFO] 📡 步骤4: rostopic hz 检查...
+2026-05-19 15:05:28 [INFO] 关键topic: /k91_201/downstream/long_camera/image_detect/compressed, /k91_201/downstream/long_camera/image_raw, /k91_201/downstream/radar/track_object, /k91_201/downstream/radar/track_object_project, /k91_201/downstream/short_camera/image_detect/compressed, /k91_201/downstream/short_camera/image_raw, /k91_201/upstream/long_camera/image_detect/compressed, /k91_201/upstream/long_camera/image_raw, /k91_201/upstream/radar/track_object, /k91_201/upstream/radar/track_object_project, /k91_201/upstream/short_camera/image_detect/compressed, /k91_201/upstream/short_camera/image_raw, /mk91_201/fusion_track_object, /mk91_201/traffic_event_object/fps_hz, /one_track_object
+2026-05-19 15:06:07 [INFO] ✅ /k91_201/downstream/long_camera/image_detect/compressed: 13.407 Hz
+2026-05-19 15:06:07 [INFO] ✅ /k91_201/downstream/long_camera/image_raw: 14.517 Hz
+2026-05-19 15:06:07 [INFO] ✅ /k91_201/downstream/radar/track_object: 19.991 Hz
+2026-05-19 15:06:07 [INFO] ✅ /k91_201/downstream/radar/track_object_project: 19.992 Hz
+2026-05-19 15:06:07 [INFO] ✅ /k91_201/downstream/short_camera/image_detect/compressed: 12.700 Hz
+2026-05-19 15:06:07 [INFO] ✅ /k91_201/downstream/short_camera/image_raw: 14.456 Hz
+2026-05-19 15:06:07 [INFO] ✅ /k91_201/upstream/long_camera/image_detect/compressed: 12.411 Hz
+2026-05-19 15:06:07 [INFO] ✅ /k91_201/upstream/long_camera/image_raw: 14.560 Hz
+2026-05-19 15:06:07 [INFO] ✅ /k91_201/upstream/radar/track_object: 20.001 Hz
+2026-05-19 15:06:07 [INFO] ✅ /k91_201/upstream/radar/track_object_project: 20.014 Hz
+2026-05-19 15:06:07 [INFO] ✅ /k91_201/upstream/short_camera/image_detect/compressed: 14.227 Hz
+2026-05-19 15:06:07 [INFO] ✅ /k91_201/upstream/short_camera/image_raw: 14.574 Hz
+2026-05-19 15:06:07 [INFO] ✅ /mk91_201/fusion_track_object: 20.028 Hz
+2026-05-19 15:06:07 [INFO] ✅ /mk91_201/traffic_event_object/fps_hz: 20.025 Hz
+2026-05-19 15:06:07 [WARNING] ❌ /one_track_object: 无数据, 负责人 @lj
+2026-05-19 15:06:07 [INFO] 📡 传感器状态: 摄像头 4/4 | 雷达 2/2
+2026-05-19 15:08:50 [INFO] ======================================================================
+2026-05-19 15:08:50 [INFO] 🔍 诊断：物理机在线但容器不可连 - 172.18.32.94
+2026-05-19 15:08:50 [INFO] ======================================================================
+2026-05-19 15:08:50 [INFO] 🔐 登录物理机 172.18.32.94...
+2026-05-19 15:08:50 [INFO]   📋 数据库记录用户: root，优先尝试
+2026-05-19 15:08:51 [INFO]   ✅ 公钥登录成功: root
+2026-05-19 15:08:51 [INFO] 🐳 一次SSH采集物理机所有信息...
+2026-05-19 15:08:53 [INFO] ✅ Docker服务运行中
+2026-05-19 15:08:53 [INFO] ✅ dev容器存在且运行中: dev Up 23 hours
+2026-05-19 15:08:53 [INFO] ✅ docker exec正常
+2026-05-19 15:08:53 [INFO] 📡 尝试连接容器SSH...
+2026-05-19 15:09:03 [WARNING] SSH执行超时: root@172.18.32.94:10022 (10s)
+2026-05-19 15:09:03 [INFO]   🔄 容器公钥失败，尝试密码登录...
+2026-05-19 15:09:10 [WARNING] Paramiko密码登录失败 root@172.18.32.94:10022 - timed out
+2026-05-19 15:09:10 [INFO] 🔍 容器SSH不可达但docker exec可用，通过docker exec探查原因并继续诊断...
+2026-05-19 15:09:12 [WARNING] ❌ 容器SSH不可达(docker exec可用)，原因: 探查命令无输出(bash: ^PermitRootLogin: command not found
+bash: ^PubkeyAuthentication: command not found
+bash: ^Pass)
+2026-05-19 15:09:12 [INFO] 🐳 通过docker exec采集容器诊断数据...
+2026-05-19 15:09:13 [INFO] 📡 传感器状态: 摄像头 4/4 | 雷达 2/2
+2026-05-19 15:09:13 [INFO] ======================================================================
+2026-05-19 15:09:13 [INFO] 🔍 诊断：容器在线但今日图片为0 - 172.18.32.94
+2026-05-19 15:09:13 [INFO] ======================================================================
+2026-05-19 15:09:13 [INFO] 📡 步骤0: 检查容器连通性...
+2026-05-19 15:09:23 [WARNING] SSH执行超时: root@172.18.32.94:10022 (10s)
+2026-05-19 15:09:23 [INFO]    首次连接失败，重试中...
+2026-05-19 15:09:34 [WARNING] SSH执行超时: root@172.18.32.94:10022 (10s)
+2026-05-19 15:09:34 [INFO]   容器SSH直连失败，尝试通过物理机docker exec...
+2026-05-19 15:09:34 [INFO] 🔐 登录物理机 172.18.32.94...
+2026-05-19 15:09:34 [INFO]   📋 数据库记录用户: root，优先尝试
+2026-05-19 15:09:35 [INFO]   ✅ 公钥登录成功: root
+2026-05-19 15:09:37 [INFO]   ✅ 物理机docker exec可用，通过docker exec诊断
+2026-05-19 15:09:39 [WARNING]   容器SSH不可达原因: 探查命令无输出(bash: ^PermitRootLogin: command not found
+bash: ^PubkeyAuthentication: command not found
+bash: ^Pass)
+2026-05-19 15:09:39 [INFO] 📦 一次SSH采集容器初始数据...
+2026-05-19 15:09:40 [INFO] ⚠️ 无法获取图片数，继续诊断
+2026-05-19 15:09:40 [WARNING] ❌ supervisorctl无输出
+2026-05-19 15:09:40 [WARNING] ❌ roscore未运行
+2026-05-19 15:09:40 [INFO] 📋 步骤3: 检查各进程日志...
+2026-05-19 15:09:42 [DEBUG] 为 kafka_event 补充额外日志: /home/files/common_logs/event.log
+2026-05-19 15:09:42 [DEBUG] 为 kafka_flow 补充额外日志: /home/files/common_logs/flow.log
+2026-05-19 15:09:42 [DEBUG] 加载诊断模式 4 条: ['cambricon_driver', 'ros_master', 'rtsp_nodelet_fail', 'oom_kill']
+2026-05-19 15:09:43 [INFO] ⏭️  rtsp: 日志文件不存在
+2026-05-19 15:09:43 [INFO] ⏭️  infer: 日志文件不存在
+2026-05-19 15:09:43 [INFO] ⏭️  traffic: 日志文件不存在
+2026-05-19 15:09:43 [INFO] ⏭️  kafka_event: 日志文件不存在
+2026-05-19 15:09:43 [INFO] ⏭️  kafka_flow: 日志文件不存在
+2026-05-19 15:09:45 [INFO] 📡 步骤4: rostopic hz 检查...
+2026-05-19 15:09:49 [INFO] 关键topic: /k608_900/upstream/radar/track_object, /k608_900/upstream/radar/track_object_project, /k608_900/upstream/short_camera/image_detect/compressed, /k608_900/upstream/short_camera/image_raw, /k610_330/upstream/long_camera/image_detect/compressed, /k610_330/upstream/long_camera/image_raw, /k610_330/upstream/radar/track_object, /k610_330/upstream/radar/track_object_project, /k610_330/upstream/short_camera/image_detect/compressed, /k610_330/upstream/short_camera/image_raw, /mec_1008/fusion_track_object, /mec_1008/traffic_event_object/fps_hz
+2026-05-19 15:10:30 [INFO] ✅ /k608_900/upstream/radar/track_object: 19.999 Hz
+2026-05-19 15:10:30 [INFO] ✅ /k608_900/upstream/radar/track_object_project: 19.986 Hz
+2026-05-19 15:10:30 [INFO] ✅ /k608_900/upstream/short_camera/image_detect/compressed: 14.401 Hz
+2026-05-19 15:10:30 [INFO] ✅ /k608_900/upstream/short_camera/image_raw: 14.468 Hz
+2026-05-19 15:10:30 [INFO] ✅ /k610_330/upstream/long_camera/image_detect/compressed: 14.554 Hz
+2026-05-19 15:10:30 [INFO] ✅ /k610_330/upstream/long_camera/image_raw: 14.495 Hz
+2026-05-19 15:10:30 [INFO] ✅ /k610_330/upstream/radar/track_object: 19.993 Hz
+2026-05-19 15:10:30 [INFO] ✅ /k610_330/upstream/radar/track_object_project: 19.998 Hz
+2026-05-19 15:10:30 [INFO] ✅ /k610_330/upstream/short_camera/image_detect/compressed: 14.490 Hz
+2026-05-19 15:10:30 [INFO] ✅ /k610_330/upstream/short_camera/image_raw: 14.493 Hz
+2026-05-19 15:10:30 [INFO] ✅ /mec_1008/fusion_track_object: 19.973 Hz
+2026-05-19 15:10:30 [INFO] ✅ /mec_1008/traffic_event_object/fps_hz: 19.997 Hz
+2026-05-19 15:10:30 [INFO] 📡 传感器状态: 摄像头 4/4 | 雷达 2/2
+2026-05-19 15:12:36 [INFO] 🔐 登录物理机 172.18.32.94...
+2026-05-19 15:12:36 [INFO]   📋 数据库记录用户: root，优先尝试
+2026-05-19 15:12:37 [INFO]   ✅ 公钥登录成功: root
+2026-05-19 15:13:53 [INFO] ======================================================================
+2026-05-19 15:13:53 [INFO] 🔍 诊断：物理机在线但容器不可连 - 172.18.32.94
+2026-05-19 15:13:53 [INFO] ======================================================================
+2026-05-19 15:13:53 [INFO] 🔐 登录物理机 172.18.32.94...
+2026-05-19 15:13:53 [INFO]   📋 数据库记录用户: root，优先尝试
+2026-05-19 15:13:56 [INFO]   ✅ 公钥登录成功: root
+2026-05-19 15:13:56 [INFO] 🐳 一次SSH采集物理机所有信息...
+2026-05-19 15:13:59 [INFO] ✅ Docker服务运行中
+2026-05-19 15:13:59 [INFO] ✅ dev容器存在且运行中: dev Up 23 hours
+2026-05-19 15:13:59 [INFO] ✅ docker exec正常
+2026-05-19 15:13:59 [INFO] 📡 尝试连接容器SSH...
+2026-05-19 15:14:09 [WARNING] SSH执行超时: root@172.18.32.94:10022 (10s)
+2026-05-19 15:14:09 [INFO]   🔄 容器公钥失败，尝试密码登录...
+2026-05-19 15:14:15 [WARNING] Paramiko密码登录失败 root@172.18.32.94:10022 - timed out
+2026-05-19 15:14:15 [INFO] 🔍 容器SSH不可达但docker exec可用，通过docker exec探查原因并继续诊断...
+2026-05-19 15:14:18 [WARNING] ❌ 容器SSH不可达(docker exec可用)，原因: 探查命令无输出(bash: ^PermitRootLogin: command not found
+bash: ^PubkeyAuthentication: command not found
+bash: ^Pass)
+2026-05-19 15:14:18 [INFO] 🐳 通过docker exec采集容器诊断数据...
+2026-05-19 15:14:20 [INFO] 📡 传感器状态: 摄像头 4/4 | 雷达 2/2
+2026-05-19 15:14:20 [INFO] ======================================================================
+2026-05-19 15:14:20 [INFO] 🔍 诊断：容器在线但今日图片为0 - 172.18.32.94
+2026-05-19 15:14:20 [INFO] ======================================================================
+2026-05-19 15:14:20 [INFO] 📡 步骤0: 检查容器连通性...
+2026-05-19 15:14:30 [WARNING] SSH执行超时: root@172.18.32.94:10022 (10s)
+2026-05-19 15:14:30 [INFO]    首次连接失败，重试中...
+2026-05-19 15:14:41 [WARNING] SSH执行超时: root@172.18.32.94:10022 (10s)
+2026-05-19 15:14:41 [INFO]   容器SSH直连失败，尝试通过物理机docker exec...
+2026-05-19 15:14:41 [INFO] 🔐 登录物理机 172.18.32.94...
+2026-05-19 15:14:41 [INFO]   📋 数据库记录用户: root，优先尝试
+2026-05-19 15:14:43 [INFO]   ✅ 公钥登录成功: root
+2026-05-19 15:14:45 [INFO]   ✅ 物理机docker exec可用，通过docker exec诊断
+2026-05-19 15:14:46 [WARNING]   容器SSH不可达原因: 探查命令无输出(bash: ^PubkeyAuthentication: command not found
+bash: ^PermitRootLogin: command not found
+bash: ^Pass)
+2026-05-19 15:14:46 [INFO] 📦 一次SSH采集容器初始数据...
+2026-05-19 15:14:48 [INFO] ⚠️ 无法获取图片数，继续诊断
+2026-05-19 15:14:48 [WARNING] ❌ supervisorctl无输出
+2026-05-19 15:14:48 [WARNING] ❌ roscore未运行
+2026-05-19 15:14:48 [INFO] 📋 步骤3: 检查各进程日志...
+2026-05-19 15:14:50 [DEBUG] 为 kafka_event 补充额外日志: /home/files/common_logs/event.log
+2026-05-19 15:14:50 [DEBUG] 为 kafka_flow 补充额外日志: /home/files/common_logs/flow.log
+2026-05-19 15:14:50 [DEBUG] 加载诊断模式 4 条: ['cambricon_driver', 'ros_master', 'rtsp_nodelet_fail', 'oom_kill']
+2026-05-19 15:14:51 [INFO] ⏭️  rtsp: 日志文件不存在
+2026-05-19 15:14:51 [INFO] ⏭️  infer: 日志文件不存在
+2026-05-19 15:14:51 [INFO] ⏭️  traffic: 日志文件不存在
+2026-05-19 15:14:51 [INFO] ⏭️  kafka_event: 日志文件不存在
+2026-05-19 15:14:51 [INFO] ⏭️  kafka_flow: 日志文件不存在
+2026-05-19 15:14:52 [INFO] 📡 步骤4: rostopic hz 检查...
+2026-05-19 15:14:56 [INFO] 关键topic: /k608_900/upstream/radar/track_object, /k608_900/upstream/radar/track_object_project, /k608_900/upstream/short_camera/image_detect/compressed, /k608_900/upstream/short_camera/image_raw, /k610_330/upstream/long_camera/image_detect/compressed, /k610_330/upstream/long_camera/image_raw, /k610_330/upstream/radar/track_object, /k610_330/upstream/radar/track_object_project, /k610_330/upstream/short_camera/image_detect/compressed, /k610_330/upstream/short_camera/image_raw, /mec_1008/fusion_track_object, /mec_1008/traffic_event_object/fps_hz
+2026-05-19 15:15:37 [INFO] ✅ /k608_900/upstream/radar/track_object: 20.014 Hz
+2026-05-19 15:15:37 [INFO] ✅ /k608_900/upstream/radar/track_object_project: 20.008 Hz
+2026-05-19 15:15:37 [INFO] ✅ /k608_900/upstream/short_camera/image_detect/compressed: 13.617 Hz
+2026-05-19 15:15:37 [INFO] ✅ /k608_900/upstream/short_camera/image_raw: 14.459 Hz
+2026-05-19 15:15:37 [INFO] ✅ /k610_330/upstream/long_camera/image_detect/compressed: 14.409 Hz
+2026-05-19 15:15:37 [INFO] ✅ /k610_330/upstream/long_camera/image_raw: 14.521 Hz
+2026-05-19 15:15:37 [INFO] ✅ /k610_330/upstream/radar/track_object: 19.994 Hz
+2026-05-19 15:15:37 [INFO] ✅ /k610_330/upstream/radar/track_object_project: 19.995 Hz
+2026-05-19 15:15:37 [INFO] ✅ /k610_330/upstream/short_camera/image_detect/compressed: 13.786 Hz
+2026-05-19 15:15:37 [INFO] ✅ /k610_330/upstream/short_camera/image_raw: 14.471 Hz
+2026-05-19 15:15:37 [INFO] ✅ /mec_1008/fusion_track_object: 19.975 Hz
+2026-05-19 15:15:37 [INFO] ✅ /mec_1008/traffic_event_object/fps_hz: 19.976 Hz
+2026-05-19 15:15:37 [INFO] 📡 传感器状态: 摄像头 4/4 | 雷达 2/2
+2026-05-19 15:17:35 [INFO] ======================================================================
+2026-05-19 15:17:35 [INFO] 🔍 诊断：物理机在线但容器不可连 - 172.18.32.94
+2026-05-19 15:17:35 [INFO] ======================================================================
+2026-05-19 15:17:35 [INFO] 🔐 登录物理机 172.18.32.94...
+2026-05-19 15:17:35 [INFO]   📋 数据库记录用户: root，优先尝试
+2026-05-19 15:17:37 [INFO]   ✅ 公钥登录成功: root
+2026-05-19 15:17:37 [INFO] 🐳 一次SSH采集物理机所有信息...
+2026-05-19 15:17:39 [INFO] ✅ Docker服务运行中
+2026-05-19 15:17:39 [INFO] ✅ dev容器存在且运行中: dev Up 24 hours
+2026-05-19 15:17:39 [INFO] ✅ docker exec正常
+2026-05-19 15:17:39 [INFO] 📡 尝试连接容器SSH...
+2026-05-19 15:17:49 [WARNING] SSH执行超时: root@172.18.32.94:10022 (10s)
+2026-05-19 15:17:49 [INFO]   🔄 容器公钥失败，尝试密码登录...
+2026-05-19 15:17:56 [WARNING] Paramiko密码登录失败 root@172.18.32.94:10022 - timed out
+2026-05-19 15:17:56 [INFO] 🔍 容器SSH不可达但docker exec可用，通过docker exec探查原因并继续诊断...
+2026-05-19 15:17:58 [WARNING] ❌ 容器SSH不可达(docker exec可用)，原因: sshd服务运行中; 10022端口在监听
+2026-05-19 15:17:58 [INFO] 🐳 通过docker exec采集容器诊断数据...
+2026-05-19 15:18:01 [INFO] 📡 传感器状态: 摄像头 4/4 | 雷达 2/2
+2026-05-19 15:18:01 [INFO] ======================================================================
+2026-05-19 15:18:01 [INFO] 🔍 诊断：容器在线但今日图片为0 - 172.18.32.94
+2026-05-19 15:18:01 [INFO] ======================================================================
+2026-05-19 15:18:01 [INFO] 📡 步骤0: 检查容器连通性...
+2026-05-19 15:18:11 [WARNING] SSH执行超时: root@172.18.32.94:10022 (10s)
+2026-05-19 15:18:11 [INFO]    首次连接失败，重试中...
+2026-05-19 15:18:22 [WARNING] SSH执行超时: root@172.18.32.94:10022 (10s)
+2026-05-19 15:18:22 [INFO]   容器SSH直连失败，尝试通过物理机docker exec...
+2026-05-19 15:18:22 [INFO] 🔐 登录物理机 172.18.32.94...
+2026-05-19 15:18:22 [INFO]   📋 数据库记录用户: root，优先尝试
+2026-05-19 15:18:24 [INFO]   ✅ 公钥登录成功: root
+2026-05-19 15:18:25 [INFO]   ✅ 物理机docker exec可用，通过docker exec诊断
+2026-05-19 15:18:27 [WARNING]   容器SSH不可达原因: sshd服务运行中; 10022端口在监听
+2026-05-19 15:18:27 [INFO] 📦 一次SSH采集容器初始数据...
+2026-05-19 15:18:30 [INFO] ✅ 今日图片数: 1403，已恢复正常，继续采集完整信息
+2026-05-19 15:18:30 [INFO] ✅ 所有进程运行正常 (12/12)
+2026-05-19 15:18:30 [INFO] ✅ roscore运行中
+2026-05-19 15:18:30 [INFO] 📋 步骤3: 检查各进程日志...
+2026-05-19 15:18:33 [DEBUG] 为 kafka_event 补充额外日志: /home/files/common_logs/event.log
+2026-05-19 15:18:33 [DEBUG] 为 kafka_flow 补充额外日志: /home/files/common_logs/flow.log
+2026-05-19 15:18:33 [DEBUG] 加载诊断模式 4 条: ['cambricon_driver', 'ros_master', 'rtsp_nodelet_fail', 'oom_kill']
+2026-05-19 15:18:35 [INFO] ✅ calibration_event: 无明显错误
+2026-05-19 15:18:35 [INFO] ✅ calibration_project: 无明显错误
+2026-05-19 15:18:35 [INFO] ❌ fusion: 1种不同错误 (来自['/home/files/common_logs/fusion.err', '/home/files/common_logs/fusion.log'])
+2026-05-19 15:18:35 [DEBUG]   • Binary file (standard input) matches
+2026-05-19 15:18:35 [INFO] ❌ infer: 7种不同错误 (来自['/home/files/common_logs/infer.err', '/home/files/common_logs/infer.log'])
+2026-05-19 15:18:35 [DEBUG]   • [ERROR] [1779173761.335858939]: RES:  xmin 2 ymin  673 xmax 97 ymax 720
+2026-05-19 15:18:35 [DEBUG]   • [ERROR] [1779173765.476974166]: RES:  xmin 83 ymin  657 xmax 267 ymax 720
+2026-05-19 15:18:35 [DEBUG]   • [ERROR] [1779173908.218204593]: RES:  xmin 36 ymin  639 xmax 292 ymax 720
+2026-05-19 15:18:35 [DEBUG]   • [ERROR] [1779174314.454839030]: RES:  xmin 107 ymin  627 xmax 270 ymax 720
+2026-05-19 15:18:35 [DEBUG]   • [ERROR] [1779174407.311432522]: RES:  xmin 13 ymin  668 xmax 210 ymax 720
+2026-05-19 15:18:35 [INFO] ✅ kafka_event: 无明显错误
+2026-05-19 15:18:35 [INFO] ✅ kafka_flow: 无明显错误
+2026-05-19 15:18:35 [INFO] ❌ kafka_monitor: 1种不同错误 (来自['/home/files/common_logs/kafka_monitor.err', '/home/files/common_logs/kafka_monitor.log'])
+2026-05-19 15:18:35 [DEBUG]   • Error in XmlRpcClient::writeRequest: write error (Connection refused).
+2026-05-19 15:18:35 [INFO] ❌ radar_bridge: 2种不同错误 (来自['/home/files/common_logs/radar_bridge.err', '/home/files/common_logs/radar_bridge.log'])
+2026-05-19 15:18:35 [DEBUG]   • Binary file (standard input) matches
+2026-05-19 15:18:35 [DEBUG]   • [radar_bridge] Waiting for ROS master...
+2026-05-19 15:18:35 [INFO] ✅ rosbridge_websocket: 无明显错误
+2026-05-19 15:18:35 [INFO] ❌ rtsp: 20种不同错误 (来自['/home/files/common_logs/rtsp.err', '/home/files/common_logs/rtsp.log'])
+2026-05-19 15:18:35 [DEBUG]   • VPU_DecGetOutputInfo decode fail framdIdx 1010540 error(0x00000000) reason(0x00400000), reasonExt(0x
+2026-05-19 15:18:35 [DEBUG]   • VPU_DecGetOutputInfo decode fail framdIdx 1083940 error(0x00000000) reason(0x00400000), reasonExt(0x
+2026-05-19 15:18:35 [DEBUG]   • VPU_DecGetOutputInfo decode fail framdIdx 10985058 error(0x00000000) reason(0x00400000), reasonExt(0
+2026-05-19 15:18:35 [DEBUG]   • VPU_DecGetOutputInfo decode fail framdIdx 10992144 error(0x00000000) reason(0x00400000), reasonExt(0
+2026-05-19 15:18:35 [DEBUG]   • VPU_DecGetOutputInfo decode fail framdIdx 10993144 error(0x00000000) reason(0x00400000), reasonExt(0
+2026-05-19 15:18:35 [INFO] ❌ traffic: 1种不同错误 (来自['/home/files/common_logs/traffic.err', '/home/files/common_logs/traffic.log'])
+2026-05-19 15:18:35 [DEBUG]   • [ERROR] [1765352343.075515151]: Failed to get 'radar_calib_params' from param server. Check YAML!
+2026-05-19 15:18:35 [INFO] ❌ zmq_bridge: 1种不同错误 (来自['/home/files/common_logs/zmq_bridge.err', '/home/files/common_logs/zmq_bridge.log'])
+2026-05-19 15:18:35 [DEBUG]   • terminate called after throwing an instance of 'zmqpp::zmq_internal_exception'
+2026-05-19 15:18:35 [INFO] 📡 步骤4: rostopic hz 检查...
+2026-05-19 15:18:39 [INFO] 关键topic: /k608_900/upstream/radar/track_object, /k608_900/upstream/radar/track_object_project, /k608_900/upstream/short_camera/image_detect/compressed, /k608_900/upstream/short_camera/image_raw, /k610_330/upstream/long_camera/image_detect/compressed, /k610_330/upstream/long_camera/image_raw, /k610_330/upstream/radar/track_object, /k610_330/upstream/radar/track_object_project, /k610_330/upstream/short_camera/image_detect/compressed, /k610_330/upstream/short_camera/image_raw, /mec_1008/fusion_track_object, /mec_1008/traffic_event_object/fps_hz
+2026-05-19 15:19:19 [INFO] ✅ /k608_900/upstream/radar/track_object: 20.001 Hz
+2026-05-19 15:19:19 [INFO] ✅ /k608_900/upstream/radar/track_object_project: 20.003 Hz
+2026-05-19 15:19:19 [INFO] ✅ /k608_900/upstream/short_camera/image_detect/compressed: 14.434 Hz
+2026-05-19 15:19:19 [INFO] ✅ /k608_900/upstream/short_camera/image_raw: 14.421 Hz
+2026-05-19 15:19:19 [INFO] ✅ /k610_330/upstream/long_camera/image_detect/compressed: 14.480 Hz
+2026-05-19 15:19:19 [INFO] ✅ /k610_330/upstream/long_camera/image_raw: 14.438 Hz
+2026-05-19 15:19:19 [INFO] ✅ /k610_330/upstream/radar/track_object: 19.997 Hz
+2026-05-19 15:19:19 [INFO] ✅ /k610_330/upstream/radar/track_object_project: 19.999 Hz
+2026-05-19 15:19:19 [INFO] ✅ /k610_330/upstream/short_camera/image_detect/compressed: 14.469 Hz
+2026-05-19 15:19:19 [INFO] ✅ /k610_330/upstream/short_camera/image_raw: 14.451 Hz
+2026-05-19 15:19:19 [INFO] ✅ /mec_1008/fusion_track_object: 19.996 Hz
+2026-05-19 15:19:19 [INFO] ✅ /mec_1008/traffic_event_object/fps_hz: 20.001 Hz
+2026-05-19 15:19:19 [INFO] 📡 传感器状态: 摄像头 4/4 | 雷达 2/2
+2026-05-19 15:28:22 [INFO] ======================================================================
+2026-05-19 15:28:22 [INFO] 🔍 诊断：物理机在线但容器不可连 - 172.18.32.94
+2026-05-19 15:28:22 [INFO] ======================================================================
+2026-05-19 15:28:22 [INFO] 🔐 登录物理机 172.18.32.94...
+2026-05-19 15:28:22 [INFO]   📋 数据库记录用户: root，优先尝试
+2026-05-19 15:28:25 [INFO]   ✅ 公钥登录成功: root
+2026-05-19 15:28:25 [INFO] 🐳 一次SSH采集物理机所有信息...
+2026-05-19 15:28:27 [INFO] ✅ Docker服务运行中
+2026-05-19 15:28:27 [INFO] ✅ dev容器存在且运行中: dev Up 24 hours
+2026-05-19 15:28:27 [INFO] ✅ docker exec正常
+2026-05-19 15:28:27 [INFO] 📡 尝试连接容器SSH...
+2026-05-19 15:28:37 [WARNING] SSH执行超时: root@172.18.32.94:10022 (10s)
+2026-05-19 15:28:37 [INFO]   🔄 容器公钥失败，尝试密码登录...
+2026-05-19 15:28:44 [WARNING] Paramiko密码登录失败 root@172.18.32.94:10022 - timed out
+2026-05-19 15:28:44 [INFO] 🔍 容器SSH不可达但docker exec可用，通过docker exec探查原因并继续诊断...
+2026-05-19 15:28:46 [WARNING] ❌ 容器SSH不可达(docker exec可用)，原因: sshd服务运行中; 10022端口在监听
+2026-05-19 15:28:46 [INFO] 🐳 通过docker exec采集容器诊断数据...
+2026-05-19 15:28:49 [INFO] 📡 传感器状态: 摄像头 4/4 | 雷达 2/2
+2026-05-19 15:28:49 [INFO] ======================================================================
+2026-05-19 15:28:49 [INFO] 🔍 诊断：容器在线但今日图片为0 - 172.18.32.94
+2026-05-19 15:28:49 [INFO] ======================================================================
+2026-05-19 15:28:49 [INFO] 📡 步骤0: 检查容器连通性...
+2026-05-19 15:28:59 [WARNING] SSH执行超时: root@172.18.32.94:10022 (10s)
+2026-05-19 15:28:59 [INFO]    首次连接失败，重试中...
+2026-05-19 15:29:10 [WARNING] SSH执行超时: root@172.18.32.94:10022 (10s)
+2026-05-19 15:29:10 [INFO]   容器SSH直连失败，尝试通过物理机docker exec...
+2026-05-19 15:29:10 [INFO] 🔐 登录物理机 172.18.32.94...
+2026-05-19 15:29:10 [INFO]   📋 数据库记录用户: root，优先尝试
+2026-05-19 15:29:12 [INFO]   ✅ 公钥登录成功: root
+2026-05-19 15:29:13 [INFO]   ✅ 物理机docker exec可用，通过docker exec诊断
+2026-05-19 15:29:14 [WARNING]   容器SSH不可达原因: sshd服务运行中; 10022端口在监听
+2026-05-19 15:29:14 [INFO] 📦 一次SSH采集容器初始数据...
+2026-05-19 15:29:17 [INFO] ✅ 今日图片数: 1429，已恢复正常，继续采集完整信息
+2026-05-19 15:29:17 [INFO] ✅ 所有进程运行正常 (12/12)
+2026-05-19 15:29:17 [INFO] ✅ roscore运行中
+2026-05-19 15:29:17 [INFO] 📋 步骤3: 检查各进程日志...
+2026-05-19 15:29:18 [DEBUG] 为 kafka_event 补充额外日志: /home/files/common_logs/event.log
+2026-05-19 15:29:18 [DEBUG] 为 kafka_flow 补充额外日志: /home/files/common_logs/flow.log
+2026-05-19 15:29:18 [DEBUG] 加载诊断模式 4 条: ['cambricon_driver', 'ros_master', 'rtsp_nodelet_fail', 'oom_kill']
+2026-05-19 15:29:20 [INFO] ✅ calibration_event: 无明显错误
+2026-05-19 15:29:20 [INFO] ✅ calibration_project: 无明显错误
+2026-05-19 15:29:20 [INFO] ❌ fusion: 1种不同错误 (来自['/home/files/common_logs/fusion.err', '/home/files/common_logs/fusion.log'])
+2026-05-19 15:29:20 [DEBUG]   • Binary file (standard input) matches
+2026-05-19 15:29:20 [INFO] ❌ infer: 8种不同错误 (来自['/home/files/common_logs/infer.err', '/home/files/common_logs/infer.log'])
+2026-05-19 15:29:20 [DEBUG]   • [ERROR] [1779173908.218204593]: RES:  xmin 36 ymin  639 xmax 292 ymax 720
+2026-05-19 15:29:20 [DEBUG]   • [ERROR] [1779174314.454839030]: RES:  xmin 107 ymin  627 xmax 270 ymax 720
+2026-05-19 15:29:20 [DEBUG]   • [ERROR] [1779174407.311432522]: RES:  xmin 13 ymin  668 xmax 210 ymax 720
+2026-05-19 15:29:20 [DEBUG]   • [ERROR] [1779174583.567101915]: RES:  xmin 53 ymin  682 xmax 206 ymax 720
+2026-05-19 15:29:20 [DEBUG]   • [ERROR] [1779174636.817898952]: RES:  xmin 131 ymin  672 xmax 292 ymax 720
+2026-05-19 15:29:20 [INFO] ❌ kafka_event: 3种不同错误 (来自['/home/files/common_logs/kafka_event.err', '/home/files/common_logs/kafka_event.log', '/home/files/common_logs/event.log'])
+2026-05-19 15:29:20 [DEBUG]   • [ERROR]2026-05-19 15:26:43,955 kafka_event_new.py:278: event has no file path:
+2026-05-19 15:29:20 [DEBUG]   • [ERROR]2026-05-19 15:26:43,956 kafka_event_new.py:278: event has no file path:
+2026-05-19 15:29:20 [DEBUG]   • [ERROR]2026-05-19 15:28:42,893 kafka_event_new.py:278: event has no file path:
+2026-05-19 15:29:20 [INFO] ✅ kafka_flow: 无明显错误
+2026-05-19 15:29:20 [INFO] ❌ kafka_monitor: 1种不同错误 (来自['/home/files/common_logs/kafka_monitor.err', '/home/files/common_logs/kafka_monitor.log'])
+2026-05-19 15:29:20 [DEBUG]   • Error in XmlRpcClient::writeRequest: write error (Connection refused).
+2026-05-19 15:29:20 [INFO] ❌ radar_bridge: 2种不同错误 (来自['/home/files/common_logs/radar_bridge.err', '/home/files/common_logs/radar_bridge.log'])
+2026-05-19 15:29:20 [DEBUG]   • Binary file (standard input) matches
+2026-05-19 15:29:20 [DEBUG]   • [radar_bridge] Waiting for ROS master...
+2026-05-19 15:29:20 [INFO] ✅ rosbridge_websocket: 无明显错误
+2026-05-19 15:29:20 [INFO] ❌ rtsp: 20种不同错误 (来自['/home/files/common_logs/rtsp.err', '/home/files/common_logs/rtsp.log'])
+2026-05-19 15:29:20 [DEBUG]   • VPU_DecGetOutputInfo decode fail framdIdx 1010540 error(0x00000000) reason(0x00400000), reasonExt(0x
+2026-05-19 15:29:20 [DEBUG]   • VPU_DecGetOutputInfo decode fail framdIdx 1083940 error(0x00000000) reason(0x00400000), reasonExt(0x
+2026-05-19 15:29:20 [DEBUG]   • VPU_DecGetOutputInfo decode fail framdIdx 10985058 error(0x00000000) reason(0x00400000), reasonExt(0
+2026-05-19 15:29:20 [DEBUG]   • VPU_DecGetOutputInfo decode fail framdIdx 10992144 error(0x00000000) reason(0x00400000), reasonExt(0
+2026-05-19 15:29:20 [DEBUG]   • VPU_DecGetOutputInfo decode fail framdIdx 10993144 error(0x00000000) reason(0x00400000), reasonExt(0
+2026-05-19 15:29:20 [INFO] ❌ traffic: 1种不同错误 (来自['/home/files/common_logs/traffic.err', '/home/files/common_logs/traffic.log'])
+2026-05-19 15:29:20 [DEBUG]   • [ERROR] [1765352343.075515151]: Failed to get 'radar_calib_params' from param server. Check YAML!
+2026-05-19 15:29:20 [INFO] ❌ zmq_bridge: 1种不同错误 (来自['/home/files/common_logs/zmq_bridge.err', '/home/files/common_logs/zmq_bridge.log'])
+2026-05-19 15:29:20 [DEBUG]   • terminate called after throwing an instance of 'zmqpp::zmq_internal_exception'
+2026-05-19 15:29:20 [INFO] 📡 步骤4: rostopic hz 检查...
+2026-05-19 15:29:23 [INFO] 关键topic: /k608_900/upstream/radar/track_object, /k608_900/upstream/radar/track_object_project, /k608_900/upstream/short_camera/image_detect/compressed, /k608_900/upstream/short_camera/image_raw, /k610_330/upstream/long_camera/image_detect/compressed, /k610_330/upstream/long_camera/image_raw, /k610_330/upstream/radar/track_object, /k610_330/upstream/radar/track_object_project, /k610_330/upstream/short_camera/image_detect/compressed, /k610_330/upstream/short_camera/image_raw, /mec_1008/fusion_track_object, /mec_1008/traffic_event_object/fps_hz
+2026-05-19 15:30:04 [INFO] ✅ /k608_900/upstream/radar/track_object: 19.984 Hz
+2026-05-19 15:30:04 [INFO] ✅ /k608_900/upstream/radar/track_object_project: 20.007 Hz
+2026-05-19 15:30:04 [INFO] ✅ /k608_900/upstream/short_camera/image_detect/compressed: 14.541 Hz
+2026-05-19 15:30:04 [INFO] ✅ /k608_900/upstream/short_camera/image_raw: 14.420 Hz
+2026-05-19 15:30:04 [INFO] ✅ /k610_330/upstream/long_camera/image_detect/compressed: 14.420 Hz
+2026-05-19 15:30:04 [INFO] ✅ /k610_330/upstream/long_camera/image_raw: 14.511 Hz
+2026-05-19 15:30:04 [INFO] ✅ /k610_330/upstream/radar/track_object: 19.997 Hz
+2026-05-19 15:30:04 [INFO] ✅ /k610_330/upstream/radar/track_object_project: 20.014 Hz
+2026-05-19 15:30:04 [INFO] ✅ /k610_330/upstream/short_camera/image_detect/compressed: 14.521 Hz
+2026-05-19 15:30:04 [INFO] ✅ /k610_330/upstream/short_camera/image_raw: 14.495 Hz
+2026-05-19 15:30:04 [INFO] ✅ /mec_1008/fusion_track_object: 19.996 Hz
+2026-05-19 15:30:04 [INFO] ✅ /mec_1008/traffic_event_object/fps_hz: 19.994 Hz
+2026-05-19 15:30:04 [INFO] 📡 传感器状态: 摄像头 4/4 | 雷达 2/2
+2026-05-19 15:35:19 [INFO] ======================================================================
+2026-05-19 15:35:19 [INFO] 🔍 诊断：物理机在线但容器不可连 - 172.18.32.94
+2026-05-19 15:35:19 [INFO] ======================================================================
+2026-05-19 15:35:19 [INFO] 🔐 登录物理机 172.18.32.94...
+2026-05-19 15:35:19 [INFO]   📋 数据库记录用户: root，优先尝试
+2026-05-19 15:35:21 [INFO]   ✅ 公钥登录成功: root
+2026-05-19 15:35:21 [INFO] 🐳 一次SSH采集物理机所有信息...
+2026-05-19 15:35:24 [INFO] ✅ Docker服务运行中
+2026-05-19 15:35:24 [INFO] ✅ dev容器存在且运行中: dev Up 24 hours
+2026-05-19 15:35:24 [INFO] ✅ docker exec正常
+2026-05-19 15:35:24 [INFO] 📡 尝试连接容器SSH...
+2026-05-19 15:35:34 [WARNING] SSH执行超时: root@172.18.32.94:10022 (10s)
+2026-05-19 15:35:34 [INFO]   🔄 容器公钥失败，尝试密码登录...
+2026-05-19 15:35:41 [WARNING] Paramiko密码登录失败 root@172.18.32.94:10022 - timed out
+2026-05-19 15:35:41 [INFO] 🔍 容器SSH不可达但docker exec可用，通过docker exec探查原因并继续诊断...
+2026-05-19 15:35:43 [WARNING] ❌ 容器SSH不可达(docker exec可用)，原因: sshd服务运行中; 10022端口在监听
+2026-05-19 15:35:43 [INFO] 🐳 通过docker exec采集容器诊断数据...
+2026-05-19 15:35:46 [INFO] 📡 传感器状态: 摄像头 4/4 | 雷达 2/2
+2026-05-19 15:35:46 [INFO] ======================================================================
+2026-05-19 15:35:46 [INFO] 🔍 诊断：容器在线但今日图片为0 - 172.18.32.94
+2026-05-19 15:35:46 [INFO] ======================================================================
+2026-05-19 15:35:46 [INFO] 📡 步骤0: 检查容器连通性...
+2026-05-19 15:35:56 [WARNING] SSH执行超时: root@172.18.32.94:10022 (10s)
+2026-05-19 15:35:56 [INFO]    首次连接失败，重试中...
+2026-05-19 15:36:07 [WARNING] SSH执行超时: root@172.18.32.94:10022 (10s)
+2026-05-19 15:36:07 [INFO]   容器SSH直连失败，尝试通过物理机docker exec...
+2026-05-19 15:36:07 [INFO] 🔐 登录物理机 172.18.32.94...
+2026-05-19 15:36:07 [INFO]   📋 数据库记录用户: root，优先尝试
+2026-05-19 15:36:09 [INFO]   ✅ 公钥登录成功: root
+2026-05-19 15:36:10 [INFO]   ✅ 物理机docker exec可用，通过docker exec诊断
+2026-05-19 15:36:12 [WARNING]   容器SSH不可达原因: sshd服务运行中; 10022端口在监听
+2026-05-19 15:36:12 [INFO] 📦 一次SSH采集容器初始数据...
+2026-05-19 15:36:15 [INFO] ✅ 今日图片数: 1439，已恢复正常，继续采集完整信息
+2026-05-19 15:36:15 [INFO] ✅ 所有进程运行正常 (12/12)
+2026-05-19 15:36:15 [INFO] ✅ roscore运行中
+2026-05-19 15:36:15 [INFO] 📋 步骤3: 检查各进程日志...
+2026-05-19 15:36:16 [DEBUG] 为 kafka_event 补充额外日志: /home/files/common_logs/event.log
+2026-05-19 15:36:16 [DEBUG] 为 kafka_flow 补充额外日志: /home/files/common_logs/flow.log
+2026-05-19 15:36:16 [DEBUG] 加载诊断模式 4 条: ['cambricon_driver', 'ros_master', 'rtsp_nodelet_fail', 'oom_kill']
+2026-05-19 15:36:18 [INFO] ✅ calibration_event: 无明显错误
+2026-05-19 15:36:18 [INFO] ✅ calibration_project: 无明显错误
+2026-05-19 15:36:18 [INFO] ❌ fusion: 1种不同错误 (来自['/home/files/common_logs/fusion.err', '/home/files/common_logs/fusion.log'])
+2026-05-19 15:36:18 [DEBUG]   • Binary file (standard input) matches
+2026-05-19 15:36:18 [INFO] ❌ infer: 8种不同错误 (来自['/home/files/common_logs/infer.err', '/home/files/common_logs/infer.log'])
+2026-05-19 15:36:18 [DEBUG]   • [ERROR] [1779174314.454839030]: RES:  xmin 107 ymin  627 xmax 270 ymax 720
+2026-05-19 15:36:18 [DEBUG]   • [ERROR] [1779174407.311432522]: RES:  xmin 13 ymin  668 xmax 210 ymax 720
+2026-05-19 15:36:18 [DEBUG]   • [ERROR] [1779174583.567101915]: RES:  xmin 53 ymin  682 xmax 206 ymax 720
+2026-05-19 15:36:18 [DEBUG]   • [ERROR] [1779174636.817898952]: RES:  xmin 131 ymin  672 xmax 292 ymax 720
+2026-05-19 15:36:18 [DEBUG]   • [ERROR] [1779175360.291789949]: RES:  xmin 661 ymin  679 xmax 768 ymax 720
+2026-05-19 15:36:18 [INFO] ❌ kafka_event: 3种不同错误 (来自['/home/files/common_logs/kafka_event.err', '/home/files/common_logs/kafka_event.log', '/home/files/common_logs/event.log'])
+2026-05-19 15:36:18 [DEBUG]   • [ERROR]2026-05-19 15:28:42,893 kafka_event_new.py:278: event has no file path:
+2026-05-19 15:36:18 [DEBUG]   • [ERROR]2026-05-19 15:26:43,955 kafka_event_new.py:278: event has no file path:
+2026-05-19 15:36:18 [DEBUG]   • [ERROR]2026-05-19 15:26:43,956 kafka_event_new.py:278: event has no file path:
+2026-05-19 15:36:18 [INFO] ✅ kafka_flow: 无明显错误
+2026-05-19 15:36:18 [INFO] ❌ kafka_monitor: 1种不同错误 (来自['/home/files/common_logs/kafka_monitor.err', '/home/files/common_logs/kafka_monitor.log'])
+2026-05-19 15:36:18 [DEBUG]   • Error in XmlRpcClient::writeRequest: write error (Connection refused).
+2026-05-19 15:36:18 [INFO] ❌ radar_bridge: 2种不同错误 (来自['/home/files/common_logs/radar_bridge.err', '/home/files/common_logs/radar_bridge.log'])
+2026-05-19 15:36:18 [DEBUG]   • Binary file (standard input) matches
+2026-05-19 15:36:18 [DEBUG]   • [radar_bridge] Waiting for ROS master...
+2026-05-19 15:36:18 [INFO] ✅ rosbridge_websocket: 无明显错误
+2026-05-19 15:36:18 [INFO] ❌ rtsp: 20种不同错误 (来自['/home/files/common_logs/rtsp.err', '/home/files/common_logs/rtsp.log'])
+2026-05-19 15:36:18 [DEBUG]   • VPU_DecGetOutputInfo decode fail framdIdx 1010540 error(0x00000000) reason(0x00400000), reasonExt(0x
+2026-05-19 15:36:18 [DEBUG]   • VPU_DecGetOutputInfo decode fail framdIdx 1083940 error(0x00000000) reason(0x00400000), reasonExt(0x
+2026-05-19 15:36:18 [DEBUG]   • VPU_DecGetOutputInfo decode fail framdIdx 10985058 error(0x00000000) reason(0x00400000), reasonExt(0
+2026-05-19 15:36:18 [DEBUG]   • VPU_DecGetOutputInfo decode fail framdIdx 10992144 error(0x00000000) reason(0x00400000), reasonExt(0
+2026-05-19 15:36:18 [DEBUG]   • VPU_DecGetOutputInfo decode fail framdIdx 10993144 error(0x00000000) reason(0x00400000), reasonExt(0
+2026-05-19 15:36:18 [INFO] ❌ traffic: 1种不同错误 (来自['/home/files/common_logs/traffic.err', '/home/files/common_logs/traffic.log'])
+2026-05-19 15:36:18 [DEBUG]   • [ERROR] [1765352343.075515151]: Failed to get 'radar_calib_params' from param server. Check YAML!
+2026-05-19 15:36:18 [INFO] ❌ zmq_bridge: 1种不同错误 (来自['/home/files/common_logs/zmq_bridge.err', '/home/files/common_logs/zmq_bridge.log'])
+2026-05-19 15:36:18 [DEBUG]   • terminate called after throwing an instance of 'zmqpp::zmq_internal_exception'
+2026-05-19 15:36:18 [INFO] 📡 步骤4: rostopic hz 检查...
+2026-05-19 15:36:21 [INFO] 关键topic: /k608_900/upstream/radar/track_object, /k608_900/upstream/radar/track_object_project, /k608_900/upstream/short_camera/image_detect/compressed, /k608_900/upstream/short_camera/image_raw, /k610_330/upstream/long_camera/image_detect/compressed, /k610_330/upstream/long_camera/image_raw, /k610_330/upstream/radar/track_object, /k610_330/upstream/radar/track_object_project, /k610_330/upstream/short_camera/image_detect/compressed, /k610_330/upstream/short_camera/image_raw, /mec_1008/fusion_track_object, /mec_1008/traffic_event_object/fps_hz
+2026-05-19 15:37:02 [INFO] ✅ /k608_900/upstream/radar/track_object: 19.989 Hz
+2026-05-19 15:37:02 [INFO] ✅ /k608_900/upstream/radar/track_object_project: 20.012 Hz
+2026-05-19 15:37:02 [INFO] ✅ /k608_900/upstream/short_camera/image_detect/compressed: 13.672 Hz
+2026-05-19 15:37:02 [INFO] ✅ /k608_900/upstream/short_camera/image_raw: 14.504 Hz
+2026-05-19 15:37:02 [INFO] ✅ /k610_330/upstream/long_camera/image_detect/compressed: 14.386 Hz
+2026-05-19 15:37:02 [INFO] ✅ /k610_330/upstream/long_camera/image_raw: 14.460 Hz
+2026-05-19 15:37:02 [INFO] ✅ /k610_330/upstream/radar/track_object: 20.002 Hz
+2026-05-19 15:37:02 [INFO] ✅ /k610_330/upstream/radar/track_object_project: 19.996 Hz
+2026-05-19 15:37:02 [INFO] ✅ /k610_330/upstream/short_camera/image_detect/compressed: 13.687 Hz
+2026-05-19 15:37:02 [INFO] ✅ /k610_330/upstream/short_camera/image_raw: 14.514 Hz
+2026-05-19 15:37:02 [INFO] ✅ /mec_1008/fusion_track_object: 19.989 Hz
+2026-05-19 15:37:02 [INFO] ✅ /mec_1008/traffic_event_object/fps_hz: 19.968 Hz
+2026-05-19 15:37:02 [INFO] 📡 传感器状态: 摄像头 4/4 | 雷达 2/2
+2026-05-19 15:37:53 [INFO] ======================================================================
+2026-05-19 15:37:53 [INFO] 🔍 诊断：物理机在线但容器不可连 - 10.145.8.66
+2026-05-19 15:37:53 [INFO] ======================================================================
+2026-05-19 15:37:53 [INFO] 🔐 登录物理机 10.145.8.66...
+2026-05-19 15:37:53 [INFO]   📋 数据库记录用户: root，优先尝试
+2026-05-19 15:37:54 [INFO]   ✅ 公钥登录成功: root
+2026-05-19 15:37:54 [INFO] 🐳 一次SSH采集物理机所有信息...
+2026-05-19 15:37:55 [INFO] ✅ Docker服务运行中
+2026-05-19 15:37:55 [INFO] ✅ dev容器存在且运行中: dev Up 4 years
+2026-05-19 15:37:55 [INFO] ✅ docker exec正常
+2026-05-19 15:37:55 [INFO] 📡 尝试连接容器SSH...
+2026-05-19 15:37:56 [INFO] ✅ 容器SSH可连接（监控显示离线）
+2026-05-19 15:37:56 [INFO] 📡 传感器状态: 摄像头 4/4 | 雷达 2/2
+2026-05-19 15:37:56 [INFO] ======================================================================
+2026-05-19 15:37:56 [INFO] 🔍 诊断：容器在线但今日图片为0 - 10.145.8.66
+2026-05-19 15:37:56 [INFO] ======================================================================
+2026-05-19 15:37:56 [INFO] 📡 步骤0: 检查容器连通性...
+2026-05-19 15:37:57 [INFO] ✅ 容器连接正常
+2026-05-19 15:37:57 [INFO] 📦 一次SSH采集容器初始数据...
+2026-05-19 15:37:58 [INFO] ✅ 今日图片数: 1007，已恢复正常，继续采集完整信息
+2026-05-19 15:37:58 [INFO] ✅ 所有进程运行正常 (11/11)
+2026-05-19 15:37:58 [INFO] ✅ roscore运行中
+2026-05-19 15:37:58 [INFO] 📋 步骤3: 检查各进程日志...
+2026-05-19 15:37:59 [DEBUG] 为 kafka_event 补充额外日志: /home/files/common_logs/event.log
+2026-05-19 15:37:59 [DEBUG] 为 kafka_flow 补充额外日志: /home/files/common_logs/flow.log
+2026-05-19 15:37:59 [DEBUG] 加载诊断模式 4 条: ['cambricon_driver', 'ros_master', 'rtsp_nodelet_fail', 'oom_kill']
+2026-05-19 15:38:00 [INFO] ❌ calibration_event: 2种不同错误 (来自['/home/files/common_logs/calibration_event.err', '/home/files/common_logs/calibration_event.log'])
+2026-05-19 15:38:00 [DEBUG]   • /usr/bin/du: cannot access '/home/files/common_logs/log/latest': No such file or directory
+2026-05-19 15:38:00 [DEBUG]   • INFO: cannot create a symlink to latest log directory: [Errno 2] No such file or directory: '/home/f
+2026-05-19 15:38:00 [INFO] ❌ calibration_project: 1种不同错误 (来自['/home/files/common_logs/calibration_project.err', '/home/files/common_logs/calibration_project.log'])
+2026-05-19 15:38:00 [DEBUG]   • INFO: cannot create a symlink to latest log directory: [Errno 2] No such file or directory: '/home/f
+2026-05-19 15:38:00 [INFO] ❌ fusion: 2种不同错误 (来自['/home/files/common_logs/fusion.err', '/home/files/common_logs/fusion.log'])
+2026-05-19 15:38:00 [DEBUG]   • INFO: cannot create a symlink to latest log directory: [Errno 2] No such file or directory: '/home/f
+2026-05-19 15:38:00 [DEBUG]   • terminate called after throwing an instance of 'std::system_error'
+2026-05-19 15:38:00 [INFO] ❌ infer: 1种不同错误 (来自['/home/files/common_logs/infer.err', '/home/files/common_logs/infer.log'])
+2026-05-19 15:38:00 [DEBUG]   • [ERROR] [1624873249.130550115]: Missing parameter: freid_engine_name
+2026-05-19 15:38:00 [INFO] ❌ kafka_event: 5种不同错误 (来自['/home/files/common_logs/kafka_event.err', '/home/files/common_logs/kafka_event.log', '/home/files/common_logs/event.log'])
+2026-05-19 15:38:00 [DEBUG]   • [ERROR]2026-05-19 14:41:00,877 kafka_event_new.py:275: event has no file path:
+2026-05-19 15:38:00 [DEBUG]   • [ERROR]2026-05-19 14:41:05,262 kafka_event_new.py:275: event has no file path:
+2026-05-19 15:38:00 [DEBUG]   • [ERROR]2026-05-19 14:52:04,804 kafka_event_new.py:275: event has no file path:
+2026-05-19 15:38:00 [DEBUG]   • [ERROR]2026-05-19 15:07:34,451 kafka_event_new.py:275: event has no file path:
+2026-05-19 15:38:00 [DEBUG]   • [ERROR]2026-05-19 15:14:47,327 kafka_event_new.py:275: event has no file path:
+2026-05-19 15:38:00 [INFO] ❌ kafka_flow: 3种不同错误 (来自['/home/files/common_logs/kafka_flow.err', '/home/files/common_logs/kafka_flow.log', '/home/files/common_logs/flow.log'])
+2026-05-19 15:38:00 [DEBUG]   • [ERROR]2026-05-19 15:35:57,636 kafka_flow_new.py:244: parse error 'flow_kafka' object has no attribu
+2026-05-19 15:38:00 [DEBUG]   • [ERROR]2026-05-19 15:33:57,612 kafka_flow_new.py:244: parse error 'flow_kafka' object has no attribu
+2026-05-19 15:38:00 [DEBUG]   • [ERROR]2026-05-19 15:34:57,612 kafka_flow_new.py:244: parse error 'flow_kafka' object has no attribu
+2026-05-19 15:38:00 [INFO] ✅ kafka_monitor: 无明显错误
+2026-05-19 15:38:00 [INFO] ❌ radar_bridge: 2种不同错误 (来自['/home/files/common_logs/radar_bridge.err', '/home/files/common_logs/radar_bridge.log'])
+2026-05-19 15:38:00 [DEBUG]   • [ERROR] [1624873248.627213233]: Connection Failed: Network is unreachable
+2026-05-19 15:38:00 [DEBUG]   • [ERROR] [1776055906.416151060]: Connection Failed: Connection refused
+2026-05-19 15:38:00 [INFO] ❌ rosbridge_websocket: 2种不同错误 (来自['/home/files/common_logs/rosbridge_websocket.err', '/home/files/common_logs/rosbridge_websocket.log'])
+2026-05-19 15:38:00 [DEBUG]   • /usr/bin/du: cannot access '/home/files/common_logs/log/latest': No such file or directory
+2026-05-19 15:38:00 [DEBUG]   • INFO: cannot create a symlink to latest log directory: [Errno 2] No such file or directory: '/home/f
+2026-05-19 15:38:00 [INFO] ❌ rtsp: 20种不同错误 (来自['/home/files/common_logs/rtsp.err', '/home/files/common_logs/rtsp.log'])
+2026-05-19 15:38:00 [DEBUG]   • mpp[1003]: kmpp_meta: kmpp_meta_init kmpp meta get objdef failed
+2026-05-19 15:38:00 [DEBUG]   • mpp[1004]: kmpp_meta: kmpp_meta_init kmpp meta get objdef failed
+2026-05-19 15:38:00 [DEBUG]   • mpp[1006]: kmpp_meta: kmpp_meta_init kmpp meta get objdef failed
+2026-05-19 15:38:00 [DEBUG]   • mpp[1010]: kmpp_meta: kmpp_meta_init kmpp meta get objdef failed
+2026-05-19 15:38:00 [DEBUG]   • mpp[1017]: kmpp_meta: kmpp_meta_init kmpp meta get objdef failed
+2026-05-19 15:38:00 [INFO] ❌ traffic: 6种不同错误 (来自['/home/files/common_logs/traffic.err', '/home/files/common_logs/traffic.log'])
+2026-05-19 15:38:00 [DEBUG]   • [ERROR] [1760439911.233684658]: Client [/mk18_800/kafka_bridge_flow] wants topic /k18_800/upstream/r
+2026-05-19 15:38:00 [DEBUG]   • [ERROR] [1760439911.340016136]: Client [/mk18_800/kafka_bridge_event] wants topic /mk18_800/traffic_
+2026-05-19 15:38:00 [DEBUG]   • [ERROR] [1760439911.436493789]: Client [/mk18_800/kafka_bridge_monitor] wants topic /k18_800/upstrea
+2026-05-19 15:38:00 [DEBUG]   • /usr/bin/du: cannot access '/home/files/common_logs/log/latest': No such file or directory
+2026-05-19 15:38:00 [DEBUG]   • Error opening directory: No such file or directory
+2026-05-19 15:38:00 [INFO] 📡 步骤4: rostopic hz 检查...
+2026-05-19 15:38:02 [INFO] 关键topic: /k18_800/downstream/long_camera/image_detect/compressed, /k18_800/downstream/long_camera/image_raw, /k18_800/downstream/radar/track_object, /k18_800/downstream/radar/track_object_project, /k18_800/downstream/short_camera/image_detect/compressed, /k18_800/downstream/short_camera/image_raw, /k18_800/upstream/long_camera/image_detect/compressed, /k18_800/upstream/long_camera/image_raw, /k18_800/upstream/radar/track_object, /k18_800/upstream/radar/track_object_project, /k18_800/upstream/short_camera/image_detect/compressed, /k18_800/upstream/short_camera/image_raw, /mk18_800/fusion_track_object, /mk18_800/traffic_event_object/fps_hz
+2026-05-19 15:38:39 [INFO] ✅ /k18_800/downstream/long_camera/image_detect/compressed: 10.063 Hz
+2026-05-19 15:38:39 [INFO] ✅ /k18_800/downstream/long_camera/image_raw: 10.025 Hz
+2026-05-19 15:38:39 [INFO] ✅ /k18_800/downstream/radar/track_object: 19.999 Hz
+2026-05-19 15:38:39 [INFO] ✅ /k18_800/downstream/radar/track_object_project: 20.001 Hz
+2026-05-19 15:38:39 [INFO] ✅ /k18_800/downstream/short_camera/image_detect/compressed: 12.626 Hz
+2026-05-19 15:38:39 [INFO] ✅ /k18_800/downstream/short_camera/image_raw: 14.568 Hz
+2026-05-19 15:38:39 [INFO] ✅ /k18_800/upstream/long_camera/image_detect/compressed: 12.483 Hz
+2026-05-19 15:38:39 [INFO] ✅ /k18_800/upstream/long_camera/image_raw: 14.461 Hz
+2026-05-19 15:38:39 [INFO] ✅ /k18_800/upstream/radar/track_object: 20.000 Hz
+2026-05-19 15:38:39 [INFO] ✅ /k18_800/upstream/radar/track_object_project: 19.999 Hz
+2026-05-19 15:38:39 [INFO] ✅ /k18_800/upstream/short_camera/image_detect/compressed: 12.842 Hz
+2026-05-19 15:38:39 [INFO] ✅ /k18_800/upstream/short_camera/image_raw: 14.451 Hz
+2026-05-19 15:38:39 [INFO] ✅ /mk18_800/fusion_track_object: 19.999 Hz
+2026-05-19 15:38:39 [INFO] ✅ /mk18_800/traffic_event_object/fps_hz: 20.010 Hz
+2026-05-19 15:38:39 [INFO] 📡 传感器状态: 摄像头 4/4 | 雷达 2/2
+2026-05-19 15:39:31 [INFO] ======================================================================
+2026-05-19 15:39:31 [INFO] 🔍 诊断：物理机在线但容器不可连 - 10.145.14.1
+2026-05-19 15:39:31 [INFO] ======================================================================
+2026-05-19 15:39:31 [INFO] 🔐 登录物理机 10.145.14.1...
+2026-05-19 15:39:31 [INFO]   📋 数据库记录用户: root，优先尝试
+2026-05-19 15:39:32 [INFO]   ✅ 公钥登录成功: root
+2026-05-19 15:39:32 [INFO] 🐳 一次SSH采集物理机所有信息...
+2026-05-19 15:39:34 [INFO] ✅ Docker服务运行中
+2026-05-19 15:39:34 [INFO] ✅ dev容器存在且运行中: dev Up 3 months
+2026-05-19 15:39:34 [INFO] ✅ docker exec正常
+2026-05-19 15:39:34 [INFO] 📡 尝试连接容器SSH...
+2026-05-19 15:39:44 [WARNING] SSH执行超时: root@10.145.14.1:10022 (10s)
+2026-05-19 15:39:44 [INFO]   🔄 容器公钥失败，尝试密码登录...
+2026-05-19 15:39:49 [WARNING] Paramiko密码登录失败 root@10.145.14.1:10022 - timed out
+2026-05-19 15:39:49 [INFO] 🔍 容器SSH不可达但docker exec可用，通过docker exec探查原因并继续诊断...
+2026-05-19 15:39:50 [WARNING] ❌ 容器SSH不可达(docker exec可用)，原因: sshd服务运行中; 10022端口在监听
+2026-05-19 15:39:50 [INFO] 🐳 通过docker exec采集容器诊断数据...
+2026-05-19 15:39:51 [INFO] 📡 传感器状态: 摄像头 4/4 | 雷达 2/2
+2026-05-19 15:39:51 [INFO] ======================================================================
+2026-05-19 15:39:51 [INFO] 🔍 诊断：容器在线但今日图片为0 - 10.145.14.1
+2026-05-19 15:39:51 [INFO] ======================================================================
+2026-05-19 15:39:51 [INFO] 📡 步骤0: 检查容器连通性...
+2026-05-19 15:39:52 [INFO] ✅ 容器连接正常
+2026-05-19 15:39:52 [INFO] 📦 一次SSH采集容器初始数据...
+2026-05-19 15:39:54 [INFO] ✅ 今日图片数: 3325，已恢复正常，继续采集完整信息
+2026-05-19 15:39:54 [INFO] ✅ 所有进程运行正常 (11/11)
+2026-05-19 15:39:54 [INFO] ✅ roscore运行中
+2026-05-19 15:39:54 [INFO] 📋 步骤3: 检查各进程日志...
+2026-05-19 15:39:54 [DEBUG] 为 kafka_event 补充额外日志: /home/files/common_logs/event.log
+2026-05-19 15:39:54 [DEBUG] 为 kafka_flow 补充额外日志: /home/files/common_logs/flow.log
+2026-05-19 15:39:54 [DEBUG] 加载诊断模式 4 条: ['cambricon_driver', 'ros_master', 'rtsp_nodelet_fail', 'oom_kill']
+2026-05-19 15:39:55 [INFO] ✅ calibration_event: 无明显错误
+2026-05-19 15:39:55 [INFO] ✅ calibration_project: 无明显错误
+2026-05-19 15:39:55 [INFO] ❌ fusion: 1种不同错误 (来自['/home/files/common_logs/fusion.err', '/home/files/common_logs/fusion.log'])
+2026-05-19 15:39:55 [DEBUG]   • terminate called after throwing an instance of 'std::system_error'
+2026-05-19 15:39:55 [INFO] ✅ infer: 无明显错误
+2026-05-19 15:39:55 [INFO] ❌ kafka_event: 1种不同错误 (来自['/home/files/common_logs/kafka_event.err', '/home/files/common_logs/kafka_event.log', '/home/files/common_logs/event.log'])
+2026-05-19 15:39:55 [DEBUG]   • [ERROR]2026-05-19 15:37:23,027 kafka_event_new.py:275: event has no file path:
+2026-05-19 15:39:55 [INFO] ✅ kafka_flow: 无明显错误
+2026-05-19 15:39:55 [INFO] ✅ kafka_monitor: 无明显错误
+2026-05-19 15:39:55 [INFO] ✅ radar_bridge: 无明显错误
+2026-05-19 15:39:55 [INFO] ✅ rosbridge_websocket: 无明显错误
+2026-05-19 15:39:55 [INFO] ❌ rtsp: 19种不同错误 (来自['/home/files/common_logs/rtsp.err', '/home/files/common_logs/rtsp.log'])
+2026-05-19 15:39:55 [DEBUG]   • [ERROR] [1769585930.822107650]: received a tcpros connection for a nonexistent service [8dcf98e92081
+2026-05-19 15:39:55 [DEBUG]   • mpp[1119]: kmpp_meta: kmpp_meta_init kmpp meta get objdef failed
+2026-05-19 15:39:55 [DEBUG]   • mpp[1671617]: kmpp_meta: kmpp_meta_init kmpp meta get objdef failed
+2026-05-19 15:39:55 [DEBUG]   • mpp[1671619]: kmpp_meta: kmpp_meta_init kmpp meta get objdef failed
+2026-05-19 15:39:55 [DEBUG]   • mpp[1671620]: kmpp_meta: kmpp_meta_init kmpp meta get objdef failed
+2026-05-19 15:39:55 [INFO] ❌ traffic: 4种不同错误 (来自['/home/files/common_logs/traffic.err', '/home/files/common_logs/traffic.log'])
+2026-05-19 15:39:55 [DEBUG]   • [ERROR] [1760439928.630412142]: Client [/mk47_875/kafka_bridge_flow] wants topic /k47_875/upstream/r
+2026-05-19 15:39:55 [DEBUG]   • [ERROR] [1760439928.686322898]: Client [/mk47_875/kafka_bridge_event] wants topic /mk47_875/traffic_
+2026-05-19 15:39:55 [DEBUG]   • [ERROR] [1760439928.786144366]: Client [/mk47_875/kafka_bridge_monitor] wants topic /k47_875/upstrea
+2026-05-19 15:39:55 [DEBUG]   • Error opening directory: No such file or directory
+2026-05-19 15:39:55 [INFO] 📡 步骤4: rostopic hz 检查...
+2026-05-19 15:39:58 [INFO] 关键topic: /k47_875/downstream/long_camera/image_detect/compressed, /k47_875/downstream/long_camera/image_raw, /k47_875/downstream/radar/track_object, /k47_875/downstream/radar/track_object_project, /k47_875/downstream/short_camera/image_detect/compressed, /k47_875/downstream/short_camera/image_raw, /k47_875/upstream/long_camera/image_detect/compressed, /k47_875/upstream/long_camera/image_raw, /k47_875/upstream/radar/track_object, /k47_875/upstream/radar/track_object_project, /k47_875/upstream/short_camera/image_detect/compressed, /k47_875/upstream/short_camera/image_raw, /mk47_875/fusion_track_object, /mk47_875/traffic_event_object/fps_hz
+2026-05-19 15:40:35 [INFO] ✅ /k47_875/downstream/long_camera/image_detect/compressed: 10.074 Hz
+2026-05-19 15:40:35 [INFO] ✅ /k47_875/downstream/long_camera/image_raw: 10.029 Hz
+2026-05-19 15:40:35 [INFO] ✅ /k47_875/downstream/radar/track_object: 20.000 Hz
+2026-05-19 15:40:35 [INFO] ✅ /k47_875/downstream/radar/track_object_project: 20.002 Hz
+2026-05-19 15:40:35 [INFO] ✅ /k47_875/downstream/short_camera/image_detect/compressed: 13.001 Hz
+2026-05-19 15:40:35 [INFO] ✅ /k47_875/downstream/short_camera/image_raw: 14.570 Hz
+2026-05-19 15:40:35 [INFO] ✅ /k47_875/upstream/long_camera/image_detect/compressed: 10.300 Hz
+2026-05-19 15:40:35 [INFO] ✅ /k47_875/upstream/long_camera/image_raw: 10.026 Hz
+2026-05-19 15:40:35 [INFO] ✅ /k47_875/upstream/radar/track_object: 20.005 Hz
+2026-05-19 15:40:35 [INFO] ✅ /k47_875/upstream/radar/track_object_project: 20.013 Hz
+2026-05-19 15:40:35 [INFO] ✅ /k47_875/upstream/short_camera/image_detect/compressed: 12.612 Hz
+2026-05-19 15:40:35 [INFO] ✅ /k47_875/upstream/short_camera/image_raw: 14.625 Hz
+2026-05-19 15:40:35 [INFO] ✅ /mk47_875/fusion_track_object: 19.980 Hz
+2026-05-19 15:40:35 [INFO] ✅ /mk47_875/traffic_event_object/fps_hz: 20.000 Hz
+2026-05-19 15:40:35 [INFO] 📡 传感器状态: 摄像头 4/4 | 雷达 2/2
+2026-05-19 15:47:18 [INFO] ======================================================================
+2026-05-19 15:47:18 [INFO] 🔍 诊断：物理机在线但容器不可连 - 10.145.14.1
+2026-05-19 15:47:18 [INFO] ======================================================================
+2026-05-19 15:47:18 [INFO] 🔐 登录物理机 10.145.14.1...
+2026-05-19 15:47:18 [INFO]   📋 数据库记录用户: root，优先尝试
+2026-05-19 15:47:19 [INFO]   ✅ 公钥登录成功: root
+2026-05-19 15:47:19 [INFO] 🐳 一次SSH采集物理机所有信息...
+2026-05-19 15:47:21 [INFO] ✅ Docker服务运行中
+2026-05-19 15:47:21 [INFO] ✅ dev容器存在且运行中: dev Up 3 months
+2026-05-19 15:47:21 [INFO] ✅ docker exec正常
+2026-05-19 15:47:21 [INFO] 📡 尝试连接容器SSH...
+2026-05-19 15:47:21 [INFO] ✅ 容器SSH可连接（监控显示离线）
+2026-05-19 15:47:21 [INFO] 📡 传感器状态: 摄像头 4/4 | 雷达 2/2
+2026-05-19 15:47:21 [INFO] ======================================================================
+2026-05-19 15:47:21 [INFO] 🔍 诊断：容器在线但今日图片为0 - 10.145.14.1
+2026-05-19 15:47:21 [INFO] ======================================================================
+2026-05-19 15:47:21 [INFO] 📡 步骤0: 检查容器连通性...
+2026-05-19 15:47:41 [WARNING] SSH执行超时: root@10.145.14.1:10022 (20s)
+2026-05-19 15:47:41 [INFO]    首次连接失败，重试中...
+2026-05-19 15:47:43 [INFO] ✅ 容器连接正常
+2026-05-19 15:47:43 [INFO] 📦 一次SSH采集容器初始数据...
+2026-05-19 15:47:44 [INFO] ✅ 今日图片数: 3371，已恢复正常，继续采集完整信息
+2026-05-19 15:47:44 [INFO] ✅ 所有进程运行正常 (11/11)
+2026-05-19 15:47:44 [INFO] ✅ roscore运行中
+2026-05-19 15:47:44 [INFO] 📋 步骤3: 检查各进程日志...
+2026-05-19 15:47:45 [DEBUG] 为 kafka_event 补充额外日志: /home/files/common_logs/event.log
+2026-05-19 15:47:45 [DEBUG] 为 kafka_flow 补充额外日志: /home/files/common_logs/flow.log
+2026-05-19 15:47:45 [DEBUG] 加载诊断模式 4 条: ['cambricon_driver', 'ros_master', 'rtsp_nodelet_fail', 'oom_kill']
+2026-05-19 15:47:46 [INFO] ✅ calibration_event: 无明显错误
+2026-05-19 15:47:46 [INFO] ✅ calibration_project: 无明显错误
+2026-05-19 15:47:46 [INFO] ❌ fusion: 1种不同错误 (来自['/home/files/common_logs/fusion.err', '/home/files/common_logs/fusion.log'])
+2026-05-19 15:47:46 [DEBUG]   • terminate called after throwing an instance of 'std::system_error'
+2026-05-19 15:47:46 [INFO] ✅ infer: 无明显错误
+2026-05-19 15:47:46 [INFO] ❌ kafka_event: 2种不同错误 (来自['/home/files/common_logs/kafka_event.err', '/home/files/common_logs/kafka_event.log', '/home/files/common_logs/event.log'])
+2026-05-19 15:47:46 [DEBUG]   • [ERROR]2026-05-19 15:46:01,274 kafka_event_new.py:275: event has no file path:
+2026-05-19 15:47:46 [DEBUG]   • [ERROR]2026-05-19 15:44:01,525 kafka_event_new.py:275: event has no file path:
+2026-05-19 15:47:46 [INFO] ✅ kafka_flow: 无明显错误
+2026-05-19 15:47:46 [INFO] ✅ kafka_monitor: 无明显错误
+2026-05-19 15:47:46 [INFO] ✅ radar_bridge: 无明显错误
+2026-05-19 15:47:46 [INFO] ✅ rosbridge_websocket: 无明显错误
+2026-05-19 15:47:46 [INFO] ❌ rtsp: 19种不同错误 (来自['/home/files/common_logs/rtsp.err', '/home/files/common_logs/rtsp.log'])
+2026-05-19 15:47:46 [DEBUG]   • [ERROR] [1769585930.822107650]: received a tcpros connection for a nonexistent service [8dcf98e92081
+2026-05-19 15:47:46 [DEBUG]   • mpp[1119]: kmpp_meta: kmpp_meta_init kmpp meta get objdef failed
+2026-05-19 15:47:46 [DEBUG]   • mpp[1671617]: kmpp_meta: kmpp_meta_init kmpp meta get objdef failed
+2026-05-19 15:47:46 [DEBUG]   • mpp[1671619]: kmpp_meta: kmpp_meta_init kmpp meta get objdef failed
+2026-05-19 15:47:46 [DEBUG]   • mpp[1671620]: kmpp_meta: kmpp_meta_init kmpp meta get objdef failed
+2026-05-19 15:47:46 [INFO] ❌ traffic: 4种不同错误 (来自['/home/files/common_logs/traffic.err', '/home/files/common_logs/traffic.log'])
+2026-05-19 15:47:46 [DEBUG]   • [ERROR] [1760439928.630412142]: Client [/mk47_875/kafka_bridge_flow] wants topic /k47_875/upstream/r
+2026-05-19 15:47:46 [DEBUG]   • [ERROR] [1760439928.686322898]: Client [/mk47_875/kafka_bridge_event] wants topic /mk47_875/traffic_
+2026-05-19 15:47:46 [DEBUG]   • [ERROR] [1760439928.786144366]: Client [/mk47_875/kafka_bridge_monitor] wants topic /k47_875/upstrea
+2026-05-19 15:47:46 [DEBUG]   • Error opening directory: No such file or directory
+2026-05-19 15:47:46 [INFO] 📡 步骤4: rostopic hz 检查...
+2026-05-19 15:47:47 [INFO] 关键topic: /k47_875/downstream/long_camera/image_detect/compressed, /k47_875/downstream/long_camera/image_raw, /k47_875/downstream/radar/track_object, /k47_875/downstream/radar/track_object_project, /k47_875/downstream/short_camera/image_detect/compressed, /k47_875/downstream/short_camera/image_raw, /k47_875/upstream/long_camera/image_detect/compressed, /k47_875/upstream/long_camera/image_raw, /k47_875/upstream/radar/track_object, /k47_875/upstream/radar/track_object_project, /k47_875/upstream/short_camera/image_detect/compressed, /k47_875/upstream/short_camera/image_raw, /mk47_875/fusion_track_object, /mk47_875/traffic_event_object/fps_hz
+2026-05-19 15:48:24 [INFO] ✅ /k47_875/downstream/long_camera/image_detect/compressed: 10.198 Hz
+2026-05-19 15:48:24 [INFO] ✅ /k47_875/downstream/long_camera/image_raw: 10.019 Hz
+2026-05-19 15:48:24 [INFO] ✅ /k47_875/downstream/radar/track_object: 19.996 Hz
+2026-05-19 15:48:24 [INFO] ✅ /k47_875/downstream/radar/track_object_project: 19.998 Hz
+2026-05-19 15:48:24 [INFO] ✅ /k47_875/downstream/short_camera/image_detect/compressed: 13.282 Hz
+2026-05-19 15:48:24 [INFO] ✅ /k47_875/downstream/short_camera/image_raw: 14.703 Hz
+2026-05-19 15:48:24 [INFO] ✅ /k47_875/upstream/long_camera/image_detect/compressed: 10.029 Hz
+2026-05-19 15:48:24 [INFO] ✅ /k47_875/upstream/long_camera/image_raw: 10.044 Hz
+2026-05-19 15:48:24 [INFO] ✅ /k47_875/upstream/radar/track_object: 20.002 Hz
+2026-05-19 15:48:24 [INFO] ✅ /k47_875/upstream/radar/track_object_project: 20.009 Hz
+2026-05-19 15:48:24 [INFO] ✅ /k47_875/upstream/short_camera/image_detect/compressed: 12.972 Hz
+2026-05-19 15:48:24 [INFO] ✅ /k47_875/upstream/short_camera/image_raw: 14.664 Hz
+2026-05-19 15:48:24 [INFO] ✅ /mk47_875/fusion_track_object: 20.004 Hz
+2026-05-19 15:48:24 [INFO] ✅ /mk47_875/traffic_event_object/fps_hz: 20.002 Hz
+2026-05-19 15:48:24 [INFO] 📡 传感器状态: 摄像头 4/4 | 雷达 2/2
+2026-05-19 15:49:03 [INFO] ======================================================================
+2026-05-19 15:49:03 [INFO] 🔍 诊断：物理机在线但容器不可连 - 172.18.32.94
+2026-05-19 15:49:03 [INFO] ======================================================================
+2026-05-19 15:49:03 [INFO] 🔐 登录物理机 172.18.32.94...
+2026-05-19 15:49:03 [INFO]   📋 数据库记录用户: root，优先尝试
+2026-05-19 15:49:05 [INFO]   ✅ 公钥登录成功: root
+2026-05-19 15:49:05 [INFO] 🐳 一次SSH采集物理机所有信息...
+2026-05-19 15:49:07 [INFO] ✅ Docker服务运行中
+2026-05-19 15:49:07 [INFO] ✅ dev容器存在且运行中: dev Up 24 hours
+2026-05-19 15:49:07 [INFO] ✅ docker exec正常
+2026-05-19 15:49:07 [INFO] 📡 尝试连接容器SSH...
+2026-05-19 15:49:27 [WARNING] SSH执行超时: root@172.18.32.94:10022 (20s)
+2026-05-19 15:49:27 [INFO]    容器SSH公钥失败，重试中...
+2026-05-19 15:49:48 [WARNING] SSH执行超时: root@172.18.32.94:10022 (20s)
+2026-05-19 15:49:48 [INFO]   🔄 容器公钥失败，尝试密码登录...
+2026-05-19 15:49:55 [WARNING] Paramiko密码登录失败 root@172.18.32.94:10022 - timed out
+2026-05-19 15:49:55 [INFO] 🔍 容器SSH不可达但docker exec可用，通过docker exec探查原因并继续诊断...
+2026-05-19 15:49:57 [WARNING] ❌ 容器SSH不可达(docker exec可用)，原因: sshd服务运行中; 10022端口在监听
+2026-05-19 15:49:57 [INFO] 🐳 通过docker exec采集容器诊断数据...
+2026-05-19 15:50:00 [INFO] 📡 传感器状态: 摄像头 4/4 | 雷达 2/2
+2026-05-19 15:50:00 [INFO] ======================================================================
+2026-05-19 15:50:00 [INFO] 🔍 诊断：容器在线但今日图片为0 - 172.18.32.94
+2026-05-19 15:50:00 [INFO] ======================================================================
+2026-05-19 15:50:00 [INFO] 📡 步骤0: 检查容器连通性...
+2026-05-19 15:50:20 [WARNING] SSH执行超时: root@172.18.32.94:10022 (20s)
+2026-05-19 15:50:20 [INFO]    首次连接失败，重试中...
+2026-05-19 15:50:41 [WARNING] SSH执行超时: root@172.18.32.94:10022 (20s)
+2026-05-19 15:50:41 [INFO]    二次连接失败，再次重试...
+2026-05-19 15:51:02 [WARNING] SSH执行超时: root@172.18.32.94:10022 (20s)
+2026-05-19 15:51:02 [INFO]   容器SSH直连失败，尝试通过物理机docker exec...
+2026-05-19 15:51:02 [INFO] 🔐 登录物理机 172.18.32.94...
+2026-05-19 15:51:02 [INFO]   📋 数据库记录用户: root，优先尝试
+2026-05-19 15:51:04 [INFO]   ✅ 公钥登录成功: root
+2026-05-19 15:51:05 [INFO]   ✅ 物理机docker exec可用，通过docker exec诊断
+2026-05-19 15:51:07 [WARNING]   容器SSH不可达原因: sshd服务运行中; 10022端口在监听
+2026-05-19 15:51:07 [INFO] 📦 一次SSH采集容器初始数据...
+2026-05-19 15:51:09 [INFO] ✅ 今日图片数: 1485，已恢复正常，继续采集完整信息
+2026-05-19 15:51:09 [INFO] ✅ 所有进程运行正常 (12/12)
+2026-05-19 15:51:09 [INFO] ✅ roscore运行中
+2026-05-19 15:51:09 [INFO] 📋 步骤3: 检查各进程日志...
+2026-05-19 15:51:10 [DEBUG] 为 kafka_event 补充额外日志: /home/files/common_logs/event.log
+2026-05-19 15:51:10 [DEBUG] 为 kafka_flow 补充额外日志: /home/files/common_logs/flow.log
+2026-05-19 15:51:10 [DEBUG] 加载诊断模式 4 条: ['cambricon_driver', 'ros_master', 'rtsp_nodelet_fail', 'oom_kill']
+2026-05-19 15:51:12 [INFO] ✅ calibration_event: 无明显错误
+2026-05-19 15:51:12 [INFO] ✅ calibration_project: 无明显错误
+2026-05-19 15:51:12 [INFO] ❌ fusion: 1种不同错误 (来自['/home/files/common_logs/fusion.err', '/home/files/common_logs/fusion.log'])
+2026-05-19 15:51:12 [DEBUG]   • Binary file (standard input) matches
+2026-05-19 15:51:12 [INFO] ❌ infer: 14种不同错误 (来自['/home/files/common_logs/infer.err', '/home/files/common_logs/infer.log'])
+2026-05-19 15:51:12 [DEBUG]   • [ERROR] [1779174314.454839030]: RES:  xmin 107 ymin  627 xmax 270 ymax 720
+2026-05-19 15:51:12 [DEBUG]   • [ERROR] [1779174407.311432522]: RES:  xmin 13 ymin  668 xmax 210 ymax 720
+2026-05-19 15:51:12 [DEBUG]   • [ERROR] [1779174583.567101915]: RES:  xmin 53 ymin  682 xmax 206 ymax 720
+2026-05-19 15:51:12 [DEBUG]   • [ERROR] [1779174636.817898952]: RES:  xmin 131 ymin  672 xmax 292 ymax 720
+2026-05-19 15:51:12 [DEBUG]   • [ERROR] [1779175360.291789949]: RES:  xmin 661 ymin  679 xmax 768 ymax 720
+2026-05-19 15:51:12 [INFO] ✅ kafka_event: 无明显错误
+2026-05-19 15:51:12 [INFO] ✅ kafka_flow: 无明显错误
+2026-05-19 15:51:12 [INFO] ❌ kafka_monitor: 1种不同错误 (来自['/home/files/common_logs/kafka_monitor.err', '/home/files/common_logs/kafka_monitor.log'])
+2026-05-19 15:51:12 [DEBUG]   • Error in XmlRpcClient::writeRequest: write error (Connection refused).
+2026-05-19 15:51:12 [INFO] ❌ radar_bridge: 2种不同错误 (来自['/home/files/common_logs/radar_bridge.err', '/home/files/common_logs/radar_bridge.log'])
+2026-05-19 15:51:12 [DEBUG]   • Binary file (standard input) matches
+2026-05-19 15:51:12 [DEBUG]   • [radar_bridge] Waiting for ROS master...
+2026-05-19 15:51:12 [INFO] ✅ rosbridge_websocket: 无明显错误
+2026-05-19 15:51:12 [INFO] ❌ rtsp: 20种不同错误 (来自['/home/files/common_logs/rtsp.err', '/home/files/common_logs/rtsp.log'])
+2026-05-19 15:51:12 [DEBUG]   • VPU_DecGetOutputInfo decode fail framdIdx 1010540 error(0x00000000) reason(0x00400000), reasonExt(0x
+2026-05-19 15:51:12 [DEBUG]   • VPU_DecGetOutputInfo decode fail framdIdx 1083940 error(0x00000000) reason(0x00400000), reasonExt(0x
+2026-05-19 15:51:12 [DEBUG]   • VPU_DecGetOutputInfo decode fail framdIdx 10985058 error(0x00000000) reason(0x00400000), reasonExt(0
+2026-05-19 15:51:12 [DEBUG]   • VPU_DecGetOutputInfo decode fail framdIdx 10992144 error(0x00000000) reason(0x00400000), reasonExt(0
+2026-05-19 15:51:12 [DEBUG]   • VPU_DecGetOutputInfo decode fail framdIdx 10993144 error(0x00000000) reason(0x00400000), reasonExt(0
+2026-05-19 15:51:12 [INFO] ❌ traffic: 1种不同错误 (来自['/home/files/common_logs/traffic.err', '/home/files/common_logs/traffic.log'])
+2026-05-19 15:51:12 [DEBUG]   • [ERROR] [1765352343.075515151]: Failed to get 'radar_calib_params' from param server. Check YAML!
+2026-05-19 15:51:12 [INFO] ❌ zmq_bridge: 1种不同错误 (来自['/home/files/common_logs/zmq_bridge.err', '/home/files/common_logs/zmq_bridge.log'])
+2026-05-19 15:51:12 [DEBUG]   • terminate called after throwing an instance of 'zmqpp::zmq_internal_exception'
+2026-05-19 15:51:12 [INFO] 📡 步骤4: rostopic hz 检查...
+2026-05-19 15:51:16 [INFO] 关键topic: /k608_900/upstream/radar/track_object, /k608_900/upstream/radar/track_object_project, /k608_900/upstream/short_camera/image_detect/compressed, /k608_900/upstream/short_camera/image_raw, /k610_330/upstream/long_camera/image_detect/compressed, /k610_330/upstream/long_camera/image_raw, /k610_330/upstream/radar/track_object, /k610_330/upstream/radar/track_object_project, /k610_330/upstream/short_camera/image_detect/compressed, /k610_330/upstream/short_camera/image_raw, /mec_1008/fusion_track_object, /mec_1008/traffic_event_object/fps_hz
+2026-05-19 15:51:56 [INFO] ✅ /k608_900/upstream/radar/track_object: 20.002 Hz
+2026-05-19 15:51:56 [INFO] ✅ /k608_900/upstream/radar/track_object_project: 20.012 Hz
+2026-05-19 15:51:56 [INFO] ✅ /k608_900/upstream/short_camera/image_detect/compressed: 14.455 Hz
+2026-05-19 15:51:56 [INFO] ✅ /k608_900/upstream/short_camera/image_raw: 14.462 Hz
+2026-05-19 15:51:56 [INFO] ✅ /k610_330/upstream/long_camera/image_detect/compressed: 14.437 Hz
+2026-05-19 15:51:56 [INFO] ✅ /k610_330/upstream/long_camera/image_raw: 14.445 Hz
+2026-05-19 15:51:56 [INFO] ✅ /k610_330/upstream/radar/track_object: 20.008 Hz
+2026-05-19 15:51:56 [INFO] ✅ /k610_330/upstream/radar/track_object_project: 20.012 Hz
+2026-05-19 15:51:56 [INFO] ✅ /k610_330/upstream/short_camera/image_detect/compressed: 14.521 Hz
+2026-05-19 15:51:56 [INFO] ✅ /k610_330/upstream/short_camera/image_raw: 14.504 Hz
+2026-05-19 15:51:56 [INFO] ✅ /mec_1008/fusion_track_object: 20.024 Hz
+2026-05-19 15:51:56 [INFO] ✅ /mec_1008/traffic_event_object/fps_hz: 20.023 Hz
+2026-05-19 15:51:56 [INFO] 📡 传感器状态: 摄像头 4/4 | 雷达 2/2
+2026-05-19 15:56:12 [INFO] ======================================================================
+2026-05-19 15:56:12 [INFO] 🔍 诊断：物理机在线但容器不可连 - 172.18.32.94
+2026-05-19 15:56:12 [INFO] ======================================================================
+2026-05-19 15:56:12 [INFO] 🔐 登录物理机 172.18.32.94...
+2026-05-19 15:56:12 [INFO]   📋 数据库记录用户: root，优先尝试
+2026-05-19 15:56:14 [INFO]   ✅ 公钥登录成功: root
+2026-05-19 15:56:14 [INFO] 🐳 一次SSH采集物理机所有信息...
+2026-05-19 15:56:16 [INFO] ✅ Docker服务运行中
+2026-05-19 15:56:16 [INFO] ✅ dev容器存在且运行中: dev Up 24 hours
+2026-05-19 15:56:16 [INFO] ✅ docker exec正常
+2026-05-19 15:56:16 [INFO] 📡 传感器状态: 摄像头 4/4 | 雷达 2/2
+2026-05-19 15:56:16 [INFO] ======================================================================
+2026-05-19 15:56:16 [INFO] 🔍 诊断：容器在线但今日图片为0 - 172.18.32.94
+2026-05-19 15:56:16 [INFO] ======================================================================
+2026-05-19 15:56:16 [INFO] 📡 步骤0: 检查容器连通性...
+2026-05-19 15:56:26 [WARNING] SSH执行超时: root@172.18.32.94:10022 (10s)
+2026-05-19 15:56:26 [INFO]    容器SSH直连失败，重试中...
+2026-05-19 15:56:37 [WARNING] SSH执行超时: root@172.18.32.94:10022 (10s)
+2026-05-19 15:56:37 [INFO]   容器SSH直连失败，尝试通过物理机docker exec...
+2026-05-19 15:56:37 [INFO] 🔐 登录物理机 172.18.32.94...
+2026-05-19 15:56:37 [INFO]   📋 数据库记录用户: root，优先尝试
+2026-05-19 15:56:39 [INFO]   ✅ 公钥登录成功: root
+2026-05-19 15:56:40 [INFO]   ✅ 物理机docker exec可用，通过docker exec诊断
+2026-05-19 15:56:42 [WARNING]   容器SSH不可达原因: sshd服务运行中; 10022端口在监听
+2026-05-19 15:56:42 [INFO] 📦 一次SSH采集容器初始数据...
+2026-05-19 15:56:44 [INFO] ✅ 今日图片数: 1495，已恢复正常，继续采集完整信息
+2026-05-19 15:56:44 [INFO] ✅ 所有进程运行正常 (12/12)
+2026-05-19 15:56:44 [INFO] ✅ roscore运行中
+2026-05-19 15:56:44 [INFO] 📋 步骤3: 检查各进程日志...
+2026-05-19 15:56:45 [DEBUG] 为 kafka_event 补充额外日志: /home/files/common_logs/event.log
+2026-05-19 15:56:45 [DEBUG] 为 kafka_flow 补充额外日志: /home/files/common_logs/flow.log
+2026-05-19 15:56:45 [DEBUG] 加载诊断模式 4 条: ['cambricon_driver', 'ros_master', 'rtsp_nodelet_fail', 'oom_kill']
+2026-05-19 15:56:47 [INFO] ✅ calibration_event: 无明显错误
+2026-05-19 15:56:47 [INFO] ✅ calibration_project: 无明显错误
+2026-05-19 15:56:47 [INFO] ❌ fusion: 1种不同错误 (来自['/home/files/common_logs/fusion.err', '/home/files/common_logs/fusion.log'])
+2026-05-19 15:56:47 [DEBUG]   • Binary file (standard input) matches
+2026-05-19 15:56:47 [INFO] ❌ infer: 12种不同错误 (来自['/home/files/common_logs/infer.err', '/home/files/common_logs/infer.log'])
+2026-05-19 15:56:47 [DEBUG]   • [ERROR] [1779174636.817898952]: RES:  xmin 131 ymin  672 xmax 292 ymax 720
+2026-05-19 15:56:47 [DEBUG]   • [ERROR] [1779175360.291789949]: RES:  xmin 661 ymin  679 xmax 768 ymax 720
+2026-05-19 15:56:47 [DEBUG]   • [ERROR] [1779175368.209539142]: RES:  xmin 41 ymin  682 xmax 192 ymax 720
+2026-05-19 15:56:47 [DEBUG]   • [ERROR] [1779175465.532227615]: RES:  xmin 19 ymin  671 xmax 198 ymax 720
+2026-05-19 15:56:47 [DEBUG]   • [ERROR] [1779176082.306421367]: RES:  xmin 5 ymin  663 xmax 181 ymax 720
+2026-05-19 15:56:47 [INFO] ❌ kafka_event: 2种不同错误 (来自['/home/files/common_logs/kafka_event.err', '/home/files/common_logs/kafka_event.log', '/home/files/common_logs/event.log'])
+2026-05-19 15:56:47 [DEBUG]   • [ERROR]2026-05-19 15:52:25,118 kafka_event_new.py:278: event has no file path:
+2026-05-19 15:56:47 [DEBUG]   • [ERROR]2026-05-19 15:53:25,393 kafka_event_new.py:278: event has no file path:
+2026-05-19 15:56:47 [INFO] ✅ kafka_flow: 无明显错误
+2026-05-19 15:56:47 [INFO] ❌ kafka_monitor: 1种不同错误 (来自['/home/files/common_logs/kafka_monitor.err', '/home/files/common_logs/kafka_monitor.log'])
+2026-05-19 15:56:47 [DEBUG]   • Error in XmlRpcClient::writeRequest: write error (Connection refused).
+2026-05-19 15:56:47 [INFO] ❌ radar_bridge: 2种不同错误 (来自['/home/files/common_logs/radar_bridge.err', '/home/files/common_logs/radar_bridge.log'])
+2026-05-19 15:56:47 [DEBUG]   • Binary file (standard input) matches
+2026-05-19 15:56:47 [DEBUG]   • [radar_bridge] Waiting for ROS master...
+2026-05-19 15:56:47 [INFO] ✅ rosbridge_websocket: 无明显错误
+2026-05-19 15:56:47 [INFO] ❌ rtsp: 20种不同错误 (来自['/home/files/common_logs/rtsp.err', '/home/files/common_logs/rtsp.log'])
+2026-05-19 15:56:47 [DEBUG]   • VPU_DecGetOutputInfo decode fail framdIdx 1010540 error(0x00000000) reason(0x00400000), reasonExt(0x
+2026-05-19 15:56:47 [DEBUG]   • VPU_DecGetOutputInfo decode fail framdIdx 1083940 error(0x00000000) reason(0x00400000), reasonExt(0x
+2026-05-19 15:56:47 [DEBUG]   • VPU_DecGetOutputInfo decode fail framdIdx 10985058 error(0x00000000) reason(0x00400000), reasonExt(0
+2026-05-19 15:56:47 [DEBUG]   • VPU_DecGetOutputInfo decode fail framdIdx 10992144 error(0x00000000) reason(0x00400000), reasonExt(0
+2026-05-19 15:56:47 [DEBUG]   • VPU_DecGetOutputInfo decode fail framdIdx 10993144 error(0x00000000) reason(0x00400000), reasonExt(0
+2026-05-19 15:56:47 [INFO] ❌ traffic: 1种不同错误 (来自['/home/files/common_logs/traffic.err', '/home/files/common_logs/traffic.log'])
+2026-05-19 15:56:47 [DEBUG]   • [ERROR] [1765352343.075515151]: Failed to get 'radar_calib_params' from param server. Check YAML!
+2026-05-19 15:56:47 [INFO] ❌ zmq_bridge: 1种不同错误 (来自['/home/files/common_logs/zmq_bridge.err', '/home/files/common_logs/zmq_bridge.log'])
+2026-05-19 15:56:47 [DEBUG]   • terminate called after throwing an instance of 'zmqpp::zmq_internal_exception'
+2026-05-19 15:56:47 [INFO] 📡 步骤4: rostopic hz 检查...
+2026-05-19 15:56:51 [INFO] 关键topic: /k608_900/upstream/radar/track_object, /k608_900/upstream/radar/track_object_project, /k608_900/upstream/short_camera/image_detect/compressed, /k608_900/upstream/short_camera/image_raw, /k610_330/upstream/long_camera/image_detect/compressed, /k610_330/upstream/long_camera/image_raw, /k610_330/upstream/radar/track_object, /k610_330/upstream/radar/track_object_project, /k610_330/upstream/short_camera/image_detect/compressed, /k610_330/upstream/short_camera/image_raw, /mec_1008/fusion_track_object, /mec_1008/traffic_event_object/fps_hz
+2026-05-19 15:57:32 [INFO] ✅ /k608_900/upstream/radar/track_object: 19.991 Hz
+2026-05-19 15:57:32 [INFO] ✅ /k608_900/upstream/radar/track_object_project: 20.008 Hz
+2026-05-19 15:57:32 [INFO] ✅ /k608_900/upstream/short_camera/image_detect/compressed: 13.880 Hz
+2026-05-19 15:57:32 [INFO] ✅ /k608_900/upstream/short_camera/image_raw: 14.432 Hz
+2026-05-19 15:57:32 [INFO] ✅ /k610_330/upstream/long_camera/image_detect/compressed: 14.517 Hz
+2026-05-19 15:57:32 [INFO] ✅ /k610_330/upstream/long_camera/image_raw: 14.332 Hz
+2026-05-19 15:57:32 [INFO] ✅ /k610_330/upstream/radar/track_object: 20.003 Hz
+2026-05-19 15:57:32 [INFO] ✅ /k610_330/upstream/radar/track_object_project: 20.028 Hz
+2026-05-19 15:57:32 [INFO] ✅ /k610_330/upstream/short_camera/image_detect/compressed: 13.972 Hz
+2026-05-19 15:57:32 [INFO] ✅ /k610_330/upstream/short_camera/image_raw: 14.344 Hz
+2026-05-19 15:57:32 [INFO] ✅ /mec_1008/fusion_track_object: 20.018 Hz
+2026-05-19 15:57:32 [INFO] ✅ /mec_1008/traffic_event_object/fps_hz: 19.998 Hz
+2026-05-19 15:57:32 [INFO] 📡 传感器状态: 摄像头 4/4 | 雷达 2/2
+2026-05-19 15:58:13 [INFO] ======================================================================
+2026-05-19 15:58:13 [INFO] 🔍 诊断：物理机在线但容器不可连 - 10.145.14.1
+2026-05-19 15:58:13 [INFO] ======================================================================
+2026-05-19 15:58:13 [INFO] 🔐 登录物理机 10.145.14.1...
+2026-05-19 15:58:13 [INFO]   📋 数据库记录用户: root，优先尝试
+2026-05-19 15:58:14 [INFO]   ✅ 公钥登录成功: root
+2026-05-19 15:58:14 [INFO] 🐳 一次SSH采集物理机所有信息...
+2026-05-19 15:58:15 [INFO] ✅ Docker服务运行中
+2026-05-19 15:58:15 [INFO] ✅ dev容器存在且运行中: dev Up 3 months
+2026-05-19 15:58:15 [INFO] ✅ docker exec正常
+2026-05-19 15:58:15 [INFO] 📡 传感器状态: 摄像头 4/4 | 雷达 2/2
+2026-05-19 15:58:15 [INFO] ======================================================================
+2026-05-19 15:58:15 [INFO] 🔍 诊断：容器在线但今日图片为0 - 10.145.14.1
+2026-05-19 15:58:15 [INFO] ======================================================================
+2026-05-19 15:58:15 [INFO] 📡 步骤0: 检查容器连通性...
+2026-05-19 15:58:16 [INFO] ✅ 容器连接正常
+2026-05-19 15:58:16 [INFO] 📦 一次SSH采集容器初始数据...
+2026-05-19 15:58:17 [INFO] ✅ 今日图片数: 3441，已恢复正常，继续采集完整信息
+2026-05-19 15:58:17 [INFO] ✅ 所有进程运行正常 (11/11)
+2026-05-19 15:58:17 [INFO] ✅ roscore运行中
+2026-05-19 15:58:17 [INFO] 📋 步骤3: 检查各进程日志...
+2026-05-19 15:58:18 [DEBUG] 为 kafka_event 补充额外日志: /home/files/common_logs/event.log
+2026-05-19 15:58:18 [DEBUG] 为 kafka_flow 补充额外日志: /home/files/common_logs/flow.log
+2026-05-19 15:58:18 [DEBUG] 加载诊断模式 4 条: ['cambricon_driver', 'ros_master', 'rtsp_nodelet_fail', 'oom_kill']
+2026-05-19 15:58:19 [INFO] ✅ calibration_event: 无明显错误
+2026-05-19 15:58:19 [INFO] ✅ calibration_project: 无明显错误
+2026-05-19 15:58:19 [INFO] ❌ fusion: 1种不同错误 (来自['/home/files/common_logs/fusion.err', '/home/files/common_logs/fusion.log'])
+2026-05-19 15:58:19 [DEBUG]   • terminate called after throwing an instance of 'std::system_error'
+2026-05-19 15:58:19 [INFO] ✅ infer: 无明显错误
+2026-05-19 15:58:19 [INFO] ❌ kafka_event: 4种不同错误 (来自['/home/files/common_logs/kafka_event.err', '/home/files/common_logs/kafka_event.log', '/home/files/common_logs/event.log'])
+2026-05-19 15:58:19 [DEBUG]   • [ERROR]2026-05-19 15:55:13,634 kafka_event_new.py:275: event has no file path:
+2026-05-19 15:58:19 [DEBUG]   • [ERROR]2026-05-19 15:55:13,643 kafka_event_new.py:275: event has no file path:
+2026-05-19 15:58:19 [DEBUG]   • [ERROR]2026-05-19 15:57:10,244 kafka_event_new.py:275: event has no file path:
+2026-05-19 15:58:19 [DEBUG]   • [ERROR]2026-05-19 15:57:10,245 kafka_event_new.py:275: event has no file path:
+2026-05-19 15:58:19 [INFO] ✅ kafka_flow: 无明显错误
+2026-05-19 15:58:19 [INFO] ✅ kafka_monitor: 无明显错误
+2026-05-19 15:58:19 [INFO] ✅ radar_bridge: 无明显错误
+2026-05-19 15:58:19 [INFO] ✅ rosbridge_websocket: 无明显错误
+2026-05-19 15:58:19 [INFO] ❌ rtsp: 19种不同错误 (来自['/home/files/common_logs/rtsp.err', '/home/files/common_logs/rtsp.log'])
+2026-05-19 15:58:19 [DEBUG]   • [ERROR] [1769585930.822107650]: received a tcpros connection for a nonexistent service [8dcf98e92081
+2026-05-19 15:58:19 [DEBUG]   • mpp[1119]: kmpp_meta: kmpp_meta_init kmpp meta get objdef failed
+2026-05-19 15:58:19 [DEBUG]   • mpp[1671617]: kmpp_meta: kmpp_meta_init kmpp meta get objdef failed
+2026-05-19 15:58:19 [DEBUG]   • mpp[1671619]: kmpp_meta: kmpp_meta_init kmpp meta get objdef failed
+2026-05-19 15:58:19 [DEBUG]   • mpp[1671620]: kmpp_meta: kmpp_meta_init kmpp meta get objdef failed
+2026-05-19 15:58:19 [INFO] ❌ traffic: 4种不同错误 (来自['/home/files/common_logs/traffic.err', '/home/files/common_logs/traffic.log'])
+2026-05-19 15:58:19 [DEBUG]   • [ERROR] [1760439928.630412142]: Client [/mk47_875/kafka_bridge_flow] wants topic /k47_875/upstream/r
+2026-05-19 15:58:19 [DEBUG]   • [ERROR] [1760439928.686322898]: Client [/mk47_875/kafka_bridge_event] wants topic /mk47_875/traffic_
+2026-05-19 15:58:19 [DEBUG]   • [ERROR] [1760439928.786144366]: Client [/mk47_875/kafka_bridge_monitor] wants topic /k47_875/upstrea
+2026-05-19 15:58:19 [DEBUG]   • Error opening directory: No such file or directory
+2026-05-19 15:58:19 [INFO] 📡 步骤4: rostopic hz 检查...
+2026-05-19 15:58:21 [INFO] 关键topic: /k47_875/downstream/long_camera/image_detect/compressed, /k47_875/downstream/long_camera/image_raw, /k47_875/downstream/radar/track_object, /k47_875/downstream/radar/track_object_project, /k47_875/downstream/short_camera/image_detect/compressed, /k47_875/downstream/short_camera/image_raw, /k47_875/upstream/long_camera/image_detect/compressed, /k47_875/upstream/long_camera/image_raw, /k47_875/upstream/radar/track_object, /k47_875/upstream/radar/track_object_project, /k47_875/upstream/short_camera/image_detect/compressed, /k47_875/upstream/short_camera/image_raw, /mk47_875/fusion_track_object, /mk47_875/traffic_event_object/fps_hz
+2026-05-19 15:58:58 [INFO] ✅ /k47_875/downstream/long_camera/image_detect/compressed: 10.243 Hz
+2026-05-19 15:58:58 [INFO] ✅ /k47_875/downstream/long_camera/image_raw: 10.052 Hz
+2026-05-19 15:58:58 [INFO] ✅ /k47_875/downstream/radar/track_object: 20.002 Hz
+2026-05-19 15:58:58 [INFO] ✅ /k47_875/downstream/radar/track_object_project: 20.000 Hz
+2026-05-19 15:58:58 [INFO] ✅ /k47_875/downstream/short_camera/image_detect/compressed: 13.029 Hz
+2026-05-19 15:58:58 [INFO] ✅ /k47_875/downstream/short_camera/image_raw: 14.582 Hz
+2026-05-19 15:58:58 [INFO] ✅ /k47_875/upstream/long_camera/image_detect/compressed: 10.081 Hz
+2026-05-19 15:58:58 [INFO] ✅ /k47_875/upstream/long_camera/image_raw: 9.984 Hz
+2026-05-19 15:58:58 [INFO] ✅ /k47_875/upstream/radar/track_object: 20.002 Hz
+2026-05-19 15:58:58 [INFO] ✅ /k47_875/upstream/radar/track_object_project: 20.007 Hz
+2026-05-19 15:58:58 [INFO] ✅ /k47_875/upstream/short_camera/image_detect/compressed: 12.480 Hz
+2026-05-19 15:58:58 [INFO] ✅ /k47_875/upstream/short_camera/image_raw: 14.470 Hz
+2026-05-19 15:58:58 [INFO] ✅ /mk47_875/fusion_track_object: 20.000 Hz
+2026-05-19 15:58:58 [INFO] ✅ /mk47_875/traffic_event_object/fps_hz: 20.002 Hz
+2026-05-19 15:58:58 [INFO] 📡 传感器状态: 摄像头 4/4 | 雷达 2/2
+2026-05-19 15:59:50 [INFO] ======================================================================
+2026-05-19 15:59:50 [INFO] 📡 数据采集（LLM模式）: 10.145.14.1
+2026-05-19 15:59:50 [INFO] ======================================================================
+2026-05-19 15:59:50 [INFO] 🔐 步骤1: 物理机连通性...
+2026-05-19 15:59:50 [INFO] 🔐 登录物理机 10.145.14.1...
+2026-05-19 15:59:50 [INFO]   📋 数据库记录用户: root，优先尝试
+2026-05-19 15:59:51 [INFO]   ✅ 公钥登录成功: root
+2026-05-19 15:59:51 [INFO] 📦 一次SSH采集物理机信息...
+2026-05-19 15:59:52 [INFO] 🔑 步骤2: 容器SSH连通性...
+2026-05-19 15:59:53 [INFO] 📦 一次SSH采集容器初始数据...
+2026-05-19 15:59:55 [INFO] 📡 步骤6: rostopic检查...
+2026-05-19 16:00:10 [INFO] ✅ 数据采集完成
+2026-05-19 16:02:16 [INFO] 🔐 登录物理机 10.145.14.1...
+2026-05-19 16:02:16 [INFO] 🔐 登录物理机 10.145.14.1...
+2026-05-19 16:02:16 [INFO]   📋 数据库记录用户: root，优先尝试
+2026-05-19 16:02:16 [INFO]   📋 数据库记录用户: root，优先尝试
+2026-05-19 16:02:26 [WARNING] SSH执行超时: root@10.145.14.1:22 (10s)
+2026-05-19 16:02:26 [DEBUG]   ❌ 公钥登录失败: SSH执行超时(10s)
+2026-05-19 16:02:26 [DEBUG]   🔄 尝试密码登录: root
+2026-05-19 16:02:26 [WARNING] SSH执行超时: root@10.145.14.1:22 (10s)
+2026-05-19 16:02:26 [DEBUG]   ❌ 公钥登录失败: SSH执行超时(10s)
+2026-05-19 16:02:26 [DEBUG]   🔄 尝试密码登录: root
+2026-05-19 16:02:32 [WARNING] Paramiko密码登录失败 root@10.145.14.1:22 - timed out
+2026-05-19 16:02:32 [DEBUG]   ❌ 密码登录也失败: timed out
+2026-05-19 16:02:32 [WARNING]   ❌ 物理机 10.145.14.1 数据库用户登录失败: 公钥和密码登录均失败（密码登录: timed out）
+2026-05-19 16:02:32 [WARNING] Paramiko密码登录失败 root@10.145.14.1:22 - timed out
+2026-05-19 16:02:32 [DEBUG]   ❌ 密码登录也失败: timed out
+2026-05-19 16:02:32 [WARNING]   ❌ 物理机 10.145.14.1 数据库用户登录失败: 公钥和密码登录均失败（密码登录: timed out）
+2026-05-19 16:02:56 [WARNING] Paramiko密码登录失败 root@10.145.14.1:10022 - timed out
+2026-05-19 16:09:24 [INFO] ======================================================================
+2026-05-19 16:09:24 [INFO] 🔍 诊断：物理机在线但容器不可连 - 10.145.14.1
+2026-05-19 16:09:24 [INFO] ======================================================================
+2026-05-19 16:09:24 [INFO] 🔐 登录物理机 10.145.14.1...
+2026-05-19 16:09:24 [INFO]   📋 数据库记录用户: root，优先尝试
+2026-05-19 16:09:25 [INFO]   ✅ 公钥登录成功: root
+2026-05-19 16:09:25 [INFO] 🐳 一次SSH采集物理机所有信息...
+2026-05-19 16:09:26 [INFO] ✅ Docker服务运行中
+2026-05-19 16:09:26 [INFO] ✅ dev容器存在且运行中: dev Up 3 months
+2026-05-19 16:09:26 [INFO] ✅ docker exec正常
+2026-05-19 16:09:26 [INFO] 📡 传感器状态: 摄像头 4/4 | 雷达 2/2
+2026-05-19 16:09:26 [INFO] ======================================================================
+2026-05-19 16:09:26 [INFO] 🔍 诊断：容器在线但今日图片为0 - 10.145.14.1
+2026-05-19 16:09:26 [INFO] ======================================================================
+2026-05-19 16:09:26 [INFO] 📡 步骤0: 检查容器连通性...
+2026-05-19 16:09:27 [INFO] ✅ 容器连接正常
+2026-05-19 16:09:27 [INFO] 📦 一次SSH采集容器初始数据...
+2026-05-19 16:09:28 [INFO] ✅ 今日图片数: 3523，已恢复正常，继续采集完整信息
+2026-05-19 16:09:28 [INFO] ✅ 所有进程运行正常 (11/11)
+2026-05-19 16:09:28 [INFO] ✅ roscore运行中
+2026-05-19 16:09:28 [INFO] 📋 步骤3: 检查各进程日志...
+2026-05-19 16:09:29 [DEBUG] 为 kafka_event 补充额外日志: /home/files/common_logs/event.log
+2026-05-19 16:09:29 [DEBUG] 为 kafka_flow 补充额外日志: /home/files/common_logs/flow.log
+2026-05-19 16:09:29 [DEBUG] 加载诊断模式 4 条: ['cambricon_driver', 'ros_master', 'rtsp_nodelet_fail', 'oom_kill']
+2026-05-19 16:09:29 [INFO] ✅ calibration_event: 无明显错误
+2026-05-19 16:09:29 [INFO] ✅ calibration_project: 无明显错误
+2026-05-19 16:09:29 [INFO] ❌ fusion: 1种不同错误 (来自['/home/files/common_logs/fusion.err', '/home/files/common_logs/fusion.log'])
+2026-05-19 16:09:29 [DEBUG]   • terminate called after throwing an instance of 'std::system_error'
+2026-05-19 16:09:29 [INFO] ✅ infer: 无明显错误
+2026-05-19 16:09:29 [INFO] ❌ kafka_event: 3种不同错误 (来自['/home/files/common_logs/kafka_event.err', '/home/files/common_logs/kafka_event.log', '/home/files/common_logs/event.log'])
+2026-05-19 16:09:29 [DEBUG]   • [ERROR]2026-05-19 16:07:07,737 kafka_event_new.py:275: event has no file path:
+2026-05-19 16:09:29 [DEBUG]   • [ERROR]2026-05-19 16:06:06,840 kafka_event_new.py:275: event has no file path:
+2026-05-19 16:09:29 [DEBUG]   • [ERROR]2026-05-19 16:06:06,841 kafka_event_new.py:275: event has no file path:
+2026-05-19 16:09:29 [INFO] ✅ kafka_flow: 无明显错误
+2026-05-19 16:09:29 [INFO] ✅ kafka_monitor: 无明显错误
+2026-05-19 16:09:29 [INFO] ✅ radar_bridge: 无明显错误
+2026-05-19 16:09:29 [INFO] ✅ rosbridge_websocket: 无明显错误
+2026-05-19 16:09:29 [INFO] ❌ rtsp: 19种不同错误 (来自['/home/files/common_logs/rtsp.err', '/home/files/common_logs/rtsp.log'])
+2026-05-19 16:09:29 [DEBUG]   • [ERROR] [1769585930.822107650]: received a tcpros connection for a nonexistent service [8dcf98e92081
+2026-05-19 16:09:29 [DEBUG]   • mpp[1119]: kmpp_meta: kmpp_meta_init kmpp meta get objdef failed
+2026-05-19 16:09:29 [DEBUG]   • mpp[1671617]: kmpp_meta: kmpp_meta_init kmpp meta get objdef failed
+2026-05-19 16:09:29 [DEBUG]   • mpp[1671619]: kmpp_meta: kmpp_meta_init kmpp meta get objdef failed
+2026-05-19 16:09:29 [DEBUG]   • mpp[1671620]: kmpp_meta: kmpp_meta_init kmpp meta get objdef failed
+2026-05-19 16:09:29 [INFO] ❌ traffic: 4种不同错误 (来自['/home/files/common_logs/traffic.err', '/home/files/common_logs/traffic.log'])
+2026-05-19 16:09:29 [DEBUG]   • [ERROR] [1760439928.630412142]: Client [/mk47_875/kafka_bridge_flow] wants topic /k47_875/upstream/r
+2026-05-19 16:09:29 [DEBUG]   • [ERROR] [1760439928.686322898]: Client [/mk47_875/kafka_bridge_event] wants topic /mk47_875/traffic_
+2026-05-19 16:09:29 [DEBUG]   • [ERROR] [1760439928.786144366]: Client [/mk47_875/kafka_bridge_monitor] wants topic /k47_875/upstrea
+2026-05-19 16:09:29 [DEBUG]   • Error opening directory: No such file or directory
+2026-05-19 16:09:29 [INFO] 📡 步骤4: rostopic hz 检查...
+2026-05-19 16:09:31 [INFO] 关键topic: /k47_875/downstream/long_camera/image_detect/compressed, /k47_875/downstream/long_camera/image_raw, /k47_875/downstream/radar/track_object, /k47_875/downstream/radar/track_object_project, /k47_875/downstream/short_camera/image_detect/compressed, /k47_875/downstream/short_camera/image_raw, /k47_875/upstream/long_camera/image_detect/compressed, /k47_875/upstream/long_camera/image_raw, /k47_875/upstream/radar/track_object, /k47_875/upstream/radar/track_object_project, /k47_875/upstream/short_camera/image_detect/compressed, /k47_875/upstream/short_camera/image_raw, /mk47_875/fusion_track_object, /mk47_875/traffic_event_object/fps_hz
+2026-05-19 16:10:07 [INFO] ✅ /k47_875/downstream/long_camera/image_detect/compressed: 10.116 Hz
+2026-05-19 16:10:07 [INFO] ✅ /k47_875/downstream/long_camera/image_raw: 10.006 Hz
+2026-05-19 16:10:07 [INFO] ✅ /k47_875/downstream/radar/track_object: 19.988 Hz
+2026-05-19 16:10:07 [INFO] ✅ /k47_875/downstream/radar/track_object_project: 20.010 Hz
+2026-05-19 16:10:07 [INFO] ✅ /k47_875/downstream/short_camera/image_detect/compressed: 12.743 Hz
+2026-05-19 16:10:07 [INFO] ✅ /k47_875/downstream/short_camera/image_raw: 14.671 Hz
+2026-05-19 16:10:07 [INFO] ✅ /k47_875/upstream/long_camera/image_detect/compressed: 9.993 Hz
+2026-05-19 16:10:07 [INFO] ✅ /k47_875/upstream/long_camera/image_raw: 10.003 Hz
+2026-05-19 16:10:07 [INFO] ✅ /k47_875/upstream/radar/track_object: 20.000 Hz
+2026-05-19 16:10:07 [INFO] ✅ /k47_875/upstream/radar/track_object_project: 19.985 Hz
+2026-05-19 16:10:07 [INFO] ✅ /k47_875/upstream/short_camera/image_detect/compressed: 12.992 Hz
+2026-05-19 16:10:07 [INFO] ✅ /k47_875/upstream/short_camera/image_raw: 14.614 Hz
+2026-05-19 16:10:07 [INFO] ✅ /mk47_875/fusion_track_object: 19.994 Hz
+2026-05-19 16:10:07 [INFO] ✅ /mk47_875/traffic_event_object/fps_hz: 20.002 Hz
+2026-05-19 16:10:07 [INFO] 📡 传感器状态: 摄像头 4/4 | 雷达 2/2
+2026-05-19 16:10:50 [INFO] ======================================================================
+2026-05-19 16:10:50 [INFO] 🔍 诊断：物理机在线但容器不可连 - 172.18.32.94
+2026-05-19 16:10:50 [INFO] ======================================================================
+2026-05-19 16:10:50 [INFO] 🔐 登录物理机 172.18.32.94...
+2026-05-19 16:10:50 [INFO]   📋 数据库记录用户: root，优先尝试
+2026-05-19 16:10:52 [INFO]   ✅ 公钥登录成功: root
+2026-05-19 16:10:52 [INFO] 🐳 一次SSH采集物理机所有信息...
+2026-05-19 16:10:54 [INFO] ✅ Docker服务运行中
+2026-05-19 16:10:54 [INFO] ✅ dev容器存在且运行中: dev Up 24 hours
+2026-05-19 16:10:54 [INFO] ✅ docker exec正常
+2026-05-19 16:10:54 [INFO] 📡 传感器状态: 摄像头 4/4 | 雷达 2/2
+2026-05-19 16:10:54 [INFO] ======================================================================
+2026-05-19 16:10:54 [INFO] 🔍 诊断：容器在线但今日图片为0 - 172.18.32.94
+2026-05-19 16:10:54 [INFO] ======================================================================
+2026-05-19 16:10:54 [INFO] 📡 步骤0: 检查容器连通性...
+2026-05-19 16:11:04 [WARNING] SSH执行超时: root@172.18.32.94:10022 (10s)
+2026-05-19 16:11:04 [INFO]    容器SSH直连失败，重试中...
+2026-05-19 16:11:15 [WARNING] SSH执行超时: root@172.18.32.94:10022 (10s)
+2026-05-19 16:11:15 [INFO]   容器SSH直连失败，尝试通过物理机docker exec...
+2026-05-19 16:11:15 [INFO] 🔐 登录物理机 172.18.32.94...
+2026-05-19 16:11:15 [INFO]   📋 数据库记录用户: root，优先尝试

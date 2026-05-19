@@ -35,3 +35,6 @@ USERS = {
     "yjx": "yjx",
     "sy": "sy",
 }
+
+# 反馈弹窗延迟（秒），对话完成后等待 N 秒弹出反馈栏
+FEEDBACK_DELAY_SECONDS = 1

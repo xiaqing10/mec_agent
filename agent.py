@@ -22,7 +22,6 @@ sys.path.insert(0, str(SELF_AGENT_DIR))
 
 from langgraph.graph import StateGraph, END, add_messages
 from langgraph.prebuilt import ToolNode, tools_condition
-from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
 from langchain_core.messages import BaseMessage, AIMessage, ToolMessage, HumanMessage
 from langchain_openai import ChatOpenAI
 
@@ -96,7 +95,6 @@ def _get_llm():
             api_key=LLM_API_KEY,
             base_url=LLM_BASE_URL,
             temperature=0.1,
-            max_tokens=16384,
             max_retries=1,
         )
         _llm_with_tools = _llm.bind_tools(TOOLS)
@@ -153,6 +151,8 @@ def agent_node(state: AgentState) -> dict:
 22. 优先用 query_device_from_db 查询设备基本状态（只读场景），需要深度诊断时再用 diagnose_device（SSH实时检查）
 23. 当你用 markdown 表格展示数据时，表头列数和数据行列数必须严格一致。表头分隔行（|---|）中每个列的 `-` 数量至少 3 个。确保每行 `|` 的数量相同，否则表格会渲染错位
 24. 表格第一行必须是表头，第二行必须是分隔行（|---|），之后才是数据行。不要在表格前后使用 ``` 代码块包裹表格
+25. 工具返回的结果中已经包含了数据来源和时间说明，你直接呈现工具返回的内容即可，不需要自己补充"数据来源"或"数据说明"。不要在回复末尾附加额外的说明
+26. 工具返回的 markdown 表格已经包含了正确的表头和数据，你在回复中直接原样复制工具返回的表格内容即可，不要自己重新生成表格。如果工具返回的表格不符合你的预期（比如某些列全是0被工具自动过滤掉了），也不要去修改它。你可以在表格后面附加文字说明来解释或补充信息
 
 诊断维度说明：
 - 物理机：SSH可达性、运行时间、硬盘占用率（/ 和 /data）
@@ -312,10 +312,35 @@ async def build_agent_async():
     kept alive (not exited) for the database connection to stay open.
     Call `await context_manager.aclose()` on shutdown.
     """
-    graph = build_agent()
+    from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
     ctx = AsyncSqliteSaver.from_conn_string(str(SELF_AGENT_DIR / "checkpoints.db"))
     memory = await ctx.__aenter__()
+    graph = build_agent_with_checkpointer(memory)
     return graph, ctx
+
+
+def build_agent_with_checkpointer(memory):
+    """Build and compile the LangGraph agent with a given checkpointer."""
+    tool_node = ToolNode(TOOLS)
+    graph = StateGraph(AgentState)
+    graph.add_node("agent", agent_node)
+    graph.add_node("tools", tool_node)
+    graph.add_node("update_context", update_context_node)
+    graph.add_node("feedback", feedback_node)
+    graph.set_entry_point("agent")
+    graph.add_conditional_edges(
+        "agent",
+        should_continue,
+        {
+            "tools": "tools",
+            "update_context": "update_context",
+            "__end__": "update_context",
+        }
+    )
+    graph.add_edge("tools", "agent")
+    graph.add_edge("update_context", "feedback")
+    graph.add_edge("feedback", END)
+    return graph.compile(checkpointer=memory)
 
 
 # ──────────────────────────────────────────────

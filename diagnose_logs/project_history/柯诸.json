@@ -22,6 +22,15 @@
           "physical_uptime": "",
           "container_status": "",
           "today_image_count": 2462
+        },
+        {
+          "timestamp": "2026-05-19T10:41:32",
+          "diag_type": "zero_images",
+          "issue": "设备已恢复正常，今日图片数: 2470",
+          "error": "",
+          "physical_uptime": "",
+          "container_status": "",
+          "today_image_count": 2470
         }
       ]
     },
@@ -46,9 +55,18 @@
           "physical_uptime": "",
           "container_status": "",
           "today_image_count": 536
+        },
+        {
+          "timestamp": "2026-05-19T10:41:32",
+          "diag_type": "zero_images",
+          "issue": "设备已恢复正常，今日图片数: 536",
+          "error": "",
+          "physical_uptime": "",
+          "container_status": "",
+          "today_image_count": 536
         }
       ]
     }
   },
-  "updated_at": "2026-05-19T10:39:49"
+  "updated_at": "2026-05-19T10:41:32"
 }
