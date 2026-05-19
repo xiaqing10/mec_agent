@@ -50,8 +50,8 @@ async def get_agent():
         if _agent is None:
             logger.info("🖤 首次初始化 LangGraph Agent (约需 20-40秒)...")
             t0 = time.time()
-            from agent import build_agent
-            _agent, _agent_checkpointer_ctx = await build_agent()
+            from agent import build_agent_async
+            _agent, _agent_checkpointer_ctx = await build_agent_async()
             _agent_init_time = time.time() - t0
             _agent_init_time_since_init[0] = _agent_init_time
             logger.info(f"✅ LangGraph Agent 初始化完成 (用时 {_agent_init_time_since_init[0]:.1f}秒)")

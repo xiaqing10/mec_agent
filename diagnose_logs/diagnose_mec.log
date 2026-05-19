@@ -46454,3 +46454,91 @@ Connection to 10.145.22.56 port 22 timed out
 2026-05-19 07:48:01 [WARNING]   ❌ 物理机 33.74.33.201 数据库用户登录失败: 公钥和密码登录均失败（密码登录: timed out）
 2026-05-19 07:48:01 [WARNING] ❌ 物理机无法连接: 公钥和密码登录均失败（密码登录: timed out）
 2026-05-19 07:48:01 [INFO] 📡 传感器状态: 摄像头 4/4 | 雷达 2/2
+2026-05-19 08:32:59 [INFO] ======================================================================
+2026-05-19 08:32:59 [INFO] 🔍 诊断：物理机在线但容器不可连 - 10.145.22.56
+2026-05-19 08:32:59 [INFO] ======================================================================
+2026-05-19 08:32:59 [INFO] 🔐 登录物理机 10.145.22.56...
+2026-05-19 08:32:59 [INFO]   📋 数据库记录用户: root，优先尝试
+2026-05-19 08:32:59 [DEBUG]   ❌ 公钥登录失败: Connection closed by 10.145.22.56 port 22
+2026-05-19 08:32:59 [DEBUG]   🔄 尝试密码登录: root
+2026-05-19 08:33:04 [WARNING] Paramiko密码登录失败 root@10.145.22.56:22 - timed out
+2026-05-19 08:33:04 [DEBUG]   ❌ 密码登录也失败: timed out
+2026-05-19 08:33:04 [WARNING]   ❌ 物理机 10.145.22.56 数据库用户登录失败: 公钥和密码登录均失败（密码登录: timed out）
+2026-05-19 08:33:04 [WARNING] ❌ 物理机无法连接: 公钥和密码登录均失败（密码登录: timed out）
+2026-05-19 08:33:04 [INFO] 📡 传感器状态: 摄像头 4/4 | 雷达 2/2
+2026-05-19 08:34:39 [INFO] ======================================================================
+2026-05-19 08:34:39 [INFO] 🔍 诊断：物理机在线但容器不可连 - 10.145.22.56
+2026-05-19 08:34:39 [INFO] ======================================================================
+2026-05-19 08:34:39 [INFO] 🔐 登录物理机 10.145.22.56...
+2026-05-19 08:34:39 [INFO]   📋 数据库记录用户: root，优先尝试
+2026-05-19 08:34:44 [DEBUG]   ❌ 公钥登录失败: Connection timed out during banner exchange
+Connection to 10.145.22.56 port 22 timed out
+2026-05-19 08:34:44 [DEBUG]   🔄 尝试密码登录: root
+2026-05-19 08:34:49 [WARNING] Paramiko密码登录失败 root@10.145.22.56:22 - timed out
+2026-05-19 08:34:49 [DEBUG]   ❌ 密码登录也失败: timed out
+2026-05-19 08:34:49 [WARNING]   ❌ 物理机 10.145.22.56 数据库用户登录失败: 公钥和密码登录均失败（密码登录: timed out）
+2026-05-19 08:34:49 [WARNING] ❌ 物理机无法连接: 公钥和密码登录均失败（密码登录: timed out）
+2026-05-19 08:34:49 [INFO] 📡 传感器状态: 摄像头 4/4 | 雷达 2/2
+2026-05-19 08:38:51 [INFO] ======================================================================
+2026-05-19 08:38:51 [INFO] 🔍 诊断：物理机在线但容器不可连 - 10.145.24.68
+2026-05-19 08:38:51 [INFO] ======================================================================
+2026-05-19 08:38:51 [INFO] 🔐 登录物理机 10.145.24.68...
+2026-05-19 08:38:51 [INFO]   📋 数据库记录用户: root，优先尝试
+2026-05-19 08:38:52 [INFO]   ✅ 公钥登录成功: root
+2026-05-19 08:38:52 [INFO] 🐳 一次SSH采集物理机所有信息...
+2026-05-19 08:38:53 [INFO] ✅ Docker服务运行中
+2026-05-19 08:38:53 [INFO] ✅ dev容器存在且运行中: dev Up 5 weeks
+2026-05-19 08:38:53 [INFO] ✅ docker exec正常
+2026-05-19 08:38:53 [INFO] 📡 尝试连接容器SSH...
+2026-05-19 08:38:53 [INFO] ✅ 容器SSH可连接（监控显示离线）
+2026-05-19 08:38:53 [INFO] 📡 传感器状态: 摄像头 4/4 | 雷达 2/2
+2026-05-19 08:38:53 [INFO] ======================================================================
+2026-05-19 08:38:53 [INFO] 🔍 诊断：容器在线但今日图片为0 - 10.145.24.68
+2026-05-19 08:38:53 [INFO] ======================================================================
+2026-05-19 08:38:53 [INFO] 📡 步骤0: 检查容器连通性...
+2026-05-19 08:38:54 [INFO] ✅ 容器连接正常
+2026-05-19 08:38:54 [INFO] 📦 一次SSH采集容器初始数据...
+2026-05-19 08:38:55 [INFO] ✅ 今日图片数: 212，已恢复正常，继续采集完整信息
+2026-05-19 08:38:55 [INFO] ✅ 所有进程运行正常 (11/11)
+2026-05-19 08:38:55 [INFO] ✅ roscore运行中
+2026-05-19 08:38:55 [INFO] 📋 步骤3: 检查各进程日志...
+2026-05-19 08:38:56 [DEBUG] 为 kafka_event 补充额外日志: /home/files/common_logs/event.log
+2026-05-19 08:38:56 [DEBUG] 为 kafka_flow 补充额外日志: /home/files/common_logs/flow.log
+2026-05-19 08:38:56 [DEBUG] 加载诊断模式 4 条: ['cambricon_driver', 'ros_master', 'rtsp_nodelet_fail', 'oom_kill']
+2026-05-19 08:38:56 [INFO] ✅ calibration_event: 无明显错误
+2026-05-19 08:38:56 [INFO] ✅ calibration_project: 无明显错误
+2026-05-19 08:38:56 [INFO] ⏭️  fusion: 日志文件不存在
+2026-05-19 08:38:56 [INFO] ✅ infer: 无明显错误
+2026-05-19 08:38:56 [INFO] ❌ kafka_event: 7种不同错误 (来自['/home/files/common_logs/kafka_event.err'])
+2026-05-19 08:38:56 [DEBUG]   • [ERROR]2026-05-19 08:34:34,525 kafka_event_new.py:275: event has no file path:
+2026-05-19 08:38:56 [DEBUG]   • [ERROR]2026-05-19 08:34:38,241 kafka_event_new.py:275: event has no file path:
+2026-05-19 08:38:56 [DEBUG]   • [ERROR]2026-05-19 08:34:38,242 kafka_event_new.py:275: event has no file path:
+2026-05-19 08:38:56 [DEBUG]   • [ERROR]2026-05-19 08:35:34,105 kafka_event_new.py:275: event has no file path:
+2026-05-19 08:38:56 [DEBUG]   • [ERROR]2026-05-19 08:35:58,188 kafka_event_new.py:275: event has no file path:
+2026-05-19 08:38:56 [INFO] ✅ kafka_flow: 无明显错误
+2026-05-19 08:38:56 [INFO] ✅ kafka_monitor: 无明显错误
+2026-05-19 08:38:56 [INFO] ⏭️  radar_bridge: 日志文件不存在
+2026-05-19 08:38:56 [INFO] ⏭️  rosbridge_websocket: 日志文件不存在
+2026-05-19 08:38:56 [INFO] ❌ rtsp: 4种不同错误 (来自['/home/files/common_logs/rtsp.err', '/home/files/common_logs/rtsp.log'])
+2026-05-19 08:38:56 [DEBUG]   • mpp[110502]: kmpp_meta: kmpp_meta_init kmpp meta get objdef failed
+2026-05-19 08:38:56 [DEBUG]   • mpp[110503]: kmpp_meta: kmpp_meta_init kmpp meta get objdef failed
+2026-05-19 08:38:56 [DEBUG]   • mpp[110505]: kmpp_meta: kmpp_meta_init kmpp meta get objdef failed
+2026-05-19 08:38:56 [DEBUG]   • mpp[110507]: kmpp_meta: kmpp_meta_init kmpp meta get objdef failed
+2026-05-19 08:38:56 [INFO] ✅ traffic: 无明显错误
+2026-05-19 08:38:56 [INFO] 📡 步骤4: rostopic hz 检查...
+2026-05-19 08:38:58 [INFO] 关键topic: /k6_238/downstream/long_camera/image_detect/compressed, /k6_238/downstream/long_camera/image_raw, /k6_238/downstream/radar/track_object, /k6_238/downstream/radar/track_object_project, /k6_238/downstream/short_camera/image_detect/compressed, /k6_238/downstream/short_camera/image_raw, /k6_238/upstream/long_camera/image_detect/compressed, /k6_238/upstream/long_camera/image_raw, /k6_238/upstream/radar/track_object, /k6_238/upstream/radar/track_object_project, /k6_238/upstream/short_camera/image_detect/compressed, /k6_238/upstream/short_camera/image_raw, /mk6_238/fusion_track_object, /mk6_238/traffic_event_object/fps_hz
+2026-05-19 08:39:04 [INFO] ✅ /k6_238/downstream/long_camera/image_detect/compressed: 7.000 Hz
+2026-05-19 08:39:04 [INFO] ✅ /k6_238/downstream/long_camera/image_raw: 16.499 Hz
+2026-05-19 08:39:04 [INFO] ✅ /k6_238/downstream/radar/track_object: 20.167 Hz
+2026-05-19 08:39:04 [INFO] ✅ /k6_238/downstream/radar/track_object_project: 20.212 Hz
+2026-05-19 08:39:04 [INFO] ✅ /k6_238/downstream/short_camera/image_detect/compressed: 10.842 Hz
+2026-05-19 08:39:04 [INFO] ✅ /k6_238/downstream/short_camera/image_raw: 13.395 Hz
+2026-05-19 08:39:04 [INFO] ✅ /k6_238/upstream/long_camera/image_detect/compressed: 8.291 Hz
+2026-05-19 08:39:04 [INFO] ✅ /k6_238/upstream/long_camera/image_raw: 13.419 Hz
+2026-05-19 08:39:04 [INFO] ✅ /k6_238/upstream/radar/track_object: 20.037 Hz
+2026-05-19 08:39:04 [INFO] ✅ /k6_238/upstream/radar/track_object_project: 19.995 Hz
+2026-05-19 08:39:04 [INFO] ✅ /k6_238/upstream/short_camera/image_detect/compressed: 10.811 Hz
+2026-05-19 08:39:04 [INFO] ✅ /k6_238/upstream/short_camera/image_raw: 15.560 Hz
+2026-05-19 08:39:04 [INFO] ✅ /mk6_238/fusion_track_object: 20.006 Hz
+2026-05-19 08:39:04 [INFO] ✅ /mk6_238/traffic_event_object/fps_hz: 20.091 Hz
+2026-05-19 08:39:04 [INFO] 📡 传感器状态: 摄像头 4/4 | 雷达 2/2

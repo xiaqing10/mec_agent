@@ -267,13 +267,8 @@ def should_continue(state: AgentState) -> Literal["tools", "update_context", "__
 # ──────────────────────────────────────────────
 # Build graph
 # ──────────────────────────────────────────────
-async def build_agent():
-    """Build and compile the LangGraph agent with async SQLite checkpointer.
-
-    Returns (compiled_graph, context_manager) — the context_manager must be
-    kept alive (not exited) for the database connection to stay open.
-    Call `await context_manager.aclose()` on shutdown.
-    """
+def build_agent():
+    """Build and compile the LangGraph agent (sync version for LangGraph Studio)."""
     tool_node = ToolNode(TOOLS)
 
     graph = StateGraph(AgentState)
@@ -299,9 +294,20 @@ async def build_agent():
     graph.add_edge("update_context", "feedback")
     graph.add_edge("feedback", END)
 
+    return graph.compile()
+
+
+async def build_agent_async():
+    """Build and compile the LangGraph agent with async SQLite checkpointer.
+
+    Returns (compiled_graph, context_manager) — the context_manager must be
+    kept alive (not exited) for the database connection to stay open.
+    Call `await context_manager.aclose()` on shutdown.
+    """
+    graph = build_agent()
     ctx = AsyncSqliteSaver.from_conn_string(str(SELF_AGENT_DIR / "checkpoints.db"))
     memory = await ctx.__aenter__()
-    return graph.compile(checkpointer=memory), ctx
+    return graph, ctx
 
 
 # ──────────────────────────────────────────────
