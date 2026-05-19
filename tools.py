@@ -675,68 +675,57 @@ def fetch_report() -> str:
 @tool
 def query_abnormal() -> str:
     """查询当前所有异常设备的统计信息。
-    包括：各项目异常设备数量、容器离线数、图片为0数等概览统计。
+    从MySQL数据库获取，包括各项目异常设备数量、物理机离线、容器离线、图片为0、图片偏少等概览统计。
     """
-    import mec_analyze
-    from code_analyze import parse_mec_report
+    import pymysql
+    from datetime import date
 
-    report_text, error = mec_analyze.fetch_latest_mec_message()
-    if error or not report_text:
-        return json.dumps({"error": f"获取报告失败: {error}"}, ensure_ascii=False)
+    try:
+        conn = pymysql.connect(host="10.10.31.25", user="root", password="sy123456",
+                               database="mec_monitor", charset="utf8mb4", connect_timeout=3,
+                               cursorclass=pymysql.cursors.DictCursor)
+    except Exception as e:
+        return json.dumps({"error": f"数据库连接失败: {e}"}, ensure_ascii=False)
 
-    parsed = parse_mec_report(report_text)
-    if not parsed:
-        return json.dumps({"error": "解析报告失败"}, ensure_ascii=False)
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute("""
+                SELECT md.project,
+                       COUNT(*) AS total,
+                       SUM(CASE WHEN md.is_active = 0 THEN 1 ELSE 0 END) AS inactive,
+                       SUM(CASE WHEN md.ssh_status = 0 THEN 1 ELSE 0 END) AS ssh_offline,
+                       SUM(CASE WHEN pm.is_healthy = 0 THEN 1 ELSE 0 END) AS pm_unhealthy,
+                       SUM(CASE WHEN md.running_containers = 0 THEN 1 ELSE 0 END) AS no_container,
+                       SUM(CASE WHEN md.event_jpg_count = 0 THEN 1 ELSE 0 END) AS zero_img,
+                       SUM(CASE WHEN md.event_jpg_count > 0 AND md.event_jpg_count < 100 THEN 1 ELSE 0 END) AS low_img
+                FROM mec_device md
+                LEFT JOIN physical_machine pm ON md.physical_machine_id = pm.id
+                GROUP BY md.project
+                ORDER BY SUM(CASE WHEN md.is_active = 0 OR md.ssh_status = 0 OR pm.is_healthy = 0 OR md.event_jpg_count = 0 THEN 1 ELSE 0 END) DESC
+            """)
+            rows = cursor.fetchall()
+    except Exception as e:
+        conn.close()
+        return json.dumps({"error": f"数据库查询失败: {e}"}, ensure_ascii=False)
 
-    projects = parsed.get("projects", {})
-    summary = {"timestamp": parsed.get("timestamp", ""), "projects": {}, "total": {"abnormal": 0}}
+    conn.close()
 
-    for pname, pdata in projects.items():
-        from code_analyze import classify_priority
-        priority, _ = classify_priority(pname, pdata)
-        if priority == "OK":
-            continue
+    lines = [f"📊 **异常项目概览**（数据库）\n"]
+    lines.append(f"数据更新时间: {date.today()}")
+    lines.append(f"> ⚠️ 数据来自MySQL数据库，非实时SSH数据\n")
+    lines.append("| 项目 | 总设备 | 异常数 | 未激活 | SSH离线 | 物理机异常 | 无容器 | 图片为0 | 图片偏少(<100) |")
+    lines.append("|------|--------|--------|--------|---------|-----------|--------|---------|---------------|")
 
-        offline = pdata.get("container_offline_but_pm_online", [])
-        zero_img = pdata.get("zero_images_devices", [])
-        phys_off = pdata.get("physical_offline_devices", [])
-        abnormal_count = len(offline) + len(zero_img) + len(phys_off)
-        phys_rate = pdata.get("physical", {}).get("rate", 100)
-        container_rate = pdata.get("container", {}).get("rate", 100)
-        sensor_rate = pdata.get("sensor", {}).get("rate", 100)
-
-        # 当全离线时 device 列表可能为空，用 total 推算离线数
-        if abnormal_count == 0:
-            phys = pdata.get("physical", {})
-            cont = pdata.get("container", {})
-            if phys.get("rate", 100) == 0 and phys.get("total", 0) > 0:
-                abnormal_count = phys.get("total", 0)
-            elif cont.get("rate", 100) == 0 and cont.get("total", 0) > 0:
-                abnormal_count = cont.get("total", 0)
-
-        summary["projects"][pname] = {
-            "异常级别": priority,
-            "异常设备数": abnormal_count,
-            "物理机离线": len(phys_off),
-            "容器离线": len(offline),
-            "图片为0": len(zero_img),
-            "物理机健康率": f"{phys_rate:.1f}%",
-            "容器健康率": f"{container_rate:.1f}%",
-            "传感器健康率": f"{sensor_rate:.1f}%"
-        }
-        summary["total"]["abnormal"] += abnormal_count
-
-    # Format as aligned markdown table
-    lines = [f"📊 **异常项目概览**（{summary['timestamp']}）\n"]
-    lines.append("| 项目 | 级别 | 异常数 | 物理机离线 | 容器离线 | 图片为0 | 物理机健康率 | 容器健康率 | 传感器健康率 |")
-    lines.append("|------|------|--------|-----------|---------|---------|-------------|-----------|-------------|")
-    for pname, ps in summary["projects"].items():
+    total_abnormal = 0
+    for r in rows:
+        abnormal = r["inactive"] + r["ssh_offline"] + r["pm_unhealthy"] + r["zero_img"]
+        total_abnormal += abnormal
         lines.append(
-            f"| {pname} | {ps['异常级别']} | {ps['异常设备数']} | {ps['物理机离线']} | "
-            f"{ps['容器离线']} | {ps['图片为0']} | {ps['物理机健康率']} | "
-            f"{ps['容器健康率']} | {ps['传感器健康率']} |"
+            f"| {r['project']} | {r['total']} | {abnormal} | {r['inactive']} | {r['ssh_offline']} | "
+            f"{r['pm_unhealthy']} | {r['no_container']} | {r['zero_img']} | {r['low_img']} |"
         )
-    lines.append(f"\n🔄 共 **{summary['total']['abnormal']}** 台异常设备")
+
+    lines.append(f"\n🔄 共 **{total_abnormal}** 台异常设备")
     return "\n".join(lines)
 
 
@@ -872,6 +861,202 @@ def help_info() -> str:
     return help_text
 
 
+# ──────────────────────────────────────────────
+# Tool 12: query_device_from_db (MySQL直连查询)
+# ──────────────────────────────────────────────
+@tool
+def query_device_from_db(ip: str) -> str:
+    """从MySQL数据库查询MEC设备的完整状态信息，无需SSH连接。
+
+    当设备SSH不可达时，数据库记录是了解设备状态的重要途径。
+    返回设备的基本信息、SSH在线状态、系统指标（CPU/内存/硬盘）、
+    物理机信息、supervisor进程状态、离线时长、历史图片数据等。
+
+    Args:
+        ip: 设备IP地址或设备名（如 mec_1002、zk26_690）
+    """
+    from query_sensor_status import get_device_db_info, format_device_db_info
+    from diagnose_mec import _resolve_device
+
+    if not ip:
+        return json.dumps({"error": "未指定设备IP或设备名"}, ensure_ascii=False)
+
+    if not re.match(r'^\d+\.\d+\.\d+\.\d+$', ip):
+        resolved_ip, _ = _resolve_device(ip)
+        if resolved_ip != ip:
+            ip = resolved_ip
+    if not re.match(r'^\d+\.\d+\.\d+\.\d+$', ip):
+        msg = f"数据库中未找到设备 '{ip}'，请检查设备名是否正确，或直接使用IP地址"
+        return json.dumps({"error": msg}, ensure_ascii=False)
+
+    db_info = get_device_db_info(ip)
+    if not db_info or not db_info.get("name"):
+        return json.dumps({"error": f"数据库中没有设备 {ip} 的记录"}, ensure_ascii=False)
+
+    return format_device_db_info(db_info)
+
+
+# ──────────────────────────────────────────────
+# Tool 13: query_project_from_db (MySQL项目状态)
+# ──────────────────────────────────────────────
+@tool
+def query_project_from_db(project: str) -> str:
+    """从MySQL数据库查询指定项目的设备整体状态，无需解析飞书报告。
+
+    返回项目下所有设备的汇总统计：总设备数、在线/离线设备数、
+    物理机健康率、容器健康率、传感器（摄像头/雷达）在线率、
+    今日图片统计、以及所有异常设备列表。
+
+    Args:
+        project: 项目名，如 德会、柯诸、汕梅、汉宜、沈海、绵九、贵阳、青海 等
+    """
+    import pymysql
+    MYSQL_HOST = "10.10.31.25"
+    MYSQL_USER = "root"
+    MYSQL_PASS = "sy123456"
+    MYSQL_DB = "mec_monitor"
+
+    if not project:
+        return json.dumps({"error": "未指定项目名"}, ensure_ascii=False)
+
+    try:
+        conn = pymysql.connect(host=MYSQL_HOST, user=MYSQL_USER, password=MYSQL_PASS,
+                               database=MYSQL_DB, charset="utf8mb4", connect_timeout=3,
+                               cursorclass=pymysql.cursors.DictCursor)
+    except Exception as e:
+        return json.dumps({"error": f"数据库连接失败: {e}"}, ensure_ascii=False)
+
+    try:
+        with conn.cursor() as cursor:
+            # 1. 项目下所有设备
+            cursor.execute("""
+                SELECT md.id, md.name, md.host, md.is_active, md.ssh_status,
+                       md.cpu_usage, md.mem_usage, md.disk_usage,
+                       md.last_connected, md.last_ssh_check,
+                       md.event_jpg_count, md.last_event_check,
+                       pm.is_healthy AS pm_healthy,
+                       pm.running_containers
+                FROM mec_device md
+                LEFT JOIN physical_machine pm ON md.physical_machine_id = pm.id
+                WHERE md.project = %s
+                ORDER BY md.name
+            """, (project,))
+            devices = cursor.fetchall()
+
+            if not devices:
+                return json.dumps({"error": f"数据库中没有项目 '{project}' 的设备记录"}, ensure_ascii=False)
+
+            # 2. 项目传感器统计
+            cursor.execute("""
+                SELECT
+                    COUNT(DISTINCT c.id) AS total_cameras,
+                    SUM(CASE WHEN c.status = 1 THEN 1 ELSE 0 END) AS online_cameras,
+                    COUNT(DISTINCT r.id) AS total_radars,
+                    SUM(CASE WHEN r.status = 1 THEN 1 ELSE 0 END) AS online_radars
+                FROM mec_device md
+                JOIN pole p ON p.mec_device_id = md.id
+                LEFT JOIN camera c ON c.pole_id = p.id
+                LEFT JOIN radar r ON r.pole_id = p.id
+                WHERE md.project = %s
+            """, (project,))
+            sensor_row = cursor.fetchone()
+
+            # 3. 今日图片汇总
+            from datetime import date
+            today = date.today()
+            cursor.execute("""
+                SELECT COUNT(*) AS device_count, SUM(eh.jpg_count) AS total_jpg
+                FROM event_image_history eh
+                JOIN mec_device md ON eh.device_id = md.id
+                WHERE md.project = %s AND eh.count_date = %s
+            """, (project, today))
+            img_row = cursor.fetchone()
+
+    except Exception as e:
+        conn.close()
+        return json.dumps({"error": f"数据库查询失败: {e}"}, ensure_ascii=False)
+
+    conn.close()
+
+    # 汇总统计
+    total = len(devices)
+    active = sum(1 for d in devices if d.get("is_active"))
+    ssh_online = sum(1 for d in devices if d.get("ssh_status"))
+    pm_healthy = sum(1 for d in devices if d.get("pm_healthy"))
+    has_container = sum(1 for d in devices if d.get("running_containers", 0) > 0)
+    zero_img = sum(1 for d in devices if d.get("event_jpg_count") is not None and d["event_jpg_count"] == 0)
+    low_img = sum(1 for d in devices if d.get("event_jpg_count") is not None and d["event_jpg_count"] is not None and d["event_jpg_count"] < 100)
+
+    # 异常设备列表
+    abnormal_devices = []
+    for d in devices:
+        issues = []
+        if not d.get("is_active"):
+            issues.append("未激活")
+        if not d.get("ssh_status"):
+            issues.append("SSH离线")
+        if not d.get("pm_healthy"):
+            issues.append("物理机异常")
+        jpg = d.get("event_jpg_count")
+        if jpg is not None and jpg == 0:
+            issues.append("今日图片为0")
+        elif jpg is not None and jpg < 100:
+            issues.append(f"今日图片偏低({jpg}张)")
+        if issues:
+            abnormal_devices.append({
+                "name": d["name"], "ip": d["host"],
+                "issues": issues,
+                "cpu": d.get("cpu_usage"), "mem": d.get("mem_usage"), "disk": d.get("disk_usage"),
+            })
+
+    total_cam = sensor_row["total_cameras"] or 0
+    online_cam = sensor_row["online_cameras"] or 0
+    total_rad = sensor_row["total_radars"] or 0
+    online_rad = sensor_row["online_radars"] or 0
+
+    lines = [f"📊 **项目 {project} 数据库状态概览**\n"]
+    lines.append(f"数据更新时间: {devices[0].get('last_ssh_check', '未知') or '未知'}")
+    lines.append(f"> ⚠️ 以下数据来自MySQL数据库，非实时SSH数据\n")
+
+    lines.append("### 设备统计")
+    lines.append(f"| 指标 | 数值 |")
+    lines.append(f"|------|------|")
+    lines.append(f"| 总设备数 | {total} |")
+    lines.append(f"| 激活设备 | {active}/{total} |")
+    lines.append(f"| SSH在线 | {ssh_online}/{total} |")
+    lines.append(f"| 物理机健康 | {pm_healthy}/{total} |")
+    lines.append(f"| 有运行容器 | {has_container}/{total} |")
+    lines.append(f"| 今日图片为0 | {zero_img} |")
+    lines.append(f"| 今日图片偏低(<100) | {low_img} |")
+
+    lines.append("\n### 传感器统计")
+    cam_rate = f"{online_cam}/{total_cam}" if total_cam > 0 else "无数据"
+    rad_rate = f"{online_rad}/{total_rad}" if total_rad > 0 else "无数据"
+    lines.append(f"| 类型 | 在线率 |")
+    lines.append(f"|------|--------|")
+    lines.append(f"| 摄像头 | {cam_rate} |")
+    lines.append(f"| 雷达 | {rad_rate} |")
+
+    if img_row and img_row["total_jpg"] is not None:
+        lines.append(f"\n今日项目总图片: {img_row['total_jpg']} 张（{img_row['device_count']}台设备有数据）")
+
+    if abnormal_devices:
+        lines.append(f"\n### 异常设备列表（{len(abnormal_devices)}台）\n")
+        lines.append("| 设备名 | IP | 问题 | CPU | 内存 | 硬盘 |")
+        lines.append("|--------|-----|------|-----|------|------|")
+        for ad in abnormal_devices[:30]:
+            cpu = f"{ad['cpu']:.0f}%" if ad['cpu'] is not None else "-"
+            mem = f"{ad['mem']:.0f}%" if ad['mem'] is not None else "-"
+            disk = f"{ad['disk']:.0f}%" if ad['disk'] is not None else "-"
+            lines.append(f"| {ad['name']} | {ad['ip']} | {'; '.join(ad['issues'])} | {cpu} | {mem} | {disk} |")
+        if len(abnormal_devices) > 30:
+            lines.append(f"\n...还有 {len(abnormal_devices) - 30} 台异常设备未列出")
+    else:
+        lines.append("\n✅ 项目下所有设备正常运行，无异常")
+
+    return "\n".join(lines)
+
+
 TOOLS = [
     diagnose_device,
     diagnose_project,
@@ -884,4 +1069,6 @@ TOOLS = [
     push_to_dingtalk,
     ssh_exec_command,
     help_info,
+    query_device_from_db,
+    query_project_from_db,
 ]

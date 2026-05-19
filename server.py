@@ -24,6 +24,8 @@ SELF_AGENT_DIR = Path(__file__).parent
 sys.path.insert(0, str(SELF_AGENT_DIR))
 os.chdir(str(SELF_AGENT_DIR))
 
+STATIC_DIR = SELF_AGENT_DIR / 'static' / 'vendor'
+
 from config import API_HOST, API_PORT, API_KEY, USERS
 
 from feedback_store import create_feedback_record, update_rating, get_feedback_stats, get_recent_feedback, update_feedback_by_id, delete_feedback_by_id
@@ -58,6 +60,73 @@ async def get_agent():
     return _agent
 
 
+def _fix_table_alignment(text: str) -> str:
+    """Fix common markdown table alignment issues in LLM output."""
+    import re
+    lines = text.split('\n')
+    result = []
+    in_table = False
+    table_lines = []
+
+    for line in lines:
+        stripped = line.strip()
+        # Detect table line: starts with |
+        if stripped.startswith('|') and stripped.endswith('|'):
+            table_lines.append(stripped)
+            in_table = True
+            continue
+
+        # Not a table line — flush any accumulated table
+        if in_table:
+            result.extend(_normalize_table(table_lines))
+            table_lines = []
+            in_table = False
+        result.append(line)
+
+    if in_table:
+        result.extend(_normalize_table(table_lines))
+
+    return '\n'.join(result)
+
+
+def _normalize_table(rows):
+    """Normalize a list of markdown table rows so columns align."""
+    if not rows:
+        return []
+
+    # Parse each row into cells
+    parsed = []
+    for row in rows:
+        cells = [c.strip() for c in row.split('|')]
+        # Remove first/last empty strings from leading/trailing |
+        if cells and cells[0] == '':
+            cells = cells[1:]
+        if cells and cells[-1] == '':
+            cells = cells[:-1]
+        parsed.append(cells)
+
+    if not parsed:
+        return rows
+
+    # Find max column count
+    max_cols = max(len(c) for c in parsed)
+
+    # Pad each row to max_cols
+    for i in range(len(parsed)):
+        while len(parsed[i]) < max_cols:
+            parsed[i].append('')
+        # Also ensure separator row has enough dashes
+        if i == 1 and all(c.strip().startswith('-') for c in parsed[i] if c.strip()):
+            parsed[i] = ['---'] * max_cols
+
+    # Reconstruct with consistent column count
+    result = []
+    for cells in parsed:
+        result.append('| ' + ' | '.join(cells) + ' |')
+
+    return result
+
+
 def _extract_agent_reply(state: dict) -> str:
     """从 agent 状态中提取最终回复。"""
     messages = state.get("messages", [])
@@ -88,7 +157,7 @@ async def handle_chat(request):
             {"messages": [HumanMessage(content=user_message)]},
             config
         )
-        reply = _extract_agent_reply(final_state) or "处理完成，但未生成回复。"
+        reply = _fix_table_alignment(_extract_agent_reply(final_state) or "处理完成，但未生成回复。")
 
         # Log feedback record with username
         username = _get_username(request) or session_id
@@ -505,9 +574,9 @@ WEBUI_HTML = r'''<!DOCTYPE html>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Self-Agent - MEC诊断助手</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/14.1.0/markdown-it.min.js"></script>
+<link rel="stylesheet" href="/static/github.min.css">
+<script src="/static/highlight.min.js"></script>
+<script src="/static/markdown-it.min.js"></script>
 <style>
 .cursor { animation: blink 1s step-end infinite; }
 @keyframes blink { 50% { opacity: 0; } }
@@ -595,10 +664,13 @@ body {
 .msg {
   padding: 10px 14px; border-radius: 12px;
   font-size: 14px; line-height: 1.65;
-  white-space: pre-wrap;
   word-break: break-word;
 }
+.msg.bot {
+  white-space: normal;
+}
 .msg.user {
+  white-space: pre-wrap;
   background: var(--primary); color: white;
   border-bottom-right-radius: 4px; max-width: 70%;
 }
@@ -607,9 +679,18 @@ body {
   border-bottom-left-radius: 4px; max-width: 100%;
   box-shadow: 0 1px 3px rgba(0,0,0,0.08);
 }
+.msg.bot h1, .msg.bot h2, .msg.bot h3, .msg.bot h4 {
+  margin: 0.8em 0 0.4em; font-weight: 600; line-height: 1.3;
+}
+.msg.bot h1 { font-size: 18px; }
+.msg.bot h2 { font-size: 16px; }
+.msg.bot h3 { font-size: 15px; }
+.msg.bot h4 { font-size: 14px; }
 .msg.bot p { margin: 0.5em 0; }
 .msg.bot p:first-child { margin-top: 0; }
 .msg.bot p:last-child { margin-bottom: 0; }
+.msg.bot strong { font-weight: 600; }
+.msg.bot em { font-style: italic; }
 .msg.bot code {
   background: #f4f4f4; padding: 2px 5px; border-radius: 3px;
   font-size: 13px; font-family: 'Consolas', 'Monaco', monospace;
@@ -621,10 +702,17 @@ body {
 .msg.bot pre code {
   background: none; padding: 0; font-size: 13px;
 }
-.msg.bot ul, .msg.bot ol { padding-left: 20px; }
-.msg.bot table { border-collapse: collapse; margin: 8px 0; font-size: 13px; }
-.msg.bot th, .msg.bot td { border: 1px solid #e5e7eb; padding: 6px 10px; text-align: left; white-space: nowrap; }
-.msg.bot th { background: #f6f8fa; font-weight: 600; }
+.msg.bot ul, .msg.bot ol { padding-left: 20px; margin: 0.5em 0; }
+.msg.bot li { margin: 0.2em 0; }
+.msg.bot hr { border: none; border-top: 1px solid #e5e7eb; margin: 12px 0; }
+.msg.bot blockquote {
+  border-left: 3px solid var(--primary); padding: 4px 12px; margin: 8px 0;
+  color: #555; background: #f8faff; border-radius: 0 4px 4px 0;
+}
+.msg.bot table { border-collapse: collapse; margin: 8px 0; font-size: 13px; width: 100%; display: block; overflow-x: auto; }
+.msg.bot table th, .msg.bot table td { border: 1px solid #e5e7eb; padding: 6px 10px; text-align: left; white-space: nowrap; }
+.msg.bot table th { background: #f6f8fa; font-weight: 600; }
+.msg.bot table td { white-space: nowrap; }
 .msg.bot table tbody tr:nth-child(even) { background: #f9fafb; }
 .msg.bot table tbody tr:nth-child(odd) { background: #fff; }
 .msg.bot table tbody tr:hover { background: #eef2ff; }
@@ -871,12 +959,86 @@ var STORAGE_KEY = 'mec_chat_sessions_v3';
 var currentSessionId = null;
 var sessions = [];
 var currentUser = '';
-var md = (function() {
+var md = null;
+
+function initMarkdown() {
   try {
-    if (typeof window.markdownit === 'function') return window.markdownit({ html: true, linkify: true, typographer: true, breaks: true });
+    if (typeof window.markdownit === 'function') {
+      md = window.markdownit({ html: true, linkify: true, typographer: true, breaks: true });
+      return true;
+    }
   } catch(e) {}
-  return { render: function(t) { return '<pre>' + escapeHtml(t) + '</pre>'; } };
-})();
+  return false;
+}
+
+function ensureMarkdown() {
+  if (md) return;
+  if (!initMarkdown()) {
+    md = { render: function(t) { return '<pre>' + escapeHtml(t) + '</pre>'; } };
+  }
+}
+
+function renderMD(text) {
+  ensureMarkdown();
+  return md.render(fixTables(text));
+}
+
+function fixTables(text) {
+  var lines = text.split('\n');
+  var result = [];
+  var tableRows = [];
+  var inTable = false;
+
+  for (var i = 0; i < lines.length; i++) {
+    var s = lines[i].trim();
+    if (s.startsWith('|') && s.endsWith('|')) {
+      tableRows.push(s);
+      inTable = true;
+      continue;
+    }
+    if (inTable) {
+      normalizeTable(tableRows, result);
+      tableRows = [];
+      inTable = false;
+    }
+    result.push(lines[i]);
+  }
+  if (inTable) {
+    normalizeTable(tableRows, result);
+  }
+  return result.join('\n');
+}
+
+function normalizeTable(rows, out) {
+  if (rows.length === 0) return;
+  var parsed = [];
+  var maxCols = 0;
+  for (var i = 0; i < rows.length; i++) {
+    var parts = rows[i].split('|');
+    var cells = [];
+    for (var j = 0; j < parts.length; j++) {
+      var c = parts[j].trim();
+      if (j === 0 && c === '') continue;
+      if (j === parts.length - 1 && c === '') continue;
+      cells.push(c);
+    }
+    if (cells.length > maxCols) maxCols = cells.length;
+    parsed.push(cells);
+  }
+  for (var i = 0; i < parsed.length; i++) {
+    while (parsed[i].length < maxCols) parsed[i].push('');
+    if (i === 1) {
+      var isSep = true;
+      for (var j = 0; j < parsed[i].length; j++) {
+        if (parsed[i][j].replace(/-/g, '').trim() !== '') { isSep = false; break; }
+      }
+      if (isSep) {
+        for (var j = 0; j < maxCols; j++) parsed[i][j] = '---';
+      }
+    }
+    out.push('| ' + parsed[i].join(' | ') + ' |');
+  }
+}
 
 // ========== Auth ==========
 function checkAuth() {
@@ -1095,7 +1257,7 @@ function showWelcome(container) {
   var w = document.createElement('div');
   w.className = 'msg-wrapper bot-wrapper';
   w.innerHTML = '<div class="msg bot">'
-    + md.render('你好！我是 **Self-Agent 诊断助手** (v3.1 流式版)。\n\n说话示例：\n- `分析德会的日志` — 项目日志分析\n- `诊断设备 10.145.58.111` — 单台设备诊断\n- `查看这台设备的硬盘` — 设备详细信息\n- `目前有多少异常设备` — 异常统计\n- `看看 infer 进程的日志` — 任意 SSH 查询')
+    + renderMD('你好！我是 **Self-Agent 诊断助手** (v3.1 流式版)。\n\n说话示例：\n- `分析德会的日志` — 项目日志分析\n- `诊断设备 10.145.58.111` — 单台设备诊断\n- `查看这台设备的硬盘` — 设备详细信息\n- `目前有多少异常设备` — 异常统计\n- `看看 infer 进程的日志` — 任意 SSH 查询')
     + '</div>';
   container.appendChild(w);
   scrollToBottom();
@@ -1118,7 +1280,7 @@ function addMsgToDOM(type, content, extra, save) {
   }
   var contentDiv = document.createElement('div');
   if (type === 'bot' && content) {
-    contentDiv.innerHTML = md.render(content);
+    contentDiv.innerHTML = renderMD(content);
     contentDiv.querySelectorAll('pre code').forEach(function(block) {
       if (window.hljs) hljs.highlightElement(block);
     });
@@ -1133,7 +1295,7 @@ function addMsgToDOM(type, content, extra, save) {
     };
     contentDiv.appendChild(copyBtn);
   } else {
-    contentDiv.innerHTML = md.render(content || '');
+    contentDiv.innerHTML = renderMD(content || '');
   }
   div.appendChild(contentDiv);
   wrapper.appendChild(div);
@@ -1260,14 +1422,14 @@ try {
       if (type === 'info') {
         var msg = data.message || '';
         fullText += (fullText ? '\n' : '') + '💬 ' + msg;
-        contentDiv.innerHTML = md.render(fullText) + '<span class="cursor">▌</span>';
+        contentDiv.innerHTML = renderMD(fullText) + '<span class="cursor">▌</span>';
         scrollToBottom();
         return;
       }
       removeTyping();
       if (type === 'token') {
         fullText += data.content || '';
-        contentDiv.innerHTML = md.render(fullText) + '<span class="cursor">▌</span>';
+        contentDiv.innerHTML = renderMD(fullText) + '<span class="cursor">▌</span>';
         scrollToBottom();
       } else if (type === 'tool_start') {
         toolCount++;
@@ -1286,7 +1448,7 @@ try {
         var resultText = data.output || '';
         if (resultText.length > 6000) resultText = resultText.slice(0, 6000) + '\n\n...(截断)';
         fullText += '\n\n--- ' + (data.name || '工具') + ' 返回结果 ---\n\n' + resultText + '\n\n---';
-        contentDiv.innerHTML = md.render(fullText) + '<span class="cursor">▌</span>';
+        contentDiv.innerHTML = renderMD(fullText) + '<span class="cursor">▌</span>';
         scrollToBottom();
       } else if (type === 'error') {
         var errMsg = (data.message || '');
@@ -1294,12 +1456,12 @@ try {
           errMsg = 'LLM API 配额超限，请稍后再试（每日 00:48 重置）。已执行的工具结果见上方。';
         }
         fullText += '\n\n[提示] ' + errMsg;
-        contentDiv.innerHTML = md.render(fullText);
+        contentDiv.innerHTML = renderMD(fullText);
         btn.disabled = false;
         var streamMsg = document.getElementById('streaming-msg');
         if (streamMsg) streamMsg.classList.remove('streaming');
 } else if (type === 'done') {
-        contentDiv.innerHTML = md.render(fullText);
+        contentDiv.innerHTML = renderMD(fullText);
         try {
           contentDiv.querySelectorAll('pre code').forEach(function(block) {
             if (window.hljs) hljs.highlightElement(block);
@@ -1434,6 +1596,19 @@ checkAuth();
 </html>'''
 
 
+async def handle_static(request):
+    filename = request.match_info.get('filename', '')
+    filepath = STATIC_DIR / filename
+    if not filepath.exists() or '..' in filename or filename.startswith('/'):
+        return web.Response(status=404)
+    content_types = {
+        '.js': 'application/javascript',
+        '.css': 'text/css',
+    }
+    ext = filepath.suffix
+    ct = content_types.get(ext, 'application/octet-stream')
+    return web.Response(body=filepath.read_bytes(), content_type=ct)
+
 async def handle_webui(request):
     html = WEBUI_HTML.replace('__API_KEY__', json.dumps(API_KEY))
     return web.Response(text=html, content_type='text/html')
@@ -1449,6 +1624,7 @@ def create_app():
     app.router.add_get("/api/v1/health", handle_health)
     app.router.add_get("/", handle_webui)
     app.router.add_get("/webui", handle_webui)
+    app.router.add_get("/static/{filename:.*}", handle_static)
     app.router.add_post("/api/v1/login", handle_login)
     app.router.add_post("/api/v1/logout", handle_logout)
     app.router.add_get("/api/v1/me", handle_me)
