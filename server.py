@@ -29,6 +29,10 @@ from handlers import (
     handle_feedback_my, handle_feedback_update, handle_feedback_delete,
     handle_chat, handle_chat_stream, handle_raw_diagnose,
 )
+from handlers.memory import (
+    handle_memory_list, handle_memory_summary,
+    handle_memory_create, handle_memory_update, handle_memory_delete,
+)
 from webui import handle_webui, handle_static
 from handlers.chat import get_agent, _agent_init_time_since_init, _agent
 
@@ -119,6 +123,11 @@ def create_app():
     app.router.add_get("/api/v1/feedback/my", handle_feedback_my)
     app.router.add_post("/api/v1/feedback/update", handle_feedback_update)
     app.router.add_delete("/api/v1/feedback/{id}", handle_feedback_delete)
+    app.router.add_get("/api/v1/memory/list", handle_memory_list)
+    app.router.add_get("/api/v1/memory/summary", handle_memory_summary)
+    app.router.add_post("/api/v1/memory/create", handle_memory_create)
+    app.router.add_post("/api/v1/memory/update", handle_memory_update)
+    app.router.add_delete("/api/v1/memory/{id}", handle_memory_delete)
     return app
 
 

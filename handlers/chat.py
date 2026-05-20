@@ -102,6 +102,11 @@ async def handle_chat(request):
     if not user_message:
         return web.json_response({"success": False, "error": "message字段不能为空"}, status=400)
 
+    from config import set_current_user_id
+    username = _get_username(request)
+    if username:
+        set_current_user_id(username)
+
     try:
         from langchain_core.messages import HumanMessage
         agent = await get_agent()
@@ -136,6 +141,14 @@ async def handle_chat(request):
     except Exception as e:
         logger.error("❌ LangGraph执行失败: %s", e)
         return web.json_response({"success": False, "error": f"处理失败: {str(e)}"}, status=500)
+    finally:
+        try:
+            username = _get_username(request)
+            if username and not _is_trivial(user_message):
+                from user_memory_store import extract_memories_from_conversation
+                extract_memories_from_conversation(username, user_message, reply if 'reply' in dir() else "", intent if 'intent' in dir() else "")
+        except Exception:
+            pass
 
 
 async def handle_chat_stream(request):
@@ -147,6 +160,11 @@ async def handle_chat_stream(request):
     session_id = body.get("session_id", "default")
     if not user_message:
         return web.json_response({"success": False, "error": "message字段不能为空"}, status=400)
+
+    from config import set_current_user_id
+    username = _get_username(request)
+    if username:
+        set_current_user_id(username)
 
     response = web.StreamResponse(
         status=200,
@@ -315,6 +333,21 @@ async def handle_chat_stream(request):
                     "summary": summary,
                     "intent": intent if tool_called else "",
                 })
+
+            if not is_trivial:
+                try:
+                    username = _get_username(request)
+                    if username:
+                        from user_memory_store import extract_memories_from_conversation
+                        extract_memories_from_conversation(username, last_user_msg, last_ai_msg, intent)
+                        from user_memory_store import extract_memories_with_llm
+                        asyncio.ensure_future(
+                            asyncio.get_event_loop().run_in_executor(
+                                None, extract_memories_with_llm, username, last_user_msg, last_ai_msg, intent
+                            )
+                        )
+                except Exception:
+                    pass
         except Exception as e:
             logger.warning("Failed to save feedback after stream: %s", e)
 
@@ -384,3 +417,8 @@ async def _parse_body(request):
 def _get_username(request) -> str:
     cookies = request.cookies
     return cookies.get("username", "")
+
+
+def _is_trivial(text: str) -> bool:
+    trivial_patterns = ["好的", "谢谢", "ok", "嗯", "明白", "知道了", "再见", "bye"]
+    return any(p in text.lower() for p in trivial_patterns)

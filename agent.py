@@ -125,6 +125,7 @@ def agent_node(state: AgentState) -> dict:
 - help_info: 帮助信息
 - query_device_from_db: 从MySQL数据库查询单台设备状态（无需SSH，即使设备离线也能查到历史记录）
 - query_project_from_db: 从MySQL数据库查询整个项目状态（无需飞书报告）
+- memory: 管理用户记忆（add/replace/remove/list），可主动保存重要偏好、习惯或事实供后续对话使用
 
 规则：
 1. 用户说"看/查看/怎么样/情况/状态/有无/多少/统计"表示只读，先查再回答
@@ -154,6 +155,7 @@ def agent_node(state: AgentState) -> dict:
 25. 工具返回的结果中已经包含了数据来源和时间说明，你直接呈现工具返回的内容即可，不需要自己补充"数据来源"或"数据说明"。不要在回复末尾附加额外的说明
 26. 工具返回的 markdown 表格已经包含了正确的表头和和数据，你在回复中直接原样复制工具返回的表格内容即可，不要自己重新生成表格。如果工具返回的表格不符合你的预期（比如某些列全是0被工具自动过滤掉了），也不要去修改它。你可以在表格后面附加文字说明来解释或补充信息
 27. 用户提到的项目名直接从数据库 mec_device 表的 project 字段获取，如德会、德会隧道、柯诸等。当用户说"德会隧道"时，直接调用 query_project_from_db("德会隧道")，不要假设它是其他项目的别名
+28. 对话中如果用户透露了重要偏好（如回复风格、关注项目）、习惯（如常查看的维度、常用操作）或个人背景信息，应主动调用 memory 工具保存（target=user），这样下次对话时你能记住。但不要为了保存而保存，只保存有长期价值的模式信息
 
 诊断维度说明：
 - 物理机：SSH可达性、运行时间、硬盘占用率（/ 和 /data）
@@ -174,6 +176,26 @@ def agent_node(state: AgentState) -> dict:
         if ctx_project:
             ctx_parts.append(f"最近操作项目: {ctx_project}")
         system_prompt += f"\n\n当前对话上下文：{'，'.join(ctx_parts)}"
+
+    # Inject user memory
+    from config import get_current_user_id
+    from user_memory_store import get_user_memories
+    user_id = get_current_user_id()
+    if user_id:
+        memories = get_user_memories(user_id)
+        if memories:
+            pref_items = [m for m in memories if m["fact_type"] == "preference"]
+            habit_items = [m for m in memories if m["fact_type"] == "habit"]
+            fact_items = [m for m in memories if m["fact_type"] == "fact"]
+            mem_parts = []
+            if pref_items:
+                mem_parts.append("**用户偏好**（回复风格和关注范围）：\n" + "\n".join(f"- {m['value']}" for m in pref_items))
+            if habit_items:
+                mem_parts.append("**用户习惯**（常见操作模式，可据此预判意图）：\n" + "\n".join(f"- {m['value']}" for m in habit_items))
+            if fact_items:
+                mem_parts.append("**已知信息**（用户告知的背景事实）：\n" + "\n".join(f"- {m['value']}" for m in fact_items))
+            if mem_parts:
+                system_prompt += "\n\n## 关于当前用户\n" + "\n\n".join(mem_parts)
 
     # Insert system prompt as first message if not already there
     all_messages = [("system", system_prompt)] + messages

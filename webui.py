@@ -226,6 +226,7 @@ body {
     <span class="user-info" id="userInfo"></span>
     <button onclick="showGuide()">📖 指南</button>
     <button onclick="showFeedbackHistory()">📊 反馈</button>
+    <button onclick="showMemoryPanel()">🧠 记忆</button>
     <button onclick="logout()">退出</button>
   </div>
 </div>
@@ -299,6 +300,48 @@ body {
         <textarea id="editFbText" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:6px;font-size:14px;resize:vertical;min-height:80px;" placeholder="可选"></textarea>
       </div>
       <button onclick="submitEditFeedback()" style="width:100%;padding:10px;background:var(--primary);color:#fff;border:none;border-radius:6px;font-size:14px;cursor:pointer;">保存修改</button>
+    </div>
+  </div>
+</div>
+<div class="fb-modal" id="memModal" style="display:none">
+  <div class="fb-modal-content">
+    <div class="fb-modal-header">
+      <span>🧠 记忆管理</span>
+      <button onclick="closeMemoryModal()">×</button>
+    </div>
+    <div class="fb-modal-body" id="memModalBody">
+      <div class="fb-tabs" id="memTabs">
+        <button class="active" onclick="switchMemTab('preference', this)">偏好</button>
+        <button onclick="switchMemTab('habit', this)">习惯</button>
+        <button onclick="switchMemTab('fact', this)">事实</button>
+      </div>
+      <div id="memContent"></div>
+      <div style="margin-top:12px;padding-top:12px;border-top:1px solid #e5e7eb;">
+        <button onclick="showAddMemoryForm()" style="padding:8px 16px;background:var(--primary);color:#fff;border:none;border-radius:6px;font-size:13px;cursor:pointer;">＋ 添加记忆</button>
+      </div>
+      <div id="memForm" style="display:none;margin-top:12px;padding:12px;background:#f8f9fa;border-radius:8px;">
+        <div style="margin-bottom:8px;">
+          <label style="font-size:12px;color:#666;">类型</label>
+          <select id="memType" style="width:100%;padding:6px;border:1px solid #ddd;border-radius:4px;font-size:13px;">
+            <option value="preference">偏好</option>
+            <option value="habit">习惯</option>
+            <option value="fact">事实</option>
+          </select>
+        </div>
+        <div style="margin-bottom:8px;">
+          <label style="font-size:12px;color:#666;">键</label>
+          <input id="memKey" style="width:100%;padding:6px;border:1px solid #ddd;border-radius:4px;font-size:13px;" placeholder="例如：preferred_device">
+        </div>
+        <div style="margin-bottom:8px;">
+          <label style="font-size:12px;color:#666;">值</label>
+          <textarea id="memValue" rows="3" style="width:100%;padding:6px;border:1px solid #ddd;border-radius:4px;font-size:13px;resize:vertical;" placeholder="例如：优先使用德会项目"></textarea>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button onclick="saveMemory()" style="padding:6px 16px;background:#2ecc71;color:#fff;border:none;border-radius:4px;font-size:13px;cursor:pointer;">保存</button>
+          <button onclick="cancelMemoryForm()" style="padding:6px 16px;background:#95a5a6;color:#fff;border:none;border-radius:4px;font-size:13px;cursor:pointer;">取消</button>
+          <input type="hidden" id="memEditId" value="">
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -898,6 +941,116 @@ function submitEditFeedback() {
       loadFeedbackMy();
     } else {
       alert(d.error || '更新失败');
+    }
+  }).catch(function(e) { alert('请求失败: ' + e.message); });
+}
+
+var currentMemTab = 'preference';
+var editingMemId = null;
+
+function showMemoryPanel() {
+  document.getElementById('memModal').style.display = 'flex';
+  switchMemTab('preference', document.querySelector('#memTabs button'));
+}
+
+function closeMemoryModal() {
+  document.getElementById('memModal').style.display = 'none';
+  cancelMemoryForm();
+}
+
+function switchMemTab(tab, btn) {
+  currentMemTab = tab;
+  document.querySelectorAll('#memTabs button').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  loadMemories(tab);
+}
+
+function loadMemories(tab) {
+  var el = document.getElementById('memContent');
+  el.innerHTML = '<div style="text-align:center;padding:20px;color:#999;">加载中...</div>';
+  fetch('/api/v1/memory/list?fact_type=' + encodeURIComponent(tab || currentMemTab), { headers: { 'X-API-Key': API_KEY } })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (d.success) {
+        var items = d.data || [];
+        if (items.length === 0) {
+          el.innerHTML = '<div style="text-align:center;padding:20px;color:#999;">暂无记忆</div>';
+          return;
+        }
+        var html = '';
+        items.forEach(function(m) {
+          html += '<div class="fb-record" style="display:flex;justify-content:space-between;align-items:flex-start;">' +
+            '<div style="flex:1;">' +
+              '<div style="font-weight:500;">' + (m.key || '') + '</div>' +
+              '<div style="font-size:12px;color:#555;margin-top:2px;">' + (m.value || '') + '</div>' +
+              '<div style="font-size:11px;color:#999;margin-top:2px;">置信度: ' + (m.confidence != null ? (m.confidence * 100).toFixed(0) + '%' : '-') + ' · ' + (m.updated_at || '') + '</div>' +
+            '</div>' +
+            '<div style="display:flex;gap:4px;flex-shrink:0;margin-left:8px;">' +
+              '<button onclick="editMemory(' + m.id + ',\'' + (m.fact_type || '') + '\',\'' + (m.key || '').replace(/'/g,"\\\\'") + '\',\'' + (m.value || '').replace(/'/g,"\\\\'") + '\')" style="background:none;border:none;cursor:pointer;font-size:13px;color:var(--primary);">✏️</button>' +
+              '<button onclick="deleteMemory(' + m.id + ')" style="background:none;border:none;cursor:pointer;font-size:13px;color:#e74c3c;">🗑</button>' +
+            '</div>' +
+          '</div>';
+        });
+        el.innerHTML = html;
+      } else {
+        el.innerHTML = '<div style="color:#e74c3c;">' + (d.error || '加载失败') + '</div>';
+      }
+    }).catch(function(e) { el.innerHTML = '<div style="color:#e74c3c;">请求失败: ' + e.message + '</div>'; });
+}
+
+function showAddMemoryForm() {
+  document.getElementById('memForm').style.display = 'block';
+  document.getElementById('memType').value = currentMemTab;
+  document.getElementById('memKey').value = '';
+  document.getElementById('memValue').value = '';
+  document.getElementById('memEditId').value = '';
+}
+
+function cancelMemoryForm() {
+  document.getElementById('memForm').style.display = 'none';
+  editingMemId = null;
+}
+
+function editMemory(id, type, key, value) {
+  document.getElementById('memForm').style.display = 'block';
+  document.getElementById('memType').value = type;
+  document.getElementById('memKey').value = key;
+  document.getElementById('memValue').value = value;
+  document.getElementById('memEditId').value = id;
+}
+
+function saveMemory() {
+  var editId = document.getElementById('memEditId').value;
+  var factType = document.getElementById('memType').value;
+  var key = document.getElementById('memKey').value.trim();
+  var value = document.getElementById('memValue').value.trim();
+  if (!key || !value) { alert('键和值不能为空'); return; }
+  var url = editId ? '/api/v1/memory/update' : '/api/v1/memory/create';
+  var body = editId ? { id: parseInt(editId), fact_type: factType, key: key, value: value } : { fact_type: factType, key: key, value: value };
+  fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-API-Key': API_KEY },
+    body: JSON.stringify(body)
+  }).then(function(r) { return r.json(); }).then(function(d) {
+    if (d.success) {
+      cancelMemoryForm();
+      loadMemories(currentMemTab);
+    } else {
+      alert(d.error || '保存失败');
+    }
+  }).catch(function(e) { alert('请求失败: ' + e.message); });
+}
+
+function deleteMemory(id) {
+  if (!confirm('确定要删除这条记忆吗？')) return;
+  fetch('/api/v1/memory/' + id, {
+    method: 'DELETE',
+    headers: { 'X-API-Key': API_KEY }
+  }).then(function(r) { return r.json(); }).then(function(d) {
+    if (d.success) {
+      loadMemories(currentMemTab);
+    } else {
+      alert(d.error || '删除失败');
     }
   }).catch(function(e) { alert('请求失败: ' + e.message); });
 }
