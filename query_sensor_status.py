@@ -15,10 +15,7 @@ import pymysql
 import pymysql.cursors
 import re
 
-MYSQL_HOST = "10.10.31.25"
-MYSQL_USER = "root"
-MYSQL_PASS = "sy123456"
-MYSQL_DB = "mec_monitor"
+from config import MYSQL_HOST, MYSQL_USER, MYSQL_PASS, MYSQL_DB
 
 
 def _get_conn():

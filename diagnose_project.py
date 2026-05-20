@@ -221,7 +221,7 @@ def diagnose_device(diag_type, device_info):
         }
 
     try:
-        if diag_type == "container_offline":
+        if diag_type == "container_offline" or diag_type == "physical_offline":
             result = diagnose_container_offline(ip)
         elif diag_type == "zero_images":
             result = diagnose_zero_images(ip)
@@ -350,15 +350,50 @@ def diagnose_project(project_name):
 
     sys.path.insert(0, str(SELF_AGENT_DIR))
 
-    report_text, error = fetch_mec_report_from_feishu()
-    if error or not report_text:
-        result_summary["error"] = error or "未获取到报告"
-        return result_summary
+    # 优先从数据库获取项目异常设备
+    from tools.tool_db import query_project_from_db
+    db_result = query_project_from_db.invoke({"project": project_name})
+    db_devices = []
+    if "异常设备列表" in db_result:
+        import re as _re
+        lines = db_result.split("\n")
+        header_found = False
+        for line in lines:
+            if line.startswith("| 设备名"):
+                header_found = True
+                continue
+            if header_found and line.startswith("|"):
+                cells = [c.strip() for c in line.split("|")]
+                if len(cells) >= 8:
+                    name = cells[1]
+                    ip = cells[2]
+                    pm = cells[3]
+                    container = cells[4]
+                    img = cells[5]
+                    is_abnormal = "❌ 离线" in pm or "❌ 离线" in container or "为0" in img or "偏低" in img or "无数据" in img
+                    if is_abnormal:
+                        if "❌ 离线" in pm:
+                            db_devices.append({"name": name, "ip": ip, "diag_type": "physical_offline", "project": project_name})
+                        elif "❌ 离线" in container:
+                            db_devices.append({"name": name, "ip": ip, "diag_type": "container_offline", "project": project_name})
+                        else:
+                            db_devices.append({"name": name, "ip": ip, "diag_type": "zero_images", "project": project_name})
 
-    container_offline_devices, zero_images_devices, physical_offline = \
-        parse_abnormal_devices(report_text, project_name)
+    if db_devices:
+        container_offline_devices = [d for d in db_devices if d["diag_type"] == "container_offline"]
+        zero_images_devices = [d for d in db_devices if d["diag_type"] == "zero_images"]
+        physical_offline_devices = [d for d in db_devices if d["diag_type"] == "physical_offline"]
+    else:
+        # 数据库没有数据，回退到飞书报告
+        report_text, error = fetch_mec_report_from_feishu()
+        if error or not report_text:
+            result_summary["error"] = error or "未获取到报告"
+            return result_summary
 
-    if not container_offline_devices and not zero_images_devices:
+        container_offline_devices, zero_images_devices, physical_offline_devices = \
+            parse_abnormal_devices(report_text, project_name)
+
+    if not container_offline_devices and not zero_images_devices and not physical_offline_devices:
         result_summary["success"] = True
         result_summary["dingtalk_message"] = f"## {project_name}\n\n项目当前无异常设备，无需诊断。"
         return result_summary
@@ -380,7 +415,14 @@ def diagnose_project(project_name):
             write_llm_pending(result, "zero_images", device)
             total_need_llm += 1
 
-    container_results = [r for r in project_results if r.get('type') == 'container_offline'
+    for device in physical_offline_devices:
+        result = diagnose_device("physical_offline", device)
+        project_results.append(result)
+        if should_need_llm(result):
+            write_llm_pending(result, "physical_offline", device)
+            total_need_llm += 1
+
+    container_results = [r for r in project_results if r.get('type') in ('container_offline', 'physical_offline')
                          and '正常' not in r.get('diagnosis', {}).get('issue', '')]
     zero_results = [r for r in project_results if r.get('type') == 'zero_images'
                     and '正常' not in r.get('diagnosis', {}).get('issue', '')

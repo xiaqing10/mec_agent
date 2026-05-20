@@ -152,7 +152,8 @@ def agent_node(state: AgentState) -> dict:
 23. 当你用 markdown 表格展示数据时，表头列数和数据行列数必须严格一致。表头分隔行（|---|）中每个列的 `-` 数量至少 3 个。确保每行 `|` 的数量相同，否则表格会渲染错位
 24. 表格第一行必须是表头，第二行必须是分隔行（|---|），之后才是数据行。不要在表格前后使用 ``` 代码块包裹表格
 25. 工具返回的结果中已经包含了数据来源和时间说明，你直接呈现工具返回的内容即可，不需要自己补充"数据来源"或"数据说明"。不要在回复末尾附加额外的说明
-26. 工具返回的 markdown 表格已经包含了正确的表头和数据，你在回复中直接原样复制工具返回的表格内容即可，不要自己重新生成表格。如果工具返回的表格不符合你的预期（比如某些列全是0被工具自动过滤掉了），也不要去修改它。你可以在表格后面附加文字说明来解释或补充信息
+26. 工具返回的 markdown 表格已经包含了正确的表头和和数据，你在回复中直接原样复制工具返回的表格内容即可，不要自己重新生成表格。如果工具返回的表格不符合你的预期（比如某些列全是0被工具自动过滤掉了），也不要去修改它。你可以在表格后面附加文字说明来解释或补充信息
+27. 用户提到的项目名直接从数据库 mec_device 表的 project 字段获取，如德会、德会隧道、柯诸等。当用户说"德会隧道"时，直接调用 query_project_from_db("德会隧道")，不要假设它是其他项目的别名
 
 诊断维度说明：
 - 物理机：SSH可达性、运行时间、硬盘占用率（/ 和 /data）
@@ -177,7 +178,20 @@ def agent_node(state: AgentState) -> dict:
     # Insert system prompt as first message if not already there
     all_messages = [("system", system_prompt)] + messages
 
-    response = llm_with_tools.invoke(all_messages)
+    try:
+        response = llm_with_tools.invoke(all_messages)
+    except Exception as e:
+        error_str = str(e)
+        logger.error("LLM invoke failed: %s", error_str)
+        # If 400 error, try without system prompt or with truncated messages
+        if "400" in error_str or "InvalidParameter" in error_str:
+            logger.info("Retrying LLM invoke with minimal messages...")
+            # Keep only last 2 turns to reduce context size
+            trimmed = messages[-6:] if len(messages) > 6 else messages
+            fallback_messages = [("system", system_prompt)] + trimmed
+            response = llm_with_tools.invoke(fallback_messages)
+        else:
+            raise
     return {"messages": [response]}
 
 

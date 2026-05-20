@@ -14,8 +14,7 @@ import urllib.request
 import urllib.error
 from pathlib import Path
 
-SELF_AGENT_DIR = Path(__file__).parent
-sys.path.insert(0, str(SELF_AGENT_DIR))
+from config import FEISHU_APP_SECRET
 
 # Feishu配置
 CHAT_ID = 'oc_20cfbf30aae8b296ece5318b52cddd73'
@@ -29,15 +28,7 @@ MAX_LOG_SIZE = 200000  # 最大20KB
 
 def get_feishu_token():
     """获取Feishu token"""
-    env_path = os.path.expanduser('~/.hermes/.env')
-    app_secret = None
-    with open(env_path) as f:
-        for line in f:
-            if line.startswith('FEISHU_APP_SECRET='):
-                app_secret = line.strip().split('=', 1)[1]
-    
-    if not app_secret:
-        return None
+    app_secret = FEISHU_APP_SECRET
     
     try:
         url = 'https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal'
