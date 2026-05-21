@@ -169,7 +169,7 @@ def execute_repair(ip: str, action: str, target: str = "") -> dict:
 
     stdout, stderr, rc = ssh_exec(ip, port, user, command, exec_timeout=30, password=ssh_password)
 
-    if rc != 0 or "Permission denied" in stderr:
+    if rc != 0 or ("Permission denied" in stderr and "Identity file" not in stderr):
         result = (stdout + "\n" + stderr).strip()
         _log_repair(ip, action, target, command, result, False)
         return {"success": False, "error": f"执行失败 (exit={rc})", "output": result[:2000]}

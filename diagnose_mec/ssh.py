@@ -18,6 +18,15 @@ PHYSICAL_USERS = PHYSICAL_SSH_USERS
 SUDO_USERS = {"lcfc", "nvidia"}
 ROS_ENV_CMD = "source /home/files/rvf/setup.bash 2>/dev/null || source /home/files/install/setup.bash 2>/dev/null || source /opt/ros/noetic/setup.bash 2>/dev/null"
 
+_ssh_pool = None
+
+
+def _get_ssh_pool():
+    global _ssh_pool
+    if _ssh_pool is None or _ssh_pool._shutdown:
+        _ssh_pool = concurrent.futures.ThreadPoolExecutor(max_workers=4)
+    return _ssh_pool
+
 
 def ssh_exec(host_ip: str, port: int, user: str, command: str, exec_timeout: int = 30, password: str = "") -> tuple:
     connect_timeout = 5
@@ -63,9 +72,8 @@ def ssh_exec(host_ip: str, port: int, user: str, command: str, exec_timeout: int
         except RuntimeError:
             loop = None
         if loop is not None and loop.is_running():
-            with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
-                future = loop.run_in_executor(pool, lambda: subprocess.run(cmd, capture_output=True, text=True, timeout=exec_timeout))
-                result = future.result()
+            cf = _get_ssh_pool().submit(lambda: subprocess.run(cmd, capture_output=True, text=True, timeout=exec_timeout))
+            result = cf.result(timeout=exec_timeout + 5)
             return result.stdout.strip(), result.stderr.strip(), result.returncode
         else:
             result = subprocess.run(cmd, capture_output=True, text=True, timeout=exec_timeout)
@@ -174,9 +182,8 @@ def find_physical_user(host_ip: str) -> tuple:
             if code == 0 and stdout.strip() == "OK":
                 logger.info("物理机用户: %s@%s (密钥)", pm_user, host_ip)
                 return pm_user, "key"
-            break
         except Exception:
-            break
+            pass
 
     if db_pm_pass:
         for pm_user in PHYSICAL_USERS:
