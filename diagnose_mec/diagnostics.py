@@ -685,7 +685,7 @@ def _check_rostopic_hz(host_ip: str, result: dict, has_log_errors: bool) -> dict
             else:
                 result["diagnosis"]["topic_rates"][topic] = topic_text.strip()[:80]
                 logger.info("ℹ️  %s: %s", topic, topic_text.strip()[:60])
-        elif 'no new messages' in topic_text.lower():
+        elif 'no new messages' in topic_text.lower() or not topic_text.strip():
             result["diagnosis"]["topic_rates"][topic] = f"0 Hz (无数据){person_tag}"
             zero_rate_topics.append(topic)
             logger.warning("❌ %s: 无数据, 负责人%s", topic, person_tag)

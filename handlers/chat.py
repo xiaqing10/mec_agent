@@ -250,18 +250,6 @@ async def handle_chat_stream(request):
                     last_ai_msg += content
                     await _send("token", {"content": content})
 
-            elif kind == "on_chain_end" and name == "agent":
-                output = data.get("output", {}) or {}
-                if isinstance(output, dict):
-                    msgs = output.get("messages", [])
-                    if msgs:
-                        last_msg = msgs[-1]
-                        if hasattr(last_msg, 'content') and last_msg.content:
-                            content = last_msg.content
-                            if content:
-                                await _send("token", {"content": content})
-                                last_ai_msg += content
-
             elif kind == "on_tool_start":
                 current_tool = name
                 tool_input = data.get("input", {})
@@ -276,8 +264,30 @@ async def handle_chat_stream(request):
                     drain_task = None
                 output = data.get("output", "")
                 await _send("tool_end", {"name": name})
-                output_text = str(output)
-                if output_text and output_text != "None":
+                output_text = output.content if hasattr(output, 'content') else str(output)
+                has_llm_output = output_text and output_text != "None"
+                if name == "diagnose_device":
+                    try:
+                        diag = json.loads(output_text)
+                        if diag.get("type") == "diagnose_device_result":
+                            logger.info("DEBUG diag_summary: ip=%s overall=%s dims=%d summary_len=%d",
+                                        diag.get("ip"), diag.get("overall"),
+                                        len(diag.get("dimensions", [])),
+                                        len(diag.get("summary_for_llm", "")))
+                            await _send("diag_summary", diag)
+                            llm_output = diag.get("summary_for_llm", "")
+                            if llm_output:
+                                output_text = llm_output
+                                await _send("tool_result", {"name": name, "output": llm_output[:8000]})
+                                tool_actions.append({"name": name, "content": llm_output[:100]})
+                            has_llm_output = False
+                        else:
+                            logger.warning("DEBUG diag_summary: json parsed but type=%s", diag.get("type"))
+                    except (json.JSONDecodeError, TypeError) as e:
+                        logger.warning("DEBUG diag_summary: json parse failed type=%s err=%s",
+                                       type(e).__name__, str(e)[:100])
+                        logger.warning("DEBUG diag_summary: raw output[:200] = %s", output_text[:200])
+                if has_llm_output:
                     await _send("tool_result", {"name": name, "output": output_text[:8000]})
                     tool_actions.append({"name": name, "content": output_text[:100]})
                 current_tool = None

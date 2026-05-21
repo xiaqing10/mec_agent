@@ -1,0 +1,21 @@
+{
+  "project": "南京仙新路",
+  "devices": {
+    "mk11_292": {
+      "name": "mk11_292",
+      "ip": "172.172.8.107",
+      "records": [
+        {
+          "timestamp": "2026-05-21T14:30:10",
+          "diag_type": "zero_images",
+          "issue": "设备已恢复正常，今日图片数: 513",
+          "error": "",
+          "physical_uptime": "",
+          "container_status": "",
+          "today_image_count": 513
+        }
+      ]
+    }
+  },
+  "updated_at": "2026-05-21T14:30:10"
+}

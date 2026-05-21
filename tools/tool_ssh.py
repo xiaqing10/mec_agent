@@ -8,8 +8,10 @@ _DANGEROUS_CMDS = ["rm -rf /", ":(){ :|:& };:", "mkfs", "dd if=", "chmod -R 000"
 
 @tool
 def ssh_exec_command(ip: str, command: str, container: bool = False, ros_env: bool = False) -> str:
-    """在MEC设备上执行任意SSH命令并返回输出。
-    用于查看进程日志、检查配置文件内容、查看系统状态等灵活场景。
+    """在MEC设备上执行单个SSH只读命令并返回输出。
+
+    仅用于 diagnose_device 和 device_info 不覆盖的特定细粒度查询（如查看特定日志文件、特定配置文件内容等）。
+    不要用此工具替代 diagnose_device 进行多维度诊断。诊断设备整体状态请使用 diagnose_device；查询设备指标请使用 device_info。
 
     Args:
         ip: 设备IP地址或设备名

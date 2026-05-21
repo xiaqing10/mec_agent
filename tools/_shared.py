@@ -31,30 +31,75 @@ def _summarize_log_errors(log_errors: dict) -> str:
     return "; ".join(parts) if parts else ""
 
 
-def _fmt(ip, dims, root=""):
+def _build_diag_result(ip, dims, root=""):
+    import json
+    from datetime import datetime
+
     has_e = any(d["status"] == "error" for d in dims)
     has_w = any(d["status"] == "warning" for d in dims)
-    lines = [f"> 设备 {ip} 诊断结果（{'❌异常' if has_e else '⚠️注意' if has_w else '✅正常'}）\n"]
-    error_dims = [d for d in dims if d["status"] == "error"]
-    skip_dims = [d for d in dims if d["status"] == "skip"]
-    other_dims = [d for d in dims if d["status"] not in ("error", "skip")]
-    for d in other_dims:
-        ico = {"ok": "✅", "warning": "⚠️"}.get(d["status"], "❓")
-        lines.append(f"{ico} **{d['name']}**: {d['detail']}")
+    overall = "error" if has_e else ("warning" if has_w else "normal")
+
+    diag_time = datetime.now().strftime("%Y-%m-%d %H:%M")
+
+    summary_parts = [f"设备 {ip} 诊断完毕（{'异常' if has_e else '需要关注' if has_w else '正常'}），{diag_time}"]
     if root:
-        reason = ROOT_CAUSE_CN.get(root, root)
-        lines.append(f"\n📌 **根因分析**: {reason}")
-        for d in error_dims:
-            lines.append(f"  - ❌ **{d['name']}**: {d['detail']}")
-    elif error_dims:
-        for d in error_dims:
-            lines.append(f"❌ **{d['name']}**: {d['detail']}")
-    if skip_dims:
-        lines.append("")
-        for d in skip_dims:
-            lines.append(f"  ⏭️ {d['name']}: {d['detail']}")
-    lines.append(f"\n_诊断时间: {__import__('datetime').datetime.now().strftime('%Y-%m-%d %H:%M')}_")
-    return "\n".join(lines)
+        summary_parts.append(f"根因: {ROOT_CAUSE_CN.get(root, root)}")
+    else:
+        error_names = [d["name"] for d in dims if d["status"] == "error"]
+        warning_names = [d["name"] for d in dims if d["status"] == "warning"]
+        if error_names:
+            summary_parts.append(f"异常维度: {', '.join(error_names)}")
+        if warning_names:
+            summary_parts.append(f"需要关注的维度: {', '.join(warning_names)}")
+
+    ok_names = [d["name"] for d in dims if d["status"] == "ok"]
+    if ok_names:
+        summary_parts.append(f"正常维度: {', '.join(ok_names)}")
+
+    skip_names = [d["name"] for d in dims if d["status"] == "skip"]
+    if skip_names:
+        summary_parts.append(f"未检查维度: {', '.join(skip_names)}（因上游不可达）")
+
+    summary_for_llm = "\n".join(summary_parts)
+
+    result = {
+        "type": "diagnose_device_result",
+        "ip": ip,
+        "overall": overall,
+        "root_cause": root,
+        "diagnosis_time": diag_time,
+        "dimensions": [],
+        "summary_for_llm": summary_for_llm,
+    }
+
+    for d in dims:
+        dim_entry = {
+            "name": d["name"],
+            "status": d["status"],
+            "detail": d.get("detail", ""),
+        }
+        if d.get("problem"):
+            dim_entry["problem"] = d["problem"]
+
+        if d.get("_log_errors"):
+            err_snippets = []
+            for proc_name, err_info in d["_log_errors"].items():
+                for e in err_info.get("errors", [])[:3]:
+                    err_snippets.append(("  " + e) if isinstance(e, str) else ("  " + str(e)))
+            if err_snippets:
+                dim_entry["log_errors_detail"] = err_snippets[:5]
+
+        if d.get("_topic_rates"):
+            topic_items = []
+            zero_set = set(d.get("_zero_topics", []))
+            for t, r in d["_topic_rates"].items():
+                item = f"{t}: {r}"
+                topic_items.append({"topic": item, "is_zero": t in zero_set})
+            dim_entry["topic_rates"] = topic_items
+
+        result["dimensions"].append(dim_entry)
+
+    return json.dumps(result, ensure_ascii=False)
 
 
 ROOT_CAUSE_CN = {

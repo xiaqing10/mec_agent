@@ -8,7 +8,8 @@ from config import SSH_KEY_PATH, CONTAINER_SSH_PORT, CONTAINER_SSH_USER, PHYSICA
 
 logger = logging.getLogger("diagnose_mec.ssh")
 
-SSH_CMD = "ssh"
+#SSH_CMD = "ssh"
+SSH_CMD = "/mnt/c/Windows/System32/OpenSSH/ssh.exe"
 SSH_KEY = SSH_KEY_PATH
 
 CONTAINER_PORT = CONTAINER_SSH_PORT
@@ -143,6 +144,30 @@ def _get_device_credentials(host_ip: str) -> dict:
 
 
 def find_physical_user(host_ip: str) -> tuple:
+    creds = _get_device_credentials(host_ip)
+    db_pm_user = creds.get("pm_username", "")
+    db_pm_pass = creds.get("pm_password", "")
+    db_dev_pass = creds.get("password", "")
+
+    if db_pm_user:
+        try:
+            stdout, stderr, code = ssh_exec(host_ip, 22, db_pm_user, "echo 'OK'", exec_timeout=10)
+            if code == 0 and stdout.strip() == "OK":
+                logger.info("物理机用户: %s@%s (密钥)", db_pm_user, host_ip)
+                return db_pm_user, "key"
+        except Exception:
+            pass
+
+        db_pass = db_pm_pass or db_dev_pass
+        if db_pass:
+            try:
+                stdout, stderr, code = ssh_exec(host_ip, 22, db_pm_user, "echo 'OK'", exec_timeout=10, password=db_pass)
+                if code == 0 and stdout.strip() == "OK":
+                    logger.info("物理机用户: %s@%s (数据库密码)", db_pm_user, host_ip)
+                    return db_pm_user, "password"
+            except Exception:
+                pass
+
     for pm_user in PHYSICAL_USERS:
         try:
             stdout, stderr, code = ssh_exec(host_ip, 22, pm_user, "echo 'OK'", exec_timeout=10)
@@ -153,26 +178,10 @@ def find_physical_user(host_ip: str) -> tuple:
         except Exception:
             break
 
-    creds = _get_device_credentials(host_ip)
-    pm_user_from_db = creds.get("pm_username", "")
-    pm_pass = creds.get("pm_password", "")
-    dev_pass = creds.get("password", "")
-
-    if pm_user_from_db:
-        db_pass = pm_pass or dev_pass
-        if db_pass:
-            try:
-                stdout, stderr, code = ssh_exec(host_ip, 22, pm_user_from_db, "echo 'OK'", exec_timeout=10, password=db_pass)
-                if code == 0 and stdout.strip() == "OK":
-                    logger.info("物理机用户: %s@%s (数据库密码)", pm_user_from_db, host_ip)
-                    return pm_user_from_db, "password"
-            except Exception:
-                pass
-
-    if pm_pass:
+    if db_pm_pass:
         for pm_user in PHYSICAL_USERS:
             try:
-                stdout, stderr, code = ssh_exec(host_ip, 22, pm_user, "echo 'OK'", exec_timeout=10, password=pm_pass)
+                stdout, stderr, code = ssh_exec(host_ip, 22, pm_user, "echo 'OK'", exec_timeout=10, password=db_pm_pass)
                 if code == 0 and stdout.strip() == "OK":
                     logger.info("物理机用户: %s@%s (密码)", pm_user, host_ip)
                     return pm_user, "password"

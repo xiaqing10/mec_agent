@@ -3,7 +3,7 @@ import re
 
 from langchain_core.tools import tool
 
-from ._shared import _diag_progress_callback, _notify_progress, _summarize_log_errors, _fmt
+from ._shared import _diag_progress_callback, _notify_progress, _summarize_log_errors, _build_diag_result
 
 
 @tool
@@ -56,7 +56,7 @@ def diagnose_device(ip: str, project: str = "") -> str:
             dimensions.append({"name": "登录建议", "status": "warning", "detail": "公钥认证失败，已尝试密码登录也失败。可能原因：1)设备SSH配置不允许密码登录 2)密码已变更 3)网络中间层阻断"})
         elif "超时" in ce or "Timeout" in ce.lower():
             dimensions.append({"name": "网络建议", "status": "warning", "detail": "SSH连接超时，可能原因：1)设备关机或断网 2)网络路由不通 3)防火墙阻断SSH端口"})
-        return _fmt(ip, dimensions, "physical_unreachable")
+        return _build_diag_result(ip, dimensions, "physical_unreachable")
 
     pu = cd.get("physical_uptime", "未知")
     disk_root = cd.get("disk_root", "")
@@ -108,7 +108,7 @@ def diagnose_device(ip: str, project: str = "") -> str:
         db_detail = format_device_db_info(db_info)
         if db_detail:
             dimensions.append({"name": "数据库记录", "status": "warning", "detail": db_detail})
-        return _fmt(ip, dimensions, problem)
+        return _build_diag_result(ip, dimensions, problem)
     elif "Docker" in (issue_text or ""):
         problem, detail = "docker_service_down", "Docker服务未运行"
         _notify_progress("容器", "error", detail)
@@ -128,7 +128,7 @@ def diagnose_device(ip: str, project: str = "") -> str:
         db_detail = format_device_db_info(db_info)
         if db_detail:
             dimensions.append({"name": "数据库记录", "status": "warning", "detail": db_detail})
-        return _fmt(ip, dimensions, problem)
+        return _build_diag_result(ip, dimensions, problem)
 
     # 容器存在（可能SSH不可达），继续走完整诊断（diagnose_zero_images内部会fallback到docker exec）
     img = diagnose_zero_images(ip, progress_cb=_diag_progress_callback)
@@ -161,7 +161,7 @@ def diagnose_device(ip: str, project: str = "") -> str:
             if log_summary:
                 detail += f" | 日志: {log_summary}"
         dimensions.append({"name": "进程", "status": "error", "detail": detail,
-                          "problem": problem, "supervisor_raw": sv_raw})
+                           "problem": problem, "supervisor_raw": sv_raw, "_log_errors": log_errors})
         _notify_progress("进程", "error", detail)
     elif log_errors:
         log_summary = _summarize_log_errors(log_errors)
@@ -169,7 +169,7 @@ def diagnose_device(ip: str, project: str = "") -> str:
         problem_map = {"driver": "gpu_driver_error", "ros_master": "ros_master_error",
                        "oom": "oom_error", "process": "process_log_error"}
         dimensions.append({"name": "进程", "status": "error", "detail": f"supervisor正常但日志异常: {log_summary}",
-                          "problem": problem_map.get(error_category_val, "process_log_error")})
+                           "problem": problem_map.get(error_category_val, "process_log_error"), "_log_errors": log_errors})
         _notify_progress("进程", "error", f"supervisor正常但日志异常: {log_summary}")
     elif isinstance(sv, dict) and sv.get("total", 0) > 0:
         dimensions.append({"name": "进程", "status": "ok", "detail": f"{sv.get('running',0)}/{sv.get('total',0)} 运行正常"})
@@ -186,17 +186,31 @@ def diagnose_device(ip: str, project: str = "") -> str:
     rostopic = iz.get("rostopic", "")
     has_log_errors = bool(iz.get("log_errors"))
 
+    def _make_ros_dim(name, status, detail, problem=None, topic_rates=None):
+        dim = {"name": name, "status": status, "detail": detail}
+        if problem:
+            dim["problem"] = problem
+        if topic_rates:
+            dim["_topic_rates"] = topic_rates
+        return dim
+
+    tr = topic_rates if topic_rates else None
+
     if not roscore and not has_log_errors:
         if abnormals:
-            dimensions.append({"name": "ROS", "status": "skip", "detail": "进程异常，跳过"})
+            dimensions.append(_make_ros_dim("ROS", "skip", "进程异常，跳过", topic_rates=tr))
         else:
-            dimensions.append({"name": "ROS", "status": "error", "detail": "roscore未运行", "problem": "roscore_down"})
+            dimensions.append(_make_ros_dim("ROS", "error", "roscore未运行", "roscore_down", tr))
     elif "未运行" in roscore:
-        dimensions.append({"name": "ROS", "status": "error", "detail": "roscore未运行", "problem": "roscore_down"})
+        dimensions.append(_make_ros_dim("ROS", "error", "roscore未运行", "roscore_down", tr))
     elif rostopic:
-        dimensions.append({"name": "ROS", "status": "error" if "无输出" in rostopic else "warning", "detail": rostopic})
+        dimensions.append(_make_ros_dim("ROS", "error" if "无输出" in rostopic else "warning", rostopic, topic_rates=tr))
     elif topic_rates:
-        zero_topics = [t for t, r in topic_rates.items() if "0 Hz" in r or "无数据" in r]
+        zero_topics = [t for t, r in topic_rates.items() if r.startswith("0 Hz") or "无数据" in r]
+        import logging
+        _logger = logging.getLogger(__name__)
+        if zero_topics:
+            _logger.info("ROS zero_topics: %s", [(t, topic_rates[t]) for t in zero_topics])
         topic_list_str = "\n  - ".join(f"{t}: {r}" for t, r in topic_rates.items())
         if len(zero_topics) == len(topic_rates) and topic_rates:
             detail = f"所有topic无数据({len(topic_rates)}个)\n  - {topic_list_str}"
@@ -205,12 +219,13 @@ def diagnose_device(ip: str, project: str = "") -> str:
         else:
             detail = f"roscore运行，{len(topic_rates)} topic有数据\n  - {topic_list_str}"
         ros_status = "error" if len(zero_topics)==len(topic_rates) and topic_rates else "warning" if zero_topics else "ok"
-        dimensions.append({"name": "ROS话题", "status": ros_status, "detail": detail})
+        dimensions.append({"name": "ROS话题", "status": ros_status, "detail": detail,
+                           "_topic_rates": topic_rates, "_zero_topics": zero_topics})
         _notify_progress("ROS话题", ros_status, detail[:60])
     elif abnormals:
-        dimensions.append({"name": "ROS", "status": "skip", "detail": "进程异常，跳过"})
+        dimensions.append(_make_ros_dim("ROS", "skip", "进程异常，跳过", topic_rates=tr))
     else:
-        dimensions.append({"name": "ROS", "status": "ok", "detail": "roscore运行"})
+        dimensions.append(_make_ros_dim("ROS", "ok", "roscore运行", topic_rates=tr))
 
     latest_time = iz.get("latest_image_time", "")
     if ic > 0:
@@ -263,7 +278,7 @@ def diagnose_device(ip: str, project: str = "") -> str:
         from project_history import save_diagnosis
         save_diagnosis(dev_info.get("project", ""), dev_info.get("name", ""), ip, img)
 
-    return _fmt(ip, dimensions, root_cause if has_error else "")
+    return _build_diag_result(ip, dimensions, root_cause if has_error else "")
 
 
 @tool

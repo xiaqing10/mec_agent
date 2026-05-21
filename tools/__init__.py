@@ -1,4 +1,4 @@
-from ._shared import set_diag_progress_callback, _notify_progress, _summarize_log_errors, _fmt
+from ._shared import set_diag_progress_callback, _notify_progress, _summarize_log_errors, _build_diag_result
 from .tool_device import diagnose_device, device_info, llm_diagnose_device
 from .tool_project import diagnose_project, analyze_logs, llm_analyze_logs
 from .tool_db import query_abnormal, query_device_from_db, query_project_from_db

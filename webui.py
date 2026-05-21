@@ -671,6 +671,74 @@ try {
         }
         pTag.innerHTML = pTag.innerHTML + '<div>' + ico + ' <b>' + data.name + '</b>: ' + data.detail + '</div>';
         scrollToBottom();
+      } else if (type === 'diag_summary') {
+        var dims = data.dimensions || [];
+        var ip = data.ip || '';
+        var overall = data.overall || '';
+        var cause = data.root_cause || '';
+        var time = data.diagnosis_time || '';
+        var chatArea = document.getElementById('chatArea');
+        var panel = document.getElementById('diag-summary-panel');
+        if (!panel) {
+          panel = document.createElement('div');
+          panel.id = 'diag-summary-panel';
+          panel.className = 'diag-summary-card';
+          panel.style.cssText = 'margin:8px;border:1px solid #d1d5db;border-radius:8px;overflow:hidden;font-size:13px;background:#fff;';
+          chatArea.appendChild(panel);
+        }
+        panel.style.display = 'block';
+        var statusColors = {'ok':'#10b981','warning':'#f59e0b','error':'#ef4444','skip':'#9ca3af'};
+        var statusIcons = {'ok':'✅','warning':'⚠️','error':'❌','skip':'⏭️'};
+        var html = '<div style="background:#f9fafb;padding:10px 14px;border-bottom:1px solid #e5e7eb;display:flex;justify-content:space-between;align-items:center;">';
+        var ovIco = {'normal':'✅','warning':'⚠️','error':'❌'}[overall] || '❓';
+        var ovLabel = {'normal':'正常','warning':'注意','error':'异常'}[overall] || overall;
+        html += '<b>' + ovIco + ' 诊断结果: ' + ip + ' (' + ovLabel + ')</b>';
+        html += '<span style="color:#888;font-size:11px;">' + time + '</span>';
+        html += '</div>';
+        html += '<div style="padding:8px 14px;">';
+        for (var i = 0; i < dims.length; i++) {
+          var d = dims[i];
+          if (d.name === '数据库记录' || d.name === '登录建议' || d.name === '网络建议') continue;
+          var c = statusColors[d.status] || '#888';
+          var ic = statusIcons[d.status] || '❓';
+          html += '<div style="display:flex;align-items:flex-start;padding:6px 0;border-bottom:1px solid #f3f4f6;">';
+          html += '<span style="flex:0 0 80px;font-weight:600;color:' + c + ';">' + ic + ' ' + d.name + '</span>';
+          html += '<span style="flex:1;color:#444;">' + (d.detail || '') + '</span>';
+          html += '</div>';
+          if (d.log_errors_detail && d.log_errors_detail.length > 0) {
+            html += '<div style="margin-left:84px;padding:4px 8px;background:#fff5f5;border-left:2px solid #ef4444;border-radius:0 4px 4px 0;font-size:12px;color:#666;margin-bottom:4px;">';
+            for (var j = 0; j < d.log_errors_detail.length; j++) {
+              html += '<div>' + d.log_errors_detail[j] + '</div>';
+            }
+            html += '</div>';
+          }
+          if (d.topic_rates && d.topic_rates.length > 0) {
+            var hasZero = false;
+            for (var kk = 0; kk < d.topic_rates.length; kk++) {
+              if (d.topic_rates[kk].is_zero) { hasZero = true; break; }
+            }
+            var bg = hasZero ? '#fff5f5' : '#f0fdf4';
+            var bd = hasZero ? '#ef4444' : '#10b981';
+            html += '<div style="margin-left:84px;padding:4px 8px;background:' + bg + ';border-left:2px solid ' + bd + ';border-radius:0 4px 4px 0;font-size:12px;color:#555;margin-bottom:4px;">';
+            for (var k = 0; k < d.topic_rates.length; k++) {
+              var tItem = d.topic_rates[k];
+              if (typeof tItem === 'string') {
+                html += '<div>' + tItem + '</div>';
+              } else {
+                html += '<div style="color:' + (tItem.is_zero ? '#ef4444' : '#555') + ';">' + tItem.topic + '</div>';
+              }
+            }
+            html += '</div>';
+          }
+        }
+        if (cause) {
+          html += '<div style="margin-top:10px;padding:8px 14px;background:#fff7ed;border-radius:6px;border-left:3px solid #f97316;">';
+          html += '<b>🔍 根因分析:</b> ' + cause;
+          html += '</div>';
+        }
+        html += '</div>';
+        panel.innerHTML = html;
+        scrollToBottom();
       } else if (type === 'tool_end') {
         var tag = document.getElementById('tool-' + toolCount);
         if (tag) {
@@ -735,6 +803,11 @@ try {
         }
         var msgDiv = contentDiv.parentNode;
         if (msgDiv) msgDiv.classList.remove('streaming');
+        var diagPanel = document.getElementById('diag-summary-panel');
+        if (diagPanel && diagPanel.style.display !== 'none') {
+          var chatArea = document.getElementById('chatArea');
+          chatArea.appendChild(diagPanel);
+        }
         scrollToBottom();
         btn.disabled = false;
         window._streamingFullText = '';
