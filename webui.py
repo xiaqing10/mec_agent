@@ -273,6 +273,7 @@ body {
       <div class="fb-tabs">
         <button class="active" onclick="switchFbTab('my', this)">我的反馈</button>
         <button onclick="switchFbTab('all', this)" id="fbTabAll">全部反馈</button>
+        <button onclick="switchFbTab('pinned', this)" id="fbTabPinned">📌 待优化</button>
         <button onclick="switchFbTab('stats', this)" id="fbTabStats">统计</button>
       </div>
       <div id="fbContent"></div>
@@ -330,7 +331,18 @@ body {
         </div>
         <div style="margin-bottom:8px;">
           <label style="font-size:12px;color:#666;">键</label>
-          <input id="memKey" style="width:100%;padding:6px;border:1px solid #ddd;border-radius:4px;font-size:13px;" placeholder="例如：preferred_device">
+          <select id="memKey" onchange="onMemKeyChange()" style="width:100%;padding:6px;border:1px solid #ddd;border-radius:4px;font-size:13px;">
+            <option value="reply_style">回复风格（简洁/详细）</option>
+            <option value="focus_project">关注的项目</option>
+            <option value="preferred_format">偏好的格式（表格/列表）</option>
+            <option value="common_device">常用设备</option>
+            <option value="diagnose_focus">诊断关注点（硬盘/内存/传感器）</option>
+            <option value="work_pattern">工作模式（先诊断再修复）</option>
+            <option value="role">角色/职责</option>
+            <option value="background">背景信息</option>
+            <option value="__custom__">自定义...</option>
+          </select>
+          <input id="memCustomKey" style="display:none;width:100%;padding:6px;border:1px solid #ddd;border-radius:4px;font-size:13px;margin-top:4px;" placeholder="输入自定义键名">
         </div>
         <div style="margin-bottom:8px;">
           <label style="font-size:12px;color:#666;">值</label>
@@ -342,6 +354,16 @@ body {
           <input type="hidden" id="memEditId" value="">
         </div>
       </div>
+    </div>
+  </div>
+</div>
+<div class="fb-modal" id="repairModal" style="display:none">
+  <div class="fb-modal-content" style="width:500px;">
+    <div class="fb-modal-header">
+      <span>🔧 修复确认</span>
+      <button onclick="closeRepairModal()">×</button>
+    </div>
+    <div class="fb-modal-body" id="repairBody">
     </div>
   </div>
 </div>
@@ -657,6 +679,14 @@ try {
         }
       } else if (type === 'tool_result') {
         var resultText = data.output || '';
+        if (data.name === 'repair_device' && resultText.indexOf('"status": "pending_confirmation"') !== -1) {
+          try {
+            var repairData = JSON.parse(resultText);
+            if (repairData.status === 'pending_confirmation') {
+              showRepairConfirm(repairData);
+            }
+          } catch(e) {}
+        }
         if (resultText.length > 6000) resultText = resultText.slice(0, 6000) + '\n\n...(截断)';
         var details = document.createElement('details');
         details.style.margin = '4px 0';
@@ -778,6 +808,10 @@ function logout() {
     document.getElementById('loginOverlay').style.display = 'flex';
     document.getElementById('loginError').textContent = '';
     document.getElementById('userInfo').textContent = '';
+    document.getElementById('chatArea').innerHTML = '';
+    document.getElementById('sessionList').innerHTML = '';
+    sessions = [];
+    currentSessionId = null;
   });
 }
 
@@ -833,6 +867,7 @@ function switchFbTab(tab, btn) {
   btn.classList.add('active');
   if (tab === 'my') loadFeedbackMy();
   else if (tab === 'all') loadFeedbackAll();
+  else if (tab === 'pinned') loadPinnedFeedback();
   else if (tab === 'stats') loadFeedbackStats();
 }
 
@@ -889,8 +924,13 @@ function renderFeedbackList(el, records, title) {
   var ratingMap = {'satisfied': '👍 有帮助', 'partial': '🤔 部分解决', 'unsatisfied': '👎 没帮助'};
   var colorMap = {'satisfied': '#2ecc71', 'partial': '#f39c12', 'unsatisfied': '#e74c3c'};
   var isMy = title === '我的反馈';
+  var isAll = title === '全部反馈';
+  var isPinned = title === '📌 待优化';
   var html = '';
+  var shown = 0;
   records.forEach(function(r) {
+    if (isAll && (!r.rating || r.rating === 'satisfied')) return;
+    shown++;
     var rating = r.rating ? ratingMap[r.rating] || r.rating : '⏳ 待评价';
     var color = r.rating ? colorMap[r.rating] || '#999' : '#95a5a6';
     var actions = '';
@@ -898,18 +938,34 @@ function renderFeedbackList(el, records, title) {
       var acts = typeof r.actions === 'string' ? JSON.parse(r.actions) : r.actions;
       if (acts && acts.length) actions = '🛠 ' + acts.map(function(a) { return a.name; }).join(', ');
     } catch(e) {}
+    var pinBtn = '';
+    if (isAll) {
+      if (r.pinned) {
+        pinBtn = ' <button onclick="unpinFeedback(' + r.id + ')" style="background:none;border:none;cursor:pointer;font-size:13px;color:#e74c3c;">📌 取消置顶</button>';
+      } else {
+        pinBtn = ' <button onclick="pinFeedback(' + r.id + ')" style="background:none;border:none;cursor:pointer;font-size:13px;color:#999;">📌 置顶</button>';
+      }
+    } else if (isPinned) {
+      pinBtn = ' <button onclick="unpinFeedback(' + r.id + ')" style="background:none;border:none;cursor:pointer;font-size:13px;color:#e74c3c;">📌 移出</button>';
+    }
     html += '<div class="fb-record">' +
       '<div class="fb-intent">' + (r.intent || '(无意图)') + '</div>' +
       '<div class="fb-meta">' +
         '<span class="fb-rating" style="color:' + color + '">' + rating + '</span>' +
+        (r.user_id ? '<span>👤 ' + r.user_id + '</span>' : '') +
         (r.auto_correctness != null ? '<span>🤖 自评 ' + r.auto_correctness + '/10</span>' : '') +
         '<span>' + (r.created_at || '') + '</span>' +
         (isMy ? ' <button class="edit-fb-btn" onclick="editFeedback(' + r.id + ')">✏️ 编辑</button>' : '') +
+        pinBtn +
       '</div>' +
       (actions ? '<div style="font-size:11px;color:#888;margin-top:2px;">' + actions + '</div>' : '') +
       (r.feedback_text ? '<div style="font-size:12px;color:#555;margin-top:2px;background:#f8f9fa;padding:4px 8px;border-radius:4px;">💬 ' + r.feedback_text + '</div>' : '') +
     '</div>';
   });
+  if (shown === 0 && isAll) {
+    el.innerHTML = '<div style="text-align:center;padding:20px;color:#999;">所有反馈都已被标记为有帮助</div>';
+    return;
+  }
   el.innerHTML = html;
 }
 
@@ -942,6 +998,42 @@ function submitEditFeedback() {
     } else {
       alert(d.error || '更新失败');
     }
+  }).catch(function(e) { alert('请求失败: ' + e.message); });
+}
+
+function loadPinnedFeedback() {
+  var el = document.getElementById('fbContent');
+  el.innerHTML = '<div style="text-align:center;padding:20px;color:#999;">加载中...</div>';
+  fetch('/api/v1/feedback/pinned', { headers: { 'X-API-Key': API_KEY } })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (d.success) renderFeedbackList(el, d.data, '📌 待优化');
+      else el.innerHTML = '<div style="color:#e74c3c;">' + (d.error || '加载失败') + '</div>';
+    }).catch(function(e) { el.innerHTML = '<div style="color:#e74c3c;">请求失败: ' + e.message + '</div>'; });
+}
+
+function pinFeedback(id) {
+  fetch('/api/v1/feedback/pin', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-API-Key': API_KEY },
+    body: JSON.stringify({ id: id })
+  }).then(function(r) { return r.json(); }).then(function(d) {
+    if (d.success) loadFeedbackAll();
+    else alert(d.error || '操作失败');
+  }).catch(function(e) { alert('请求失败: ' + e.message); });
+}
+
+function unpinFeedback(id) {
+  fetch('/api/v1/feedback/unpin', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-API-Key': API_KEY },
+    body: JSON.stringify({ id: id })
+  }).then(function(r) { return r.json(); }).then(function(d) {
+    if (d.success) {
+      var activeTab = document.querySelector('.fb-tabs button.active');
+      if (activeTab && activeTab.textContent.indexOf('待优化') !== -1) loadPinnedFeedback();
+      else loadFeedbackAll();
+    } else alert(d.error || '操作失败');
   }).catch(function(e) { alert('请求失败: ' + e.message); });
 }
 
@@ -1001,7 +1093,9 @@ function loadMemories(tab) {
 function showAddMemoryForm() {
   document.getElementById('memForm').style.display = 'block';
   document.getElementById('memType').value = currentMemTab;
-  document.getElementById('memKey').value = '';
+  document.getElementById('memKey').value = 'reply_style';
+  document.getElementById('memCustomKey').style.display = 'none';
+  document.getElementById('memCustomKey').value = '';
   document.getElementById('memValue').value = '';
   document.getElementById('memEditId').value = '';
 }
@@ -1011,10 +1105,32 @@ function cancelMemoryForm() {
   editingMemId = null;
 }
 
+function onMemKeyChange() {
+  var sel = document.getElementById('memKey');
+  var custom = document.getElementById('memCustomKey');
+  if (sel.value === '__custom__') {
+    custom.style.display = 'block';
+    custom.focus();
+  } else {
+    custom.style.display = 'none';
+    custom.value = '';
+  }
+}
+
+var MEM_KEY_OPTIONS = ['reply_style','focus_project','preferred_format','common_device','diagnose_focus','work_pattern','role','background'];
+
 function editMemory(id, type, key, value) {
   document.getElementById('memForm').style.display = 'block';
   document.getElementById('memType').value = type;
-  document.getElementById('memKey').value = key;
+  if (MEM_KEY_OPTIONS.indexOf(key) !== -1) {
+    document.getElementById('memKey').value = key;
+    document.getElementById('memCustomKey').style.display = 'none';
+    document.getElementById('memCustomKey').value = '';
+  } else {
+    document.getElementById('memKey').value = '__custom__';
+    document.getElementById('memCustomKey').style.display = 'block';
+    document.getElementById('memCustomKey').value = key;
+  }
   document.getElementById('memValue').value = value;
   document.getElementById('memEditId').value = id;
 }
@@ -1022,7 +1138,8 @@ function editMemory(id, type, key, value) {
 function saveMemory() {
   var editId = document.getElementById('memEditId').value;
   var factType = document.getElementById('memType').value;
-  var key = document.getElementById('memKey').value.trim();
+  var keySel = document.getElementById('memKey').value;
+  var key = keySel === '__custom__' ? document.getElementById('memCustomKey').value.trim() : keySel;
   var value = document.getElementById('memValue').value.trim();
   if (!key || !value) { alert('键和值不能为空'); return; }
   var url = editId ? '/api/v1/memory/update' : '/api/v1/memory/create';
@@ -1053,6 +1170,85 @@ function deleteMemory(id) {
       alert(d.error || '删除失败');
     }
   }).catch(function(e) { alert('请求失败: ' + e.message); });
+}
+
+var pendingRepairs = [];
+var currentRepairIndex = 0;
+
+function showRepairConfirm(data) {
+  pendingRepairs = [{
+    ip: data.device_ip,
+    action: data.action,
+    target: data.target || '',
+    action_desc: data.action_desc,
+    command: data.command
+  }];
+  currentRepairIndex = 0;
+  renderRepairModal();
+  document.getElementById('repairModal').style.display = 'flex';
+}
+
+function closeRepairModal() {
+  document.getElementById('repairModal').style.display = 'none';
+  pendingRepairs = [];
+  currentRepairIndex = 0;
+}
+
+function renderRepairModal() {
+  if (currentRepairIndex >= pendingRepairs.length) {
+    closeRepairModal();
+    return;
+  }
+  var r = pendingRepairs[currentRepairIndex];
+  var html = '<div style="margin-bottom:12px;">' +
+    '<div style="font-weight:600;font-size:15px;margin-bottom:4px;">' + r.action_desc + '</div>' +
+    '<div style="font-size:13px;color:#555;margin-bottom:8px;">' +
+      '<div>设备: <b>' + r.ip + '</b></div>' +
+      (r.target ? '<div>目标: <b>' + r.target + '</b></div>' : '') +
+      '<div style="margin-top:4px;font-family:monospace;font-size:12px;background:#2d2d2d;color:#f8f8f2;padding:6px 10px;border-radius:4px;">$ ' + r.command + '</div>' +
+    '</div>' +
+  '</div>' +
+  '<div style="display:flex;gap:8px;">' +
+    '<button onclick="confirmRepair()" style="flex:1;padding:10px;background:#2ecc71;color:#fff;border:none;border-radius:6px;font-size:14px;cursor:pointer;">✅ 确认执行</button>' +
+    '<button onclick="skipRepair()" style="flex:1;padding:10px;background:#e74c3c;color:#fff;border:none;border-radius:6px;font-size:14px;cursor:pointer;">✗ 跳过</button>' +
+  '</div>';
+  document.getElementById('repairBody').innerHTML = html;
+}
+
+function confirmRepair() {
+  if (currentRepairIndex >= pendingRepairs.length) return;
+  var r = pendingRepairs[currentRepairIndex];
+  var el = document.getElementById('repairBody');
+  el.innerHTML = '<div style="text-align:center;padding:20px;">⏳ 正在执行...</div>';
+  fetch('/api/v1/repair/execute', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-API-Key': API_KEY },
+    body: JSON.stringify({ ip: r.ip, action: r.action, target: r.target })
+  }).then(function(resp) { return resp.json(); }).then(function(d) {
+    if (d.success) {
+      el.innerHTML = '<div style="text-align:center;padding:20px;">' +
+        '<div style="font-size:48px;margin-bottom:8px;">✅</div>' +
+        '<div style="font-weight:600;font-size:15px;color:#2ecc71;">执行成功</div>' +
+        '<div style="font-size:12px;color:#666;margin-top:4px;font-family:monospace;">' + (d.output || '') + '</div>' +
+        '<button onclick="closeRepairModal()" style="margin-top:16px;padding:8px 24px;background:var(--primary);color:#fff;border:none;border-radius:6px;font-size:14px;cursor:pointer;">关闭</button>' +
+      '</div>';
+    } else {
+      el.innerHTML = '<div style="text-align:center;padding:20px;">' +
+        '<div style="font-size:48px;margin-bottom:8px;">❌</div>' +
+        '<div style="font-weight:600;font-size:15px;color:#e74c3c;">执行失败</div>' +
+        '<div style="font-size:12px;color:#666;margin-top:4px;">' + (d.error || '未知错误') + '</div>' +
+        (d.output ? '<div style="font-size:11px;color:#999;margin-top:4px;font-family:monospace;">' + d.output + '</div>' : '') +
+        '<button onclick="closeRepairModal()" style="margin-top:16px;padding:8px 24px;background:var(--primary);color:#fff;border:none;border-radius:6px;font-size:14px;cursor:pointer;">关闭</button>' +
+      '</div>';
+    }
+  }).catch(function(e) {
+    el.innerHTML = '<div style="text-align:center;padding:20px;color:#e74c3c;">请求失败: ' + e.message + '<br><button onclick="closeRepairModal()" style="margin-top:12px;padding:8px 24px;background:var(--primary);color:#fff;border:none;border-radius:6px;font-size:14px;cursor:pointer;">关闭</button></div>';
+  });
+}
+
+function skipRepair() {
+  currentRepairIndex++;
+  renderRepairModal();
 }
 
 checkLogin();

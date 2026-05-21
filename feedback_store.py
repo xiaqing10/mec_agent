@@ -10,6 +10,7 @@ Schema:
 - rating: "satisfied" | "partial" | "unsatisfied" | null
 - feedback_text: optional user comment
 - auto_correctness: LLM self-evaluation score (0-10)
+- pinned: 1 if pinned by admin for optimization, 0 otherwise
 - created_at: timestamp
 """
 
@@ -43,10 +44,15 @@ def _init_db(conn):
             rating TEXT,
             feedback_text TEXT,
             auto_correctness INTEGER,
+            pinned INTEGER DEFAULT 0,
             created_at TEXT NOT NULL,
             updated_at TEXT
         )
     """)
+    try:
+        conn.execute("ALTER TABLE feedback ADD COLUMN pinned INTEGER DEFAULT 0")
+    except sqlite3.OperationalError:
+        pass
     conn.execute("""
         CREATE INDEX IF NOT EXISTS idx_feedback_user ON feedback(user_id)
     """)
@@ -135,6 +141,27 @@ def delete_feedback_by_id(record_id: int):
     conn = _get_conn()
     conn.execute("DELETE FROM feedback WHERE id = ?", (record_id,))
     conn.commit()
+
+
+def pin_feedback(record_id: int):
+    conn = _get_conn()
+    conn.execute("UPDATE feedback SET pinned = 1 WHERE id = ?", (record_id,))
+    conn.commit()
+
+
+def unpin_feedback(record_id: int):
+    conn = _get_conn()
+    conn.execute("UPDATE feedback SET pinned = 0 WHERE id = ?", (record_id,))
+    conn.commit()
+
+
+def get_pinned_feedback(limit: int = 200) -> list:
+    conn = _get_conn()
+    rows = conn.execute(
+        "SELECT * FROM feedback WHERE pinned = 1 ORDER BY updated_at DESC LIMIT ?",
+        (limit,)
+    ).fetchall()
+    return [dict(r) for r in rows]
 
 
 def close():

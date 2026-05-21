@@ -27,7 +27,9 @@ from handlers import (
     handle_login, handle_logout, handle_me,
     handle_feedback, handle_feedback_stats, handle_feedback_list,
     handle_feedback_my, handle_feedback_update, handle_feedback_delete,
+    handle_feedback_pin, handle_feedback_unpin, handle_feedback_pinned_list,
     handle_chat, handle_chat_stream, handle_raw_diagnose,
+    handle_repair_execute,
 )
 from handlers.memory import (
     handle_memory_list, handle_memory_summary,
@@ -123,6 +125,10 @@ def create_app():
     app.router.add_get("/api/v1/feedback/my", handle_feedback_my)
     app.router.add_post("/api/v1/feedback/update", handle_feedback_update)
     app.router.add_delete("/api/v1/feedback/{id}", handle_feedback_delete)
+    app.router.add_post("/api/v1/feedback/pin", handle_feedback_pin)
+    app.router.add_post("/api/v1/feedback/unpin", handle_feedback_unpin)
+    app.router.add_get("/api/v1/feedback/pinned", handle_feedback_pinned_list)
+    app.router.add_post("/api/v1/repair/execute", handle_repair_execute)
     app.router.add_get("/api/v1/memory/list", handle_memory_list)
     app.router.add_get("/api/v1/memory/summary", handle_memory_summary)
     app.router.add_post("/api/v1/memory/create", handle_memory_create)

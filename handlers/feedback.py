@@ -2,7 +2,7 @@ import json
 import logging
 from aiohttp import web
 
-from feedback_store import create_feedback_record, update_rating, get_feedback_stats, get_recent_feedback, update_feedback_by_id, delete_feedback_by_id
+from feedback_store import create_feedback_record, update_rating, get_feedback_stats, get_recent_feedback, update_feedback_by_id, delete_feedback_by_id, pin_feedback, unpin_feedback, get_pinned_feedback
 
 logger = logging.getLogger(__name__)
 
@@ -116,5 +116,47 @@ async def handle_feedback_delete(request):
             return web.json_response({"success": False, "error": "记录不存在或不属于你"}, status=403)
         delete_feedback_by_id(record_id)
         return web.json_response({"success": True, "message": "已删除"})
+    except Exception as e:
+        return web.json_response({"success": False, "error": str(e)}, status=500)
+
+
+async def handle_feedback_pin(request):
+    username = _get_username(request)
+    if username != "admin":
+        return web.json_response({"success": False, "error": "仅管理员可操作"}, status=403)
+    body = await _parse_body(request)
+    if not body:
+        return web.json_response({"success": False, "error": "请求体必须为JSON格式"}, status=400)
+    record_id = body.get("id")
+    if not record_id:
+        return web.json_response({"success": False, "error": "缺少id"}, status=400)
+    try:
+        pin_feedback(int(record_id))
+        return web.json_response({"success": True, "message": "已加入待优化"})
+    except Exception as e:
+        return web.json_response({"success": False, "error": str(e)}, status=500)
+
+
+async def handle_feedback_unpin(request):
+    username = _get_username(request)
+    if username != "admin":
+        return web.json_response({"success": False, "error": "仅管理员可操作"}, status=403)
+    body = await _parse_body(request)
+    if not body:
+        return web.json_response({"success": False, "error": "请求体必须为JSON格式"}, status=400)
+    record_id = body.get("id")
+    if not record_id:
+        return web.json_response({"success": False, "error": "缺少id"}, status=400)
+    try:
+        unpin_feedback(int(record_id))
+        return web.json_response({"success": True, "message": "已移出待优化"})
+    except Exception as e:
+        return web.json_response({"success": False, "error": str(e)}, status=500)
+
+
+async def handle_feedback_pinned_list(request):
+    try:
+        records = get_pinned_feedback(limit=200)
+        return web.json_response({"success": True, "data": records})
     except Exception as e:
         return web.json_response({"success": False, "error": str(e)}, status=500)
