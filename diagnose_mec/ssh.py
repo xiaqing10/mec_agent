@@ -118,7 +118,7 @@ def _docker_cmd(physical_user: str, cmd: str) -> str:
 
 
 def _docker_exec_cmd(host_ip: str, physical_user: str, command: str, exec_timeout: int = 30, password: str = "") -> tuple:
-    wrapped = f"docker exec dev bash -l -c '{command}'"
+    wrapped = f'docker exec dev bash -l -c "{command}"'
     exec_cmd = _docker_cmd(physical_user, wrapped)
     return ssh_exec(host_ip, 22, physical_user, exec_cmd, exec_timeout=exec_timeout, password=password)
 

@@ -242,6 +242,7 @@ def diagnose_zero_images(host_ip: str, progress_cb=None) -> dict:
             "echo '===GREP_CONF===' && grep -hE 'stdout_logfile=|stderr_logfile=' /etc/supervisor/conf.d/*.conf 2>/dev/null | sort -u"
         )
         exec_full, _, _ = _docker_exec_cmd(host_ip, login_user, docker_cmds, exec_timeout=30, password=ssh_password)
+        logger.info("DEBUG docker_cmds exec_full[:500] = %s", exec_full[:500])
         combined = {}
         for marker in ["SUPERVISOR", "ROSCORE", "IMG_COUNT", "IMG_INFO", "GREP_CONF"]:
             if f"==={marker}===" in exec_full:

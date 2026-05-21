@@ -109,6 +109,8 @@ def repair_device(ip: str, action: str, target: str = "") -> str:
                 "error": f"参数 '{target}' 不合法，只允许字母数字下划线横线点号，最长128字符",
                 "suggestion": {"action": action, "desc": action_info["desc"], "param": action_info["param_label"]}
             }, ensure_ascii=False)
+        if action == "restart_container" and target != "dev":
+            target = "dev"
 
     if not re.match(r'^\d+\.\d+\.\d+\.\d+$', ip):
         resolved_ip, _ = _resolve_device(ip)
