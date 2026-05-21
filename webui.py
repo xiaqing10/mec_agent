@@ -683,8 +683,8 @@ try {
           panel = document.createElement('div');
           panel.id = 'diag-summary-panel';
           panel.className = 'diag-summary-card';
-          panel.style.cssText = 'margin:8px;border:1px solid #d1d5db;border-radius:8px;overflow:hidden;font-size:13px;background:#fff;';
-          chatArea.appendChild(panel);
+          panel.style.cssText = 'margin:8px 0;border:1px solid #d1d5db;border-radius:8px;overflow:hidden;font-size:13px;background:#fff;';
+          contentDiv.parentNode.insertBefore(panel, contentDiv);
         }
         panel.style.display = 'block';
         var statusColors = {'ok':'#10b981','warning':'#f59e0b','error':'#ef4444','skip':'#9ca3af'};
@@ -803,11 +803,6 @@ try {
         }
         var msgDiv = contentDiv.parentNode;
         if (msgDiv) msgDiv.classList.remove('streaming');
-        var diagPanel = document.getElementById('diag-summary-panel');
-        if (diagPanel && diagPanel.style.display !== 'none') {
-          var chatArea = document.getElementById('chatArea');
-          chatArea.appendChild(diagPanel);
-        }
         scrollToBottom();
         btn.disabled = false;
         window._streamingFullText = '';
