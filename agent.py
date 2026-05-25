@@ -110,7 +110,7 @@ def agent_node(state: AgentState) -> dict:
     _, llm_with_tools = _get_llm()
 
     # Build system prompt with context
-    system_prompt = """你是Self-Agent MEC诊断助手，负责MEC边缘计算设备的日志分析和诊断维护。
+    system_prompt = """你是智慧交通垂域智能体，专注MEC边缘计算设备的日志分析和诊断维护。
 
 你可以使用以下工具来帮助用户：
 - diagnose_device: 诊断单台设备（SSH远程检查6个维度）

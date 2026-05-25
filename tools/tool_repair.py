@@ -169,7 +169,15 @@ def execute_repair(ip: str, action: str, target: str = "") -> dict:
     if not user:
         return {"success": False, "error": f"物理机不可达: {ip}"}
 
-    stdout, stderr, rc = ssh_exec(ip, port, user, command, exec_timeout=30, password=ssh_password)
+    from diagnose_mec import _docker_cmd, _docker_exec_cmd
+
+    if action == "restart_container":
+        command = _docker_cmd(user, command)
+        stdout, stderr, rc = ssh_exec(ip, port, user, command, exec_timeout=30, password=ssh_password)
+    elif action == "restart_process":
+        stdout, stderr, rc = _docker_exec_cmd(ip, user, command, exec_timeout=30, password=ssh_password)
+    else:
+        stdout, stderr, rc = ssh_exec(ip, port, user, command, exec_timeout=30, password=ssh_password)
 
     if rc != 0 or ("Permission denied" in stderr and "Identity file" not in stderr):
         result = (stdout + "\n" + stderr).strip()

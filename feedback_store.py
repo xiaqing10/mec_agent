@@ -164,6 +164,51 @@ def get_pinned_feedback(limit: int = 200) -> list:
     return [dict(r) for r in rows]
 
 
+def get_user_conversation_summary(hours: int = 72) -> list:
+    """Get conversations grouped by user, only admin visible.
+    Returns list of { user_id, total, satisfied, partial, unsatisfied,
+                       last_active, conversations: [{intent, actions, rating, created_at, feedback_text}] }
+    """
+    conn = _get_conn()
+    from datetime import datetime, timedelta
+    since = (datetime.now() - timedelta(hours=hours)).isoformat()
+    rows = conn.execute(
+        "SELECT * FROM feedback WHERE created_at >= ? ORDER BY created_at DESC",
+        (since,)
+    ).fetchall()
+    users = {}
+    for r in rows:
+        d = dict(r)
+        uid = d.get("user_id", "unknown")
+        if uid not in users:
+            users[uid] = {
+                "user_id": uid,
+                "total": 0, "satisfied": 0, "partial": 0, "unsatisfied": 0,
+                "last_active": d["created_at"],
+                "conversations": []
+            }
+        u = users[uid]
+        u["total"] += 1
+        rating = d.get("rating")
+        if rating in ("satisfied", "partial", "unsatisfied"):
+            u[rating] += 1
+        if d["created_at"] > u["last_active"]:
+            u["last_active"] = d["created_at"]
+        try:
+            actions = json.loads(d["actions"]) if d.get("actions") else []
+        except Exception:
+            actions = []
+        u["conversations"].append({
+            "intent": d.get("intent", ""),
+            "actions": [a.get("name", "") for a in actions if isinstance(a, dict)],
+            "rating": d.get("rating"),
+            "feedback_text": d.get("feedback_text", ""),
+            "created_at": d["created_at"],
+        })
+    result = sorted(users.values(), key=lambda x: x["last_active"], reverse=True)
+    return result
+
+
 def close():
     if hasattr(_local, "conn") and _local.conn:
         _local.conn.close()

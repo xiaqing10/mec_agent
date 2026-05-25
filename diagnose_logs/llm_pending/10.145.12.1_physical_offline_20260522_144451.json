@@ -1,0 +1,79 @@
+{
+  "ip": "10.145.12.1",
+  "device_name": "mk39_840",
+  "project": "德会",
+  "diag_type": "physical_offline",
+  "code_diagnosis": {
+    "host": "10.145.12.1",
+    "type": "container_offline",
+    "timestamp": "2026-05-22T14:43:17.108388",
+    "diagnosis": {
+      "error": "物理机无法连接：10.145.12.1"
+    },
+    "recommendations": [],
+    "sensor_status": {
+      "cameras": [
+        {
+          "name": "k39_840_upstream_short",
+          "ip": "10.145.12.4",
+          "status": true,
+          "last_check": "2026-05-22 06:32:43",
+          "project": "德会",
+          "pole": "k39_840"
+        },
+        {
+          "name": "k39_840_upstream_long",
+          "ip": "10.145.12.3",
+          "status": true,
+          "last_check": "2026-05-22 06:32:43",
+          "project": "德会",
+          "pole": "k39_840"
+        },
+        {
+          "name": "k39_840_downstream_short",
+          "ip": "10.145.12.5",
+          "status": true,
+          "last_check": "2026-05-22 06:32:43",
+          "project": "德会",
+          "pole": "k39_840"
+        },
+        {
+          "name": "k39_840_downstream_long",
+          "ip": "10.145.12.6",
+          "status": true,
+          "last_check": "2026-05-22 06:32:43",
+          "project": "德会",
+          "pole": "k39_840"
+        }
+      ],
+      "radars": [
+        {
+          "name": "k39_840_雷达_upstream",
+          "ip": "10.145.12.8",
+          "status": true,
+          "last_check": "2026-05-22 06:32:43",
+          "project": "德会",
+          "pole": "k39_840"
+        },
+        {
+          "name": "k39_840_雷达_downstream",
+          "ip": "10.145.12.9",
+          "status": true,
+          "last_check": "2026-05-22 06:32:43",
+          "project": "德会",
+          "pole": "k39_840"
+        }
+      ],
+      "total_cameras": 4,
+      "total_radars": 2,
+      "offline_cameras": 0,
+      "offline_radars": 0,
+      "offline_total": 0,
+      "project": ""
+    },
+    "device_name": "mk39_840",
+    "project": "德会"
+  },
+  "need_llm_reason": "未知",
+  "pending_time": "2026-05-22 14:44:51"
+}

@@ -2,7 +2,7 @@ import json
 import logging
 from aiohttp import web
 
-from feedback_store import create_feedback_record, update_rating, get_feedback_stats, get_recent_feedback, update_feedback_by_id, delete_feedback_by_id, pin_feedback, unpin_feedback, get_pinned_feedback
+from feedback_store import create_feedback_record, update_rating, get_feedback_stats, get_recent_feedback, update_feedback_by_id, delete_feedback_by_id, pin_feedback, unpin_feedback, get_pinned_feedback, get_user_conversation_summary
 
 logger = logging.getLogger(__name__)
 
@@ -158,5 +158,21 @@ async def handle_feedback_pinned_list(request):
     try:
         records = get_pinned_feedback(limit=200)
         return web.json_response({"success": True, "data": records})
+    except Exception as e:
+        return web.json_response({"success": False, "error": str(e)}, status=500)
+
+
+async def handle_admin_conversation_summary(request):
+    username = _get_username(request)
+    if username != "admin":
+        return web.json_response({"success": False, "error": "仅管理员可查看"}, status=403)
+    hours = request.query.get("hours", "72")
+    try:
+        hours = int(hours)
+    except ValueError:
+        hours = 72
+    try:
+        data = get_user_conversation_summary(hours=hours)
+        return web.json_response({"success": True, "data": data})
     except Exception as e:
         return web.json_response({"success": False, "error": str(e)}, status=500)

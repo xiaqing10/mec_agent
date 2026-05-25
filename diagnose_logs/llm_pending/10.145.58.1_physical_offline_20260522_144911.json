@@ -1,0 +1,79 @@
+{
+  "ip": "10.145.58.1",
+  "device_name": "mzk66_400",
+  "project": "德会",
+  "diag_type": "physical_offline",
+  "code_diagnosis": {
+    "host": "10.145.58.1",
+    "type": "container_offline",
+    "timestamp": "2026-05-22T14:47:39.043549",
+    "diagnosis": {
+      "error": "物理机无法连接：10.145.58.1"
+    },
+    "recommendations": [],
+    "sensor_status": {
+      "cameras": [
+        {
+          "name": "zk66_400_upstream_short",
+          "ip": "10.145.58.6",
+          "status": true,
+          "last_check": "2026-05-22 06:32:43",
+          "project": "德会",
+          "pole": "zk66_400"
+        },
+        {
+          "name": "zk66_400_upstream_long",
+          "ip": "10.145.58.5",
+          "status": true,
+          "last_check": "2026-05-22 06:32:43",
+          "project": "德会",
+          "pole": "zk66_400"
+        },
+        {
+          "name": "zk66_400_downstream_short",
+          "ip": "10.145.58.4",
+          "status": true,
+          "last_check": "2026-05-22 06:32:43",
+          "project": "德会",
+          "pole": "zk66_400"
+        },
+        {
+          "name": "zk66_400_downstream_long",
+          "ip": "10.145.58.3",
+          "status": true,
+          "last_check": "2026-05-22 06:32:43",
+          "project": "德会",
+          "pole": "zk66_400"
+        }
+      ],
+      "radars": [
+        {
+          "name": "zk66_400_雷达_upstream",
+          "ip": "10.145.58.9",
+          "status": true,
+          "last_check": "2026-05-22 06:32:43",
+          "project": "德会",
+          "pole": "zk66_400"
+        },
+        {
+          "name": "zk66_400_雷达_downstream",
+          "ip": "10.145.58.10",
+          "status": true,
+          "last_check": "2026-05-22 06:32:43",
+          "project": "德会",
+          "pole": "zk66_400"
+        }
+      ],
+      "total_cameras": 4,
+      "total_radars": 2,
+      "offline_cameras": 0,
+      "offline_radars": 0,
+      "offline_total": 0,
+      "project": ""
+    },
+    "device_name": "mzk66_400",
+    "project": "德会"
+  },
+  "need_llm_reason": "未知",
+  "pending_time": "2026-05-22 14:49:11"
+}
