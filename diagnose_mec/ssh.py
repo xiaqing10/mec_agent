@@ -4,12 +4,11 @@ import asyncio
 import concurrent.futures
 from pathlib import Path
 
-from config import SSH_KEY_PATH, CONTAINER_SSH_PORT, CONTAINER_SSH_USER, PHYSICAL_SSH_USERS
+from config import SSH_KEY_PATH,SSH_CMD_PATH, CONTAINER_SSH_PORT, CONTAINER_SSH_USER, PHYSICAL_SSH_USERS
 
 logger = logging.getLogger("diagnose_mec.ssh")
 
-#SSH_CMD = "ssh"
-SSH_CMD = "/mnt/c/Windows/System32/OpenSSH/ssh.exe"
+SSH_CMD = SSH_CMD_PATH
 SSH_KEY = SSH_KEY_PATH
 
 CONTAINER_PORT = CONTAINER_SSH_PORT

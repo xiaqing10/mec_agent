@@ -14,8 +14,11 @@ Architecture:
 
 import json
 import sys
+import logging
 from pathlib import Path
 from typing import TypedDict, Annotated, Literal, Optional
+
+logger = logging.getLogger(__name__)
 
 SELF_AGENT_DIR = Path(__file__).parent
 sys.path.insert(0, str(SELF_AGENT_DIR))
