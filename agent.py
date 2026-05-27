@@ -14,6 +14,7 @@ Architecture:
 
 import json
 import sys
+import time
 import logging
 from pathlib import Path
 from typing import TypedDict, Annotated, Literal, Optional
@@ -129,7 +130,10 @@ def agent_node(state: AgentState) -> dict:
 - query_device_from_db: 从MySQL数据库查询单台设备状态（无需SSH，即使设备离线也能查到历史记录）
 - query_project_from_db: 从MySQL数据库查询整个项目状态（无需飞书报告）
 - memory: 管理用户记忆（add/replace/remove/list），可主动保存重要偏好、习惯或事实供后续对话使用
-- repair_device: 安全修复操作（重启容器/进程/服务、清理缓存/日志/临时文件）。诊断后发现问题时可建议修复，但需用户在前端弹窗确认后才执行
+ - repair_device: 安全修复操作（重启容器/进程/服务、清理缓存/日志/临时文件）。诊断后发现问题时可建议修复，但需用户在前端弹窗确认后才执行
+- query_event_records: 从数据库查询设备或项目某天的事件记录列表（时间、事件类型、车牌、车速等），无需SSH
+- query_project_event_stats: 查询项目下某天的事件统计汇总（按事件类型、按设备分类），无需SSH
+- fetch_event_image: 根据事件记录ID抓取远程设备的事件图片到本地显示
 
 规则：
 1. 用户说"看/查看/怎么样/情况/状态/有无/多少/统计"表示只读，先查再回答
@@ -208,20 +212,37 @@ def agent_node(state: AgentState) -> dict:
     # Insert system prompt as first message if not already there
     all_messages = [("system", system_prompt)] + messages
 
+    _t0 = time.time()
+    msg_count = len(all_messages)
+    msg_chars = sum(len(str(m)) for m in all_messages)
+    logger.info("[TIMING] LLM invoke 开始 | 消息数=%d | 总字符数=%d | 用户消息=%s",
+                msg_count, msg_chars, (messages[-1].content[:80] if messages else ''))
     try:
         response = llm_with_tools.invoke(all_messages)
     except Exception as e:
         error_str = str(e)
-        logger.error("LLM invoke failed: %s", error_str)
+        _t1 = time.time()
+        logger.info("[TIMING] LLM invoke 失败 | 耗时=%.1fs | 错误=%s", _t1 - _t0, error_str)
         # If 400 error, try without system prompt or with truncated messages
         if "400" in error_str or "InvalidParameter" in error_str:
             logger.info("Retrying LLM invoke with minimal messages...")
             # Keep only last 2 turns to reduce context size
             trimmed = messages[-6:] if len(messages) > 6 else messages
             fallback_messages = [("system", system_prompt)] + trimmed
+            _t2 = time.time()
             response = llm_with_tools.invoke(fallback_messages)
+            logger.info("[TIMING] LLM retry 完成 | 耗时=%.1fs", time.time() - _t2)
         else:
             raise
+    _t1 = time.time()
+    tool_calls = getattr(response, 'tool_calls', None)
+    if tool_calls:
+        names = [tc.get('name', '?') for tc in tool_calls]
+        args = [tc.get('args', {}) for tc in tool_calls]
+        logger.info("[TIMING] LLM invoke 完成 | 耗时=%.1fs | 工具=%s | 参数=%s", _t1 - _t0, names, args)
+    else:
+        content_preview = (response.content[:100] if hasattr(response, 'content') and response.content else '')
+        logger.info("[TIMING] LLM invoke 完成 | 耗时=%.1fs | 直接回复=%s", _t1 - _t0, content_preview[:60])
     return {"messages": [response]}
 
 
@@ -280,7 +301,7 @@ def feedback_node(state: AgentState) -> dict:
             f"AI回复: {last_ai_msg[:200] if last_ai_msg else ''}"
         )
         try:
-            intent_resp = llm.invoke([("human", intent_prompt)])
+            intent_resp = llm.invoke([("human", intent_prompt)], timeout=30)
             intent = intent_resp.content.strip()[:100]
         except Exception:
             intent = last_user_msg[:50]
@@ -292,7 +313,7 @@ def feedback_node(state: AgentState) -> dict:
             f"AI回复: {last_ai_msg[:500] if last_ai_msg else ''}"
         )
         try:
-            score_resp = llm.invoke([("human", auto_prompt)])
+            score_resp = llm.invoke([("human", auto_prompt)], timeout=30)
             score_text = score_resp.content.strip()
             auto_score = max(0, min(10, int(score_text)))
         except Exception:

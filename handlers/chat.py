@@ -226,6 +226,7 @@ async def handle_chat_stream(request):
                     last_len = len(progress_list)
                 await asyncio.sleep(0.2)
 
+        _stream_t0 = time.time()
         async for event in agent.astream_events(
             {"messages": [HumanMessage(content=user_message)]},
             config,
@@ -237,6 +238,11 @@ async def handle_chat_stream(request):
             kind = event.get("event", "")
             name = event.get("name", "")
             data = event.get("data") or {}
+
+            if not hasattr(handle_chat_stream, '_first_event_logged'):
+                handle_chat_stream._first_event_logged = True
+                logger.info("[TIMING] SSE 首事件 | 耗时=%.1fs | kind=%s | name=%s",
+                            time.time() - _stream_t0, kind, name)
 
             if kind == "on_chat_model_stream":
                 chunk = data.get("chunk", "")
@@ -292,74 +298,25 @@ async def handle_chat_stream(request):
                     tool_actions.append({"name": name, "content": output_text[:100]})
                 current_tool = None
 
+        _stream_t1 = time.time()
+        logger.info("[TIMING] SSE 流结束 | 总耗时=%.1fs", time.time() - _stream_t0)
+
         await _send("done", {"status": "complete"})
 
-        logger.info("DEBUG feedback: tool_called=%s, last_user_msg=%s, tool_actions=%s",
-                     tool_called, last_user_msg[:50], [a["name"] for a in tool_actions])
-        try:
-            if tool_called:
-                intent = last_user_msg[:50]
-                auto_score = None
-                try:
-                    from langchain_openai import ChatOpenAI
-                    from config import LLM_MODEL, LLM_API_KEY, LLM_BASE_URL
-                    llm = ChatOpenAI(
-                        model=LLM_MODEL, api_key=LLM_API_KEY,
-                        base_url=LLM_BASE_URL, temperature=0.1
-                    )
-                    intent_prompt = (
-                        "请用一句话概括用户本次对话中用户的意图（20字以内），仅输出概括内容：\n"
-                        f"用户消息: {last_user_msg[:200]}\n"
-                        f"AI回复: {last_ai_msg[:200] if last_ai_msg else ''}"
-                    )
-                    intent_resp = await llm.ainvoke([("human", intent_prompt)])
-                    intent = intent_resp.content.strip()[:100]
+        trivial_patterns = ["好的", "谢谢", "ok", "嗯", "明白", "知道了", "再见", "bye"]
+        is_trivial = any(p in last_user_msg.lower() for p in trivial_patterns)
+        if not is_trivial:
+            await _send("feedback_request", {
+                "session_id": session_id,
+                "summary": last_user_msg[:60],
+                "intent": "",
+            })
 
-                    auto_prompt = (
-                        "请评估本次诊断是否成功完成。仅输出0-10的整数分数（10=完美）:\n"
-                        f"用户意图: {intent}\n"
-                        f"AI回复: {last_ai_msg[:500] if last_ai_msg else ''}"
-                    )
-                    score_resp = await llm.ainvoke([("human", auto_prompt)])
-                    auto_score = max(0, min(10, int(score_resp.content.strip())))
-                except Exception:
-                    pass
-
-                from feedback_store import create_feedback_record
-                create_feedback_record(
-                    session_id,
-                    user_id=_get_username(request) or session_id,
-                    intent=intent,
-                    actions=tool_actions,
-                    auto_correctness=auto_score,
-                )
-
-            trivial_patterns = ["好的", "谢谢", "ok", "嗯", "明白", "知道了", "再见", "bye"]
-            is_trivial = any(p in last_user_msg.lower() for p in trivial_patterns)
-            if not is_trivial:
-                summary = last_user_msg[:60]
-                await _send("feedback_request", {
-                    "session_id": session_id,
-                    "summary": summary,
-                    "intent": intent if tool_called else "",
-                })
-
-            if not is_trivial:
-                try:
-                    username = _get_username(request)
-                    if username:
-                        from user_memory_store import extract_memories_from_conversation
-                        extract_memories_from_conversation(username, last_user_msg, last_ai_msg, intent)
-                        from user_memory_store import extract_memories_with_llm
-                        asyncio.ensure_future(
-                            asyncio.get_event_loop().run_in_executor(
-                                None, extract_memories_with_llm, username, last_user_msg, last_ai_msg, intent
-                            )
-                        )
-                except Exception:
-                    pass
-        except Exception as e:
-            logger.warning("Failed to save feedback after stream: %s", e)
+        from handlers.feedback_queue import enqueue_post_process
+        asyncio.ensure_future(enqueue_post_process(
+            session_id, _get_username(request), last_user_msg, last_ai_msg,
+            tool_called, tool_actions, config, agent
+        ))
 
     except Exception as e:
         logger.error("❌ SSE流失败: %s", e)

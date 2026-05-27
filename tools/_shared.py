@@ -119,5 +119,8 @@ ROOT_CAUSE_CN = {
     "roscore_down": "roscore未运行 — ROS主节点未启动",
     "zero_images": "今日图片为0 — 数据源无图片产生，可能相机/算法异常",
     "supervisor_error": "Supervisor服务异常 — 进程管理服务本身出现问题",
+    "topic_all_zero": "所有ROS话题无数据 — 关键topic帧率为0",
+    "topic_partial_zero": "部分ROS话题无数据 — 部分关键topic帧率为0",
+    "log_error_only": "日志异常 — supervisor正常但日志中存在错误输出",
     "unknown": "未知根因 — 需人工进一步排查",
 }

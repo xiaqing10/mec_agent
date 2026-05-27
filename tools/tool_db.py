@@ -206,7 +206,9 @@ def query_project_from_db(project: str) -> str:
         container_status = "容器在线" if container_online else "容器离线"
 
         parts = [pm_status, container_status]
-        if jpg is None:
+        if not container_online:
+            parts.append("数据不可靠(容器离线)")
+        elif jpg is None:
             parts.append("图片无数据")
         elif jpg == 0:
             parts.append("今日图片为0")

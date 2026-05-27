@@ -7,6 +7,7 @@ from .tool_dingtalk import push_to_dingtalk
 from .tool_fetch import fetch_report
 from .tool_help import help_info
 from .tool_repair import repair_device
+from .tool_image import query_event_records, fetch_event_image, query_project_event_stats
 
 TOOLS = [
     diagnose_device,
@@ -23,6 +24,9 @@ TOOLS = [
     query_device_from_db,
     query_project_from_db,
     repair_device,
+    query_event_records,
+    fetch_event_image,
+    query_project_event_stats,
 ]
 
 __all__ = [
@@ -33,4 +37,5 @@ __all__ = [
     "query_abnormal", "query_device_from_db", "query_project_from_db",
     "ssh_exec_command", "push_to_dingtalk", "fetch_report", "help_info",
     "repair_device",
+    "query_event_records", "fetch_event_image", "query_project_event_stats",
 ]

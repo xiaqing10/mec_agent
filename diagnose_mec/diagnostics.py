@@ -114,17 +114,26 @@ def diagnose_container_offline(host_ip: str, progress_cb=None) -> dict:
     if "EXEC_OK" in exec_ok:
         result["diagnosis"]["container_exec"] = "正常 ✓"
         logger.info("✅ docker exec正常")
+
+        # 真正尝试直连容器10022端口
+        ssh_check_stdout, _, ssh_check_code = ssh_exec(
+            host_ip, CONTAINER_PORT, CONTAINER_USER, "echo 'OK'", exec_timeout=10
+        )
+        if ssh_check_code == 0 and "OK" in ssh_check_stdout:
+            result["diagnosis"]["container_ssh_connect"] = "可连接"
+            logger.info("✅ 容器10022端口直连成功")
+        else:
+            result["diagnosis"]["container_ssh_connect"] = "不可连接"
+            result["diagnosis"]["issue"] = "容器SSH无法连接（10022端口直连失败）"
+            logger.warning("❌ 容器10022端口直连失败")
+
         if ssh_status:
             result["diagnosis"]["container_ssh"] = ssh_status[:200]
-            # docker exec 成功但 SSH 不可达 —— 容器进程正常但 SSH 服务有问题
             if "not running" in ssh_status.lower() or "inactive" in ssh_status.lower() or "not found" in ssh_status.lower():
-                result["diagnosis"]["issue"] = "容器SSH无法连接（SSH服务未运行）"
-            elif "EXEC_OK" in exec_ok:
-                # docker exec 成功，容器运行，但 SSH 不通 —— 明确标记
-                result["diagnosis"]["issue"] = "容器SSH无法连接（容器内SSH服务异常）"
+                if "issue" not in result["diagnosis"]:
+                    result["diagnosis"]["issue"] = "容器SSH无法连接（SSH服务未运行）"
         else:
             result["diagnosis"]["container_ssh"] = "SSH状态: 无输出"
-            result["diagnosis"]["issue"] = "容器SSH无法连接（无SSH进程信息）"
     else:
         result["diagnosis"]["container_exec"] = f"失败: {exec_ok[:200]}" if exec_ok else "失败: (无输出)"
         logger.warning("⚠️ docker exec失败")
@@ -363,15 +372,6 @@ def diagnose_zero_images(host_ip: str, progress_cb=None) -> dict:
         result["_exec_ctx"] = {"method": "docker_exec", "login_user": login_user, "ssh_password": ssh_password}
     result = _check_rostopic_hz(host_ip, result, bool(result.get("diagnosis", {}).get("log_errors")))
     result.pop("_exec_ctx", None)
-
-    if "issue" not in result["diagnosis"]:
-        topic_rates = result["diagnosis"].get("topic_rates", {})
-        zero_rate_topics = [t for t, r in topic_rates.items() if "0 Hz" in r]
-        all_zero = len(zero_rate_topics) == len(topic_rates) and topic_rates
-        if all_zero:
-            result["diagnosis"]["issue"] = "进程正常、roscore运行、日志无明显错误，但所有topic无数据"
-        else:
-            result["diagnosis"]["issue"] = "进程正常、roscore运行、日志无明显错误、topic有数据，但图片为0"
 
     return _add_sensor_status(result, host_ip)
 

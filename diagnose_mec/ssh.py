@@ -48,7 +48,7 @@ def ssh_exec(host_ip: str, port: int, user: str, command: str, exec_timeout: int
             finally:
                 client.close()
         except Exception as e:
-            logger.warning("Paramiko密码登录失败 %s@%s:%d - %s", user, host_ip, port, e)
+            logger.debug("Paramiko密码登录失败 %s@%s:%d - %s", user, host_ip, port, e)
             return "", str(e), -1
 
     cmd = [
@@ -78,10 +78,10 @@ def ssh_exec(host_ip: str, port: int, user: str, command: str, exec_timeout: int
             result = subprocess.run(cmd, capture_output=True, text=True, timeout=exec_timeout)
             return result.stdout.strip(), result.stderr.strip(), result.returncode
     except subprocess.TimeoutExpired:
-        logger.warning("SSH执行超时: %s@%s:%d (%ds)", user, host_ip, port, exec_timeout)
+        logger.debug("SSH执行超时: %s@%s:%d (%ds)", user, host_ip, port, exec_timeout)
         return "", f"SSH执行超时({exec_timeout}s)", -1
     except Exception as e:
-        logger.error("SSH异常: %s@%s:%d - %s", user, host_ip, port, e)
+        logger.debug("SSH异常: %s@%s:%d - %s", user, host_ip, port, e)
         return "", str(e), -1
 
 

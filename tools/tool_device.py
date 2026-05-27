@@ -10,8 +10,7 @@ from ._shared import _diag_progress_callback, _notify_progress, _summarize_log_e
 def diagnose_device(ip: str, project: str = "") -> str:
     """诊断单台MEC设备。
 
-    通过SSH远程检查设备的6个维度：物理机在线状态（含硬盘占用率）、容器运行状态、
-    进程健康度（含日志错误分析）、ROS运行状态、图片数据量、传感器在线状态。
+    通过SSH远程检查设备的6个维度：物理机、容器、进程(含ROS)、主题+日志、今日事件数、传感器。
 
     Args:
         ip: 设备IP地址或设备名（如 mec_1002、zk26_690）
@@ -46,7 +45,7 @@ def diagnose_device(ip: str, project: str = "") -> str:
     if ce:
         _notify_progress("物理机", "error", ce[:80])
         dimensions.append({"name": "物理机", "status": "error", "detail": ce, "problem": "ssh_unreachable"})
-        for dim_name in ["容器", "进程", "ROS", "数据源", "传感器"]:
+        for dim_name in ["容器", "进程", "主题+日志", "今日事件数", "传感器"]:
             dimensions.append({"name": dim_name, "status": "skip", "detail": "物理机不可达，跳过"})
         db_info = get_device_db_info(ip)
         db_detail = format_device_db_info(db_info)
@@ -69,31 +68,43 @@ def diagnose_device(ip: str, project: str = "") -> str:
     _notify_progress("物理机", "ok", " | ".join(disk_detail_parts))
     dimensions.append({"name": "物理机", "status": "ok", "detail": " | ".join(disk_detail_parts)})
 
+    # 容器维度：docker ps 状态 + 容器SSH连通性
     cs = cd.get("container_status", "")
     cst = cd.get("container_started", "")
     dev_cont = cd.get("dev_container", "")
     container_ssh = cd.get("container_ssh_connect", "")
     issue_text = cd.get("issue", "")
     container_exec = cd.get("container_exec", "")
+    docker_status = cd.get("docker_service", "")
+
+    docker_ok = "运行中" in (docker_status or "") or (cs and "Up" in cs)
+    docker_running = cs or ("运行中" if docker_ok else "未运行")
+
+    container_ok = False
+    container_ssh_ok = False
 
     if cs:
-        container_detail = cs
+        container_detail = f"dev容器: {cs}"
         if cst:
             container_detail += f"，启动于 {cst[:10]} {cst[11:16]}"
-        if "不可连接" in (container_ssh or ""):
-            _notify_progress("容器", "error", f"容器运行({cs})，但SSH不可连接")
-            dimensions.append({"name": "容器", "status": "error", "detail": f"容器运行({cs})，但SSH不可连接", "problem": "container_ssh_down"})
+        container_ok = True
+        if container_ssh and "不可连接" in container_ssh:
+            container_detail += " | SSH: 不可连接"
+            _notify_progress("容器", "error", container_detail)
+            dimensions.append({"name": "容器", "status": "error", "detail": container_detail, "problem": "container_ssh_down"})
         else:
+            container_detail += " | SSH: 可连接"
+            container_ssh_ok = True
             _notify_progress("容器", "ok", container_detail)
             dimensions.append({"name": "容器", "status": "ok", "detail": container_detail})
     elif dev_cont and ("不存在" in dev_cont or "未运行" in dev_cont):
         if "不存在" in dev_cont:
-            problem, detail = "dev_container_missing", "dev容器不存在"
+            problem, detail = "dev_container_missing", f"dev容器不存在"
         else:
             problem, detail = "dev_container_stopped", f"dev容器存在但未运行（{dev_cont}）"
         _notify_progress("容器", "error", detail)
         dimensions.append({"name": "容器", "status": "error", "detail": detail, "problem": problem})
-        for dim_name in ["进程", "ROS", "数据源"]:
+        for dim_name in ["进程", "主题+日志", "今日事件数"]:
             dimensions.append({"name": dim_name, "status": "skip", "detail": "容器不可达，跳过"})
         si = get_sensor_status(ip)
         if si and (si.get("cameras") or si.get("radars")):
@@ -113,7 +124,7 @@ def diagnose_device(ip: str, project: str = "") -> str:
         problem, detail = "docker_service_down", "Docker服务未运行"
         _notify_progress("容器", "error", detail)
         dimensions.append({"name": "容器", "status": "error", "detail": detail, "problem": problem})
-        for dim_name in ["进程", "ROS", "数据源"]:
+        for dim_name in ["进程", "主题+日志", "今日事件数"]:
             dimensions.append({"name": dim_name, "status": "skip", "detail": "Docker不可用，跳过"})
         si = get_sensor_status(ip)
         if si and (si.get("cameras") or si.get("radars")):
@@ -130,7 +141,7 @@ def diagnose_device(ip: str, project: str = "") -> str:
             dimensions.append({"name": "数据库记录", "status": "warning", "detail": db_detail})
         return _build_diag_result(ip, dimensions, problem)
 
-    # 容器存在（可能SSH不可达），继续走完整诊断（diagnose_zero_images内部会fallback到docker exec）
+    # 容器存在且SSH可达（或可fallback docker exec），继续采集内部数据
     img = diagnose_zero_images(ip, progress_cb=_diag_progress_callback)
     iz = img.get("diagnosis", {})
     ic = iz.get("today_image_count", -1)
@@ -139,9 +150,14 @@ def diagnose_device(ip: str, project: str = "") -> str:
     abnormals = iz.get("abnormal_processes", [])
     sv_raw = iz.get("supervisor_output", "")
     log_errors = iz.get("log_errors", {})
+    roscore = iz.get("roscore", "")
+    topic_rates = iz.get("topic_rates", {})
+    rostopic = iz.get("rostopic", "")
 
+    # 进程维度：supervisorctl status + roscore
+    proc_parts = []
+    proc_problem = None
     if abnormals:
-        proc_parts = []
         for ap in abnormals:
             status = ap.get("status", "")
             name = ap.get("name", "")
@@ -152,94 +168,120 @@ def diagnose_device(ip: str, project: str = "") -> str:
                 proc_parts.append(f"{name}({status})")
         fatal_names = [p["name"] for p in abnormals if p["status"] == "FATAL"]
         if fatal_names and any(n == "infer" for n in fatal_names):
-            problem = "gpu_driver_error" if iz.get("error_category") == "driver" else "process_fatal"
+            proc_problem = "gpu_driver_error" if iz.get("error_category") == "driver" else "process_fatal"
         else:
-            problem = "process_error"
-        detail = "; ".join(proc_parts)
-        if log_errors:
-            log_summary = _summarize_log_errors(log_errors)
-            if log_summary:
-                detail += f" | 日志: {log_summary}"
-        dimensions.append({"name": "进程", "status": "error", "detail": detail,
-                           "problem": problem, "supervisor_raw": sv_raw, "_log_errors": log_errors})
-        _notify_progress("进程", "error", detail)
-    elif log_errors:
-        log_summary = _summarize_log_errors(log_errors)
-        error_category_val = iz.get("error_category", "process")
-        problem_map = {"driver": "gpu_driver_error", "ros_master": "ros_master_error",
-                       "oom": "oom_error", "process": "process_log_error"}
-        dimensions.append({"name": "进程", "status": "error", "detail": f"supervisor正常但日志异常: {log_summary}",
-                           "problem": problem_map.get(error_category_val, "process_log_error"), "_log_errors": log_errors})
-        _notify_progress("进程", "error", f"supervisor正常但日志异常: {log_summary}")
+            proc_problem = "process_error"
+        proc_detail = "; ".join(proc_parts)
     elif isinstance(sv, dict) and sv.get("total", 0) > 0:
-        dimensions.append({"name": "进程", "status": "ok", "detail": f"{sv.get('running',0)}/{sv.get('total',0)} 运行正常"})
-        _notify_progress("进程", "ok", f"{sv.get('running',0)}/{sv.get('total',0)} 运行正常")
+        proc_detail = f"{sv.get('running',0)}/{sv.get('total',0)} 运行正常"
     elif isinstance(sv, str) and "异常" in sv:
-        dimensions.append({"name": "进程", "status": "error", "detail": "Supervisor服务异常", "problem": "supervisor_error"})
-        _notify_progress("进程", "error", "Supervisor服务异常")
+        proc_detail = "Supervisor服务异常"
+        proc_problem = "supervisor_error"
     else:
-        dimensions.append({"name": "进程", "status": "warning", "detail": "未获取到进程状态"})
-        _notify_progress("进程", "warning", "未获取到进程状态")
+        proc_detail = "未获取到进程状态"
 
-    roscore = iz.get("roscore", "")
-    topic_rates = iz.get("topic_rates", {})
-    rostopic = iz.get("rostopic", "")
-    has_log_errors = bool(iz.get("log_errors"))
+    # roscore 状态
+    roscore_running = False
+    if roscore and "未运行" not in roscore:
+        roscore_running = True
 
-    def _make_ros_dim(name, status, detail, problem=None, topic_rates=None):
-        dim = {"name": name, "status": status, "detail": detail}
-        if problem:
-            dim["problem"] = problem
-        if topic_rates:
-            dim["_topic_rates"] = topic_rates
-        return dim
-
-    tr = topic_rates if topic_rates else None
-
-    if not roscore and not has_log_errors:
-        if abnormals:
-            dimensions.append(_make_ros_dim("ROS", "skip", "进程异常，跳过", topic_rates=tr))
+    if abnormals:
+        final_proc_detail = proc_detail
+        if roscore_running:
+            final_proc_detail += " | roscore运行"
         else:
-            dimensions.append(_make_ros_dim("ROS", "error", "roscore未运行", "roscore_down", tr))
-    elif "未运行" in roscore:
-        dimensions.append(_make_ros_dim("ROS", "error", "roscore未运行", "roscore_down", tr))
-    elif rostopic:
-        dimensions.append(_make_ros_dim("ROS", "error" if "无输出" in rostopic else "warning", rostopic, topic_rates=tr))
-    elif topic_rates:
+            final_proc_detail += " | roscore未运行"
+            if not proc_problem:
+                proc_problem = "roscore_down"
+        dimensions.append({"name": "进程(supervisorctl+roscore)", "status": "error", "detail": final_proc_detail,
+                           "problem": proc_problem, "supervisor_raw": sv_raw, "_log_errors": log_errors})
+        _notify_progress("进程(supervisorctl+roscore)", "error", final_proc_detail)
+    elif not roscore_running:
+        final_detail = f"{proc_detail} | roscore未运行"
+        dimensions.append({"name": "进程(supervisorctl+roscore)", "status": "error", "detail": final_detail,
+                           "problem": "roscore_down", "supervisor_raw": sv_raw, "_log_errors": log_errors})
+        _notify_progress("进程(supervisorctl+roscore)", "error", final_detail)
+    elif isinstance(sv, dict) and sv.get("total", 0) > 0:
+        final_detail = f"{proc_detail} | roscore运行"
+        dimensions.append({"name": "进程(supervisorctl+roscore)", "status": "ok", "detail": final_detail,
+                           "supervisor_raw": sv_raw, "_log_errors": log_errors})
+        _notify_progress("进程(supervisorctl+roscore)", "ok", final_detail)
+    elif isinstance(sv, str) and "异常" in sv:
+        final_detail = f"{proc_detail} | roscore运行"
+        dimensions.append({"name": "进程(supervisorctl+roscore)", "status": "error", "detail": final_detail,
+                           "problem": "supervisor_error", "supervisor_raw": sv_raw, "_log_errors": log_errors})
+        _notify_progress("进程(supervisorctl+roscore)", "error", final_detail)
+    else:
+        final_detail = f"{proc_detail} | roscore运行" if roscore_running else f"{proc_detail} | roscore未运行"
+        dimensions.append({"name": "进程(supervisorctl+roscore)", "status": "warning", "detail": final_detail,
+                           "supervisor_raw": sv_raw, "_log_errors": log_errors})
+        _notify_progress("进程(supervisorctl+roscore)", "warning", final_detail)
+
+    # 主题+日志维度：rostopic hz + log错误分析
+    topic_log_parts = []
+    topic_log_problem = None
+    has_topic_issue = False
+
+    if topic_rates:
         zero_topics = [t for t, r in topic_rates.items() if r.startswith("0 Hz") or "无数据" in r]
-        import logging
-        _logger = logging.getLogger(__name__)
-        if zero_topics:
-            _logger.info("ROS zero_topics: %s", [(t, topic_rates[t]) for t in zero_topics])
-        topic_list_str = "\n  - ".join(f"{t}: {r}" for t, r in topic_rates.items())
+        for t, r in topic_rates.items():
+            topic_log_parts.append(f"{t}: {r}")
         if len(zero_topics) == len(topic_rates) and topic_rates:
-            detail = f"所有topic无数据({len(topic_rates)}个)\n  - {topic_list_str}"
+            has_topic_issue = True
+            topic_log_problem = "topic_all_zero"
         elif zero_topics:
-            detail = f"{len(zero_topics)}/{len(topic_rates)} topic无数据\n  - {topic_list_str}"
-        else:
-            detail = f"roscore运行，{len(topic_rates)} topic有数据\n  - {topic_list_str}"
-        ros_status = "error" if len(zero_topics)==len(topic_rates) and topic_rates else "warning" if zero_topics else "ok"
-        dimensions.append({"name": "ROS话题", "status": ros_status, "detail": detail,
-                           "_topic_rates": topic_rates, "_zero_topics": zero_topics})
-        _notify_progress("ROS话题", ros_status, detail[:60])
-    elif abnormals:
-        dimensions.append(_make_ros_dim("ROS", "skip", "进程异常，跳过", topic_rates=tr))
-    else:
-        dimensions.append(_make_ros_dim("ROS", "ok", "roscore运行", topic_rates=tr))
+            has_topic_issue = True
+            topic_log_problem = "topic_partial_zero"
+    elif rostopic:
+        topic_log_parts.append(f"rostopic: {rostopic}")
+        has_topic_issue = True
+        topic_log_problem = "topic_error"
 
+    if log_errors:
+        log_summary = _summarize_log_errors(log_errors)
+        if log_summary:
+            topic_log_parts.append(f"日志: {log_summary}")
+            if not has_topic_issue:
+                has_topic_issue = True
+                topic_log_problem = "log_error_only"
+
+    if topic_log_parts:
+        topic_log_detail = " | ".join(topic_log_parts)
+        if has_topic_issue:
+            tl_status = "error" if topic_log_problem in ("topic_all_zero", "topic_error") else "warning"
+            dimensions.append({"name": "主题+日志", "status": tl_status, "detail": topic_log_detail,
+                               "problem": topic_log_problem, "_topic_rates": topic_rates,
+                               "_zero_topics": zero_topics if topic_rates else [], "_log_errors": log_errors})
+            _notify_progress("主题+日志", tl_status, topic_log_detail[:80])
+        else:
+            dimensions.append({"name": "主题+日志", "status": "ok", "detail": topic_log_detail,
+                               "_topic_rates": topic_rates, "_log_errors": log_errors})
+            _notify_progress("主题+日志", "ok", topic_log_detail[:80])
+    elif not abnormals:
+        if roscore_running:
+            dimensions.append({"name": "主题+日志", "status": "ok", "detail": "无关键topic，roscore运行"})
+            _notify_progress("主题+日志", "ok", "无关键topic")
+        else:
+            dimensions.append({"name": "主题+日志", "status": "skip", "detail": "roscore未运行，跳过"})
+            _notify_progress("主题+日志", "skip", "roscore未运行")
+    else:
+        dimensions.append({"name": "主题+日志", "status": "skip", "detail": "进程异常，跳过"})
+        _notify_progress("主题+日志", "skip", "进程异常")
+
+    # 今日事件数维度
     latest_time = iz.get("latest_image_time", "")
     if ic > 0:
         dim5 = f"今日图片: {ic} 张"
         if latest_time:
             dim5 += f"，最新 {latest_time}"
-        dimensions.append({"name": "数据源", "status": "ok", "detail": dim5})
-        _notify_progress("数据源", "ok", dim5)
+        dimensions.append({"name": "今日事件数", "status": "ok", "detail": dim5})
+        _notify_progress("今日事件数", "ok", dim5)
     elif ic == 0:
-        dimensions.append({"name": "数据源", "status": "error", "detail": "今日图片: 0 张", "problem": "zero_images"})
-        _notify_progress("数据源", "error", "今日图片: 0 张")
+        dimensions.append({"name": "今日事件数", "status": "error", "detail": "今日图片: 0 张", "problem": "zero_images"})
+        _notify_progress("今日事件数", "error", "今日图片: 0 张")
     else:
-        dimensions.append({"name": "数据源", "status": "warning", "detail": "无法获取图片数"})
-        _notify_progress("数据源", "warning", "无法获取图片数")
+        dimensions.append({"name": "今日事件数", "status": "warning", "detail": "无法获取图片数"})
+        _notify_progress("今日事件数", "warning", "无法获取图片数")
 
     si = get_sensor_status(ip)
     if si and (si.get("cameras") or si.get("radars")):

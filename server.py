@@ -37,6 +37,7 @@ from handlers.memory import (
 )
 from webui import handle_webui, handle_static
 from handlers.chat import get_agent, _agent_init_time_since_init, _agent
+from config import EVENT_IMAGE_TEMP_DIR, EVENT_IMAGE_TTL_HOURS
 
 
 async def handle_health(request):
@@ -70,6 +71,18 @@ async def handle_clear_session(request):
         return web.json_response({"success": True, "message": f"会话 {session_id} 已清除"})
     except Exception as e:
         return web.json_response({"success": False, "error": str(e)}, status=500)
+
+
+async def handle_event_image(request):
+    record_id = request.match_info.get("record_id", "")
+    filename = request.match_info.get("filename", "")
+    if not record_id or not filename:
+        return web.json_response({"error": "缺少参数"}, status=400)
+    cache_dir = Path(str(EVENT_IMAGE_TEMP_DIR)) / record_id
+    filepath = cache_dir / filename
+    if not filepath.exists() or not filepath.is_file():
+        return web.json_response({"error": "图片未找到，请先调用 fetch_event_image 抓取"}, status=404)
+    return web.FileResponse(filepath)
 
 
 def _parse_body(request):
@@ -135,6 +148,7 @@ def create_app():
     app.router.add_post("/api/v1/memory/create", handle_memory_create)
     app.router.add_post("/api/v1/memory/update", handle_memory_update)
     app.router.add_delete("/api/v1/memory/{id}", handle_memory_delete)
+    app.router.add_get("/event_image/{record_id}/{filename:.*}", handle_event_image)
     return app
 
 

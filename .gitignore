@@ -1,4 +1,7 @@
-
 # LangGraph API
 .langgraph_api
-config.py
+__pycache__/
+*.pyc
+*.pyo
+diagnose_logs/
+checkpoints.db
